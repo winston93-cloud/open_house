@@ -106,32 +106,36 @@ const createEmailTemplate = (formData: any) => {
             font-weight: 700;
         }
         .info-row {
-            display: table;
-            width: 100%;
             margin: 15px 0;
             padding: 12px 0;
             border-bottom: 1px solid #dee2e6;
+            clear: both;
         }
         .info-row:last-child {
             border-bottom: none;
         }
         .info-label {
-            display: table-cell;
             font-weight: 600;
             color: #495057;
             font-size: 14px;
-            width: 40%;
-            vertical-align: top;
-            padding-right: 10px;
+            float: left;
+            width: 45%;
+            margin-bottom: 5px;
         }
         .info-value {
-            display: table-cell;
             color: #1e3a8a;
             font-weight: 700;
             font-size: 14px;
-            width: 60%;
-            vertical-align: top;
+            float: right;
+            width: 50%;
+            text-align: right;
+            margin-bottom: 5px;
             word-wrap: break-word;
+        }
+        .info-row:after {
+            content: "";
+            display: table;
+            clear: both;
         }
         .event-details {
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
@@ -216,19 +220,19 @@ const createEmailTemplate = (formData: any) => {
             .content {
                 padding: 20px;
             }
-            .info-row {
-                display: block;
-            }
             .info-label {
-                display: block;
+                float: none;
                 width: 100%;
                 margin-bottom: 5px;
                 font-weight: 700;
+                display: block;
             }
             .info-value {
-                display: block;
+                float: none;
                 width: 100%;
                 margin-bottom: 10px;
+                text-align: left;
+                display: block;
             }
             .event-date {
                 font-size: 22px;
