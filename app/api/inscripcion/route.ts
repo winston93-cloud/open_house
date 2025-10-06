@@ -81,14 +81,16 @@ const createEmailTemplate = (formData: any) => {
             margin-bottom: 30px;
         }
         .welcome h2 {
-            color: #1e3a8a;
+            color: #1e3a8a !important;
             font-size: 24px;
             margin: 0 0 10px 0;
+            font-weight: 700;
         }
         .welcome p {
-            color: #333;
+            color: #333333 !important;
             font-size: 16px;
             margin: 0;
+            font-weight: 500;
         }
         .info-card {
             background: #ffffff;
@@ -99,7 +101,7 @@ const createEmailTemplate = (formData: any) => {
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
         .info-card h3 {
-            color: #1e3a8a;
+            color: #1e3a8a !important;
             font-size: 20px;
             margin: 0 0 20px 0;
             text-align: center;
@@ -116,14 +118,14 @@ const createEmailTemplate = (formData: any) => {
         }
         .info-label {
             font-weight: 600;
-            color: #495057;
+            color: #2c3e50 !important;
             font-size: 14px;
             float: left;
             width: 45%;
             margin-bottom: 5px;
         }
         .info-value {
-            color: #1e3a8a;
+            color: #1e3a8a !important;
             font-weight: 700;
             font-size: 14px;
             float: right;
@@ -183,8 +185,9 @@ const createEmailTemplate = (formData: any) => {
         }
         .footer p {
             margin: 0;
-            color: #333;
+            color: #333333 !important;
             font-size: 14px;
+            font-weight: 500;
         }
         .contact-info {
             margin-top: 15px;
@@ -196,7 +199,8 @@ const createEmailTemplate = (formData: any) => {
         .contact-info p {
             margin: 5px 0;
             font-size: 13px;
-            color: #333;
+            color: #333333 !important;
+            font-weight: 500;
         }
         .highlight {
             background-color: #fff3cd;
