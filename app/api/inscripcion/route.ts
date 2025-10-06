@@ -610,7 +610,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.json();
     
     // Validar datos requeridos
-    const requiredFields = ['nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento', 'nombreCompleto', 'correo', 'telefono', 'medioEntero'];
+    const requiredFields = ['nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento', 'nombreCompleto', 'correo', 'whatsapp', 'medioEntero'];
     const missingFields = requiredFields.filter(field => !formData[field]);
     
     if (missingFields.length > 0) {
