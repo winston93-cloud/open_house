@@ -383,7 +383,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
         }
         .churchill-info-label {
             font-weight: 600;
-            color: #2c3e50 !important;
+            color: #ffffff !important;
             font-size: 14px;
             display: table-cell;
             width: 40%;
@@ -391,7 +391,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             padding-right: 10px;
         }
         .churchill-info-value {
-            color: #1e3a8a !important;
+            color: #ffffff !important;
             font-weight: 700;
             font-size: 14px;
             display: table-cell;
