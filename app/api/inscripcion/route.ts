@@ -140,7 +140,6 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-align: center;
             display: block;
-            width: 100%;
         }
         .event-time {
             font-size: 20px;
@@ -148,7 +147,6 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             margin: 10px 0;
             text-align: center;
             display: block;
-            width: 100%;
         }
         .event-description {
             margin-top: 20px;
@@ -156,7 +154,6 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             opacity: 0.9;
             text-align: center;
             line-height: 1.5;
-            width: 100%;
         }
         .footer {
             background-color: #f8f9fa;
@@ -427,7 +424,6 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-align: center;
             display: block;
-            width: 100%;
         }
         .event-time {
             font-size: 20px;
@@ -435,7 +431,6 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             margin: 10px 0;
             text-align: center;
             display: block;
-            width: 100%;
         }
         .event-description {
             margin-top: 20px;
@@ -443,7 +438,6 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             opacity: 0.9;
             text-align: center;
             line-height: 1.5;
-            width: 100%;
         }
         .footer {
             background-color: #f8f9fa;
@@ -735,7 +729,6 @@ const createEmailTemplate = (formData: any) => {
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-align: center;
             display: block;
-            width: 100%;
         }
         .event-time {
             font-size: 20px;
@@ -743,7 +736,6 @@ const createEmailTemplate = (formData: any) => {
             margin: 10px 0;
             text-align: center;
             display: block;
-            width: 100%;
         }
         .event-description {
             margin-top: 20px;
@@ -751,7 +743,6 @@ const createEmailTemplate = (formData: any) => {
             opacity: 0.9;
             text-align: center;
             line-height: 1.5;
-            width: 100%;
         }
         .footer {
             background-color: #f8f9fa;
