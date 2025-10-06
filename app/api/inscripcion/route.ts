@@ -144,6 +144,7 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-align: center;
             display: block;
+            width: 100%;
         }
         .event-time {
             font-size: 20px;
@@ -151,6 +152,7 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             margin: 10px 0;
             text-align: center;
             display: block;
+            width: 100%;
         }
         .event-description {
             margin-top: 20px;
@@ -158,6 +160,7 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             opacity: 0.9;
             text-align: center;
             line-height: 1.5;
+            width: 100%;
         }
         .footer {
             background-color: #f8f9fa;
@@ -378,8 +381,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             margin: 15px 0;
             padding: 12px 0;
             border-bottom: 1px solid #dee2e6;
-            display: table;
-            width: 100%;
+            clear: both;
         }
         .info-row:last-child {
             border-bottom: none;
@@ -388,19 +390,24 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             font-weight: 600;
             color: #2c3e50 !important;
             font-size: 14px;
-            display: table-cell;
-            width: 40%;
-            vertical-align: top;
-            padding-right: 10px;
+            float: left;
+            width: 45%;
+            margin-bottom: 5px;
         }
         .info-value {
             color: #1e3a8a !important;
             font-weight: 700;
             font-size: 14px;
-            display: table-cell;
-            width: 60%;
-            vertical-align: top;
+            float: right;
+            width: 50%;
+            text-align: right;
+            margin-bottom: 5px;
             word-wrap: break-word;
+        }
+        .info-row:after {
+            content: "";
+            display: table;
+            clear: both;
         }
         .event-details {
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
@@ -424,6 +431,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-align: center;
             display: block;
+            width: 100%;
         }
         .event-time {
             font-size: 20px;
@@ -431,6 +439,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             margin: 10px 0;
             text-align: center;
             display: block;
+            width: 100%;
         }
         .event-description {
             margin-top: 20px;
@@ -438,6 +447,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             opacity: 0.9;
             text-align: center;
             line-height: 1.5;
+            width: 100%;
         }
         .footer {
             background-color: #f8f9fa;
@@ -729,6 +739,7 @@ const createEmailTemplate = (formData: any) => {
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-align: center;
             display: block;
+            width: 100%;
         }
         .event-time {
             font-size: 20px;
@@ -736,6 +747,7 @@ const createEmailTemplate = (formData: any) => {
             margin: 10px 0;
             text-align: center;
             display: block;
+            width: 100%;
         }
         .event-description {
             margin-top: 20px;
@@ -743,6 +755,7 @@ const createEmailTemplate = (formData: any) => {
             opacity: 0.9;
             text-align: center;
             line-height: 1.5;
+            width: 100%;
         }
         .footer {
             background-color: #f8f9fa;
