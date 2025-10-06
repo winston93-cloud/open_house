@@ -378,7 +378,8 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             margin: 15px 0;
             padding: 12px 0;
             border-bottom: 1px solid #dee2e6;
-            clear: both;
+            display: table;
+            width: 100%;
         }
         .info-row:last-child {
             border-bottom: none;
@@ -387,24 +388,19 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             font-weight: 600;
             color: #2c3e50 !important;
             font-size: 14px;
-            float: left;
-            width: 45%;
-            margin-bottom: 5px;
+            display: table-cell;
+            width: 40%;
+            vertical-align: top;
+            padding-right: 10px;
         }
         .info-value {
             color: #1e3a8a !important;
             font-weight: 700;
             font-size: 14px;
-            float: right;
-            width: 50%;
-            text-align: right;
-            margin-bottom: 5px;
+            display: table-cell;
+            width: 60%;
+            vertical-align: top;
             word-wrap: break-word;
-        }
-        .info-row:after {
-            content: "";
-            display: table;
-            clear: both;
         }
         .event-details {
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
@@ -491,19 +487,20 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             .content {
                 padding: 20px;
             }
+            .info-row {
+                display: block;
+            }
             .info-label {
-                float: none;
+                display: block;
                 width: 100%;
                 margin-bottom: 5px;
                 font-weight: 700;
-                display: block;
             }
             .info-value {
-                float: none;
+                display: block;
                 width: 100%;
                 margin-bottom: 10px;
                 text-align: left;
-                display: block;
             }
             .event-date {
                 font-size: 22px;
