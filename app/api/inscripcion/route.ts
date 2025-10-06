@@ -106,48 +106,69 @@ const createEmailTemplate = (formData: any) => {
             font-weight: 700;
         }
         .info-row {
-            display: flex;
-            justify-content: space-between;
+            display: table;
+            width: 100%;
             margin: 15px 0;
-            padding: 10px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #dee2e6;
         }
         .info-row:last-child {
             border-bottom: none;
         }
         .info-label {
+            display: table-cell;
             font-weight: 600;
             color: #495057;
             font-size: 14px;
+            width: 40%;
+            vertical-align: top;
+            padding-right: 10px;
         }
         .info-value {
+            display: table-cell;
             color: #1e3a8a;
             font-weight: 700;
             font-size: 14px;
+            width: 60%;
+            vertical-align: top;
+            word-wrap: break-word;
         }
         .event-details {
             background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
             color: white;
             border-radius: 12px;
-            padding: 25px;
+            padding: 30px;
             text-align: center;
             margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
         }
         .event-details h3 {
-            margin: 0 0 15px 0;
+            margin: 0 0 20px 0;
             font-size: 22px;
             font-weight: 700;
+            text-align: center;
         }
         .event-date {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
-            margin: 10px 0;
+            margin: 15px 0;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            display: block;
         }
         .event-time {
-            font-size: 18px;
+            font-size: 20px;
+            opacity: 0.95;
+            margin: 10px 0;
+            text-align: center;
+            display: block;
+        }
+        .event-description {
+            margin-top: 20px;
+            font-size: 16px;
             opacity: 0.9;
-            margin: 5px 0;
+            text-align: center;
+            line-height: 1.5;
         }
         .footer {
             background-color: #f8f9fa;
@@ -196,11 +217,27 @@ const createEmailTemplate = (formData: any) => {
                 padding: 20px;
             }
             .info-row {
-                flex-direction: column;
-                gap: 5px;
+                display: block;
+            }
+            .info-label {
+                display: block;
+                width: 100%;
+                margin-bottom: 5px;
+                font-weight: 700;
+            }
+            .info-value {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
             }
             .event-date {
-                font-size: 20px;
+                font-size: 22px;
+            }
+            .event-time {
+                font-size: 18px;
+            }
+            .event-details {
+                padding: 20px;
             }
         }
     </style>
@@ -246,9 +283,9 @@ const createEmailTemplate = (formData: any) => {
                 <h3>🎉 Detalles del Evento</h3>
                 <div class="event-date">${fechaEvento}</div>
                 <div class="event-time">⏰ ${horaEvento}</div>
-                <p style="margin-top: 15px; font-size: 16px; opacity: 0.9;">
+                <div class="event-description">
                     Te esperamos en nuestras instalaciones para conocer más sobre nuestro programa educativo
-                </p>
+                </div>
             </div>
         </div>
         
