@@ -384,19 +384,20 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             font-weight: 600;
             color: #2c3e50 !important;
             font-size: 14px;
-            float: left;
-            width: 45%;
+            display: inline-block;
+            width: 40%;
             margin-bottom: 5px;
+            vertical-align: top;
         }
         .churchill-info-value {
             color: #1e3a8a !important;
             font-weight: 700;
             font-size: 14px;
-            float: right;
-            width: 50%;
-            text-align: right;
+            display: inline-block;
+            width: 55%;
             margin-bottom: 5px;
             word-wrap: break-word;
+            vertical-align: top;
         }
         .churchill-info-row:after {
             content: "";
@@ -492,18 +493,16 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
                 display: block;
             }
             .churchill-info-label {
-                float: none;
+                display: block;
                 width: 100%;
                 margin-bottom: 5px;
                 font-weight: 700;
-                display: block;
             }
             .churchill-info-value {
-                float: none;
+                display: block;
                 width: 100%;
                 margin-bottom: 10px;
                 text-align: left;
-                display: block;
             }
             .event-date {
                 font-size: 22px;
