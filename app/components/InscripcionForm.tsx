@@ -176,7 +176,7 @@ export default function InscripcionForm() {
 
     try {
       console.log('Enviando datos al backend...')
-          const response = await fetch('http://localhost:5000/api/inscripcion', {
+          const response = await fetch('/api/inscripcion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
