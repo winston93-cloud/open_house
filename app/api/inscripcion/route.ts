@@ -15,8 +15,11 @@ import { supabase } from '../../../lib/supabase';
           body: JSON.stringify({
             messaging_product: 'whatsapp',
             to: phoneNumber,
-            type: 'text',
-            text: { body: message }
+            type: 'template',
+            template: {
+              name: 'hello_world',
+              language: { code: 'en_US' }
+            }
           })
         });
 
