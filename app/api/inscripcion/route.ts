@@ -5,7 +5,7 @@ import { supabase } from '../../../lib/supabase';
     // Función para enviar WhatsApp
     const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
       try {
-        // Usar la API de WhatsApp Business
+        // Usar la API de WhatsApp Business con número real
         const response = await fetch('https://graph.facebook.com/v18.0/872609622594319/messages', {
           method: 'POST',
           headers: {
@@ -15,11 +15,8 @@ import { supabase } from '../../../lib/supabase';
           body: JSON.stringify({
             messaging_product: 'whatsapp',
             to: phoneNumber,
-            type: 'template',
-            template: {
-              name: 'hello_world',
-              language: { code: 'en_US' }
-            }
+            type: 'text',
+            text: { body: message }
           })
         });
 
