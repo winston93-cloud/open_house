@@ -361,7 +361,7 @@ export default function AdminDashboard() {
                 className="admin-logo-winston"
               />
               <img 
-                src="/logos/educativo hd.png" 
+                src="/logos/educativo%20hd.png" 
                 alt="Logo Educativo" 
                 className="admin-logo-educativo"
               />
