@@ -84,36 +84,80 @@ export default function AdminDashboard() {
     
       // === HOJA 1: RESUMEN EJECUTIVO ===
       const resumenData = [
-        ['REPORTE DE INSCRIPCIONES OPEN HOUSE WINSTON'],
-        ['Fecha de generación:', new Date().toLocaleDateString('es-MX')],
-        [''],
-        ['RESUMEN EJECUTIVO'],
-        ['Total de Inscripciones:', stats.total],
-        [''],
-        ['DESGLOSE POR NIVELES'],
-        ['Maternal:', stats.maternal],
-        ['Kinder:', stats.kinder],
-        ['Primaria:', stats.primaria],
-        ['Secundaria:', stats.secundaria],
-        [''],
-        ['PORCENTAJES'],
-        ['Maternal:', `${((stats.maternal / stats.total) * 100).toFixed(1)}%`],
-        ['Kinder:', `${((stats.kinder / stats.total) * 100).toFixed(1)}%`],
-        ['Primaria:', `${((stats.primaria / stats.total) * 100).toFixed(1)}%`],
-        ['Secundaria:', `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`]
+        ['', '', '', '', '', ''], // Fila vacía
+        ['', '', '', '', '', ''], // Fila vacía
+        ['', 'REPORTE DE INSCRIPCIONES OPEN HOUSE WINSTON', '', '', '', ''],
+        ['', 'Fecha de generación:', new Date().toLocaleDateString('es-MX'), '', '', ''],
+        ['', '', '', '', '', ''],
+        ['', 'RESUMEN EJECUTIVO', '', '', '', ''],
+        ['', 'Total de Inscripciones:', stats.total, '', '', ''],
+        ['', '', '', '', '', ''],
+        ['', 'DESGLOSE POR NIVELES', '', '', '', ''],
+        ['', 'Maternal:', stats.maternal, '', '', ''],
+        ['', 'Kinder:', stats.kinder, '', '', ''],
+        ['', 'Primaria:', stats.primaria, '', '', ''],
+        ['', 'Secundaria:', stats.secundaria, '', '', ''],
+        ['', '', '', '', '', ''],
+        ['', 'PORCENTAJES', '', '', '', ''],
+        ['', 'Maternal:', `${((stats.maternal / stats.total) * 100).toFixed(1)}%`, '', '', ''],
+        ['', 'Kinder:', `${((stats.kinder / stats.total) * 100).toFixed(1)}%`, '', '', ''],
+        ['', 'Primaria:', `${((stats.primaria / stats.total) * 100).toFixed(1)}%`, '', '', ''],
+        ['', 'Secundaria:', `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`, '', '', '']
       ];
       
       const resumenSheet = XLSX.utils.aoa_to_sheet(resumenData);
       
       // Aplicar estilos al resumen
-      resumenSheet['!cols'] = [{ width: 20 }, { width: 15 }];
+      resumenSheet['!cols'] = [
+        { width: 5 },   // Columna A (vacía)
+        { width: 25 }, // Columna B (títulos)
+        { width: 20 }, // Columna C (valores)
+        { width: 10 }, // Columna D
+        { width: 10 }, // Columna E
+        { width: 10 }  // Columna F
+      ];
       resumenSheet['!rows'] = Array(resumenData.length).fill({ hpx: 25 });
+      
+      // Aplicar colores a las celdas
+      const range = XLSX.utils.decode_range(resumenSheet['!ref']);
+      for (let row = range.s.r; row <= range.e.r; row++) {
+        for (let col = range.s.c; col <= range.e.c; col++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+          if (!resumenSheet[cellAddress]) resumenSheet[cellAddress] = { v: '' };
+          
+          // Colores por nivel
+          if (row >= 9 && row <= 12) { // Filas de niveles
+            if (col === 1) { // Columna B (nombres de niveles)
+              resumenSheet[cellAddress].s = {
+                fill: { fgColor: { rgb: row === 9 ? 'FF69B4' : row === 10 ? '8B5CF6' : row === 11 ? '10B981' : 'F59E0B' } },
+                font: { color: { rgb: 'FFFFFF' }, bold: true }
+              };
+            }
+          }
+          
+          // Título principal
+          if (row === 2 && col === 1) {
+            resumenSheet[cellAddress].s = {
+              font: { bold: true, size: 16, color: { rgb: '1E3A8A' } }
+            };
+          }
+          
+          // Subtítulos
+          if ((row === 5 || row === 8 || row === 14) && col === 1) {
+            resumenSheet[cellAddress].s = {
+              font: { bold: true, size: 14, color: { rgb: '374151' } }
+            };
+          }
+        }
+      }
       
       XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen Ejecutivo');
       
       // === HOJA 2: DATOS DETALLADOS ===
       const datosDetallados = [
-        ['NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN']
+        ['', '', '', '', '', ''], // Fila vacía
+        ['', '', '', '', '', ''], // Fila vacía
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN']
       ];
       
       // Agregar datos agrupados por nivel
@@ -128,41 +172,43 @@ export default function AdminDashboard() {
       niveles.forEach(nivel => {
         const inscripcionesNivel = inscripciones.filter(i => i.nivel_academico === nivel);
         
-        if (inscripcionesNivel.length > 0) {
-          // Agregar encabezado del nivel
-          datosDetallados.push([`=== ${nivel.toUpperCase()} (${inscripcionesNivel.length} inscripciones) ===`, '', '', '', '', '']);
-          
-          // Agregar datos del nivel
-          inscripcionesNivel.forEach(inscripcion => {
-            datosDetallados.push([
-              inscripcion.nombre_aspirante,
-              inscripcion.nivel_academico,
-              inscripcion.grado_escolar,
-              inscripcion.email,
-              inscripcion.whatsapp,
-              new Date(inscripcion.created_at).toLocaleDateString('es-MX', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-              })
-            ]);
-          });
-          
-          // Agregar subtotal del nivel
-          datosDetallados.push([`SUBTOTAL ${nivel.toUpperCase()}:`, inscripcionesNivel.length.toString(), '', '', '', '']);
-          datosDetallados.push(['', '', '', '', '', '']); // Línea en blanco
-        }
+            if (inscripcionesNivel.length > 0) {
+              // Agregar encabezado del nivel
+              datosDetallados.push(['', `=== ${nivel.toUpperCase()} (${inscripcionesNivel.length} inscripciones) ===`, '', '', '', '', '']);
+              
+              // Agregar datos del nivel
+              inscripcionesNivel.forEach(inscripcion => {
+                datosDetallados.push([
+                  '', // Columna A vacía
+                  inscripcion.nombre_aspirante,
+                  inscripcion.nivel_academico,
+                  inscripcion.grado_escolar,
+                  inscripcion.email,
+                  inscripcion.whatsapp,
+                  new Date(inscripcion.created_at).toLocaleDateString('es-MX', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                ]);
+              });
+              
+              // Agregar subtotal del nivel
+              datosDetallados.push(['', `SUBTOTAL ${nivel.toUpperCase()}:`, inscripcionesNivel.length.toString(), '', '', '', '']);
+              datosDetallados.push(['', '', '', '', '', '', '']); // Línea en blanco
+            }
       });
       
       // Agregar total general
-      datosDetallados.push(['TOTAL GENERAL:', stats.total.toString(), '', '', '', '']);
+      datosDetallados.push(['', 'TOTAL GENERAL:', stats.total.toString(), '', '', '', '']);
       
       const datosSheet = XLSX.utils.aoa_to_sheet(datosDetallados);
       
       // Configurar columnas
       datosSheet['!cols'] = [
+        { width: 5 },   // Columna A (vacía)
         { width: 30 }, // Nombre
         { width: 15 }, // Nivel
         { width: 15 }, // Grado
@@ -175,60 +221,73 @@ export default function AdminDashboard() {
       
       // === HOJA 3: ANÁLISIS ESTADÍSTICO ===
       const analisisData = [
-        ['ANÁLISIS ESTADÍSTICO DE INSCRIPCIONES'],
-        [''],
-        ['DISTRIBUCIÓN POR NIVELES'],
-        ['Nivel', 'Cantidad', 'Porcentaje', 'Color'],
-        ['Maternal', stats.maternal.toString(), `${((stats.maternal / stats.total) * 100).toFixed(1)}%`, 'Rosa'],
-        ['Kinder', stats.kinder.toString(), `${((stats.kinder / stats.total) * 100).toFixed(1)}%`, 'Morado'],
-        ['Primaria', stats.primaria.toString(), `${((stats.primaria / stats.total) * 100).toFixed(1)}%`, 'Verde'],
-        ['Secundaria', stats.secundaria.toString(), `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`, 'Naranja'],
-        [''],
-        ['TOTAL', stats.total.toString(), '100.0%', ''],
-        [''],
-        ['ANÁLISIS TEMPORAL'],
-        ['Primera inscripción:', inscripciones.length > 0 ? new Date(Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A'],
-        ['Última inscripción:', inscripciones.length > 0 ? new Date(Math.max(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A'],
-        ['Período de captación:', inscripciones.length > 0 ? 
-          `${Math.ceil((Math.max(...inscripciones.map(i => new Date(i.created_at).getTime())) - Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24))} días` : 'N/A'
+        ['', '', '', ''], // Fila vacía
+        ['', '', '', ''], // Fila vacía
+        ['', 'ANÁLISIS ESTADÍSTICO DE INSCRIPCIONES', '', ''],
+        ['', '', '', ''],
+        ['', 'DISTRIBUCIÓN POR NIVELES', '', ''],
+        ['', 'Nivel', 'Cantidad', 'Porcentaje'],
+        ['', 'Maternal', stats.maternal.toString(), `${((stats.maternal / stats.total) * 100).toFixed(1)}%`],
+        ['', 'Kinder', stats.kinder.toString(), `${((stats.kinder / stats.total) * 100).toFixed(1)}%`],
+        ['', 'Primaria', stats.primaria.toString(), `${((stats.primaria / stats.total) * 100).toFixed(1)}%`],
+        ['', 'Secundaria', stats.secundaria.toString(), `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`],
+        ['', '', '', ''],
+        ['', 'TOTAL', stats.total.toString(), '100.0%'],
+        ['', '', '', ''],
+        ['', 'ANÁLISIS TEMPORAL', '', ''],
+        ['', 'Primera inscripción:', inscripciones.length > 0 ? new Date(Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
+        ['', 'Última inscripción:', inscripciones.length > 0 ? new Date(Math.max(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
+        ['', 'Período de captación:', inscripciones.length > 0 ? 
+          `${Math.ceil((Math.max(...inscripciones.map(i => new Date(i.created_at).getTime())) - Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24))} días` : 'N/A', ''
         ],
-        [''],
-        ['MÉTRICAS ADICIONALES'],
-        ['Promedio diario:', stats.total > 0 ? (stats.total / Math.max(1, Math.ceil((Date.now() - Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24)))).toFixed(2) : '0'],
-        ['Nivel más popular:', stats.maternal >= stats.kinder && stats.maternal >= stats.primaria && stats.maternal >= stats.secundaria ? 'Maternal' :
+        ['', '', '', ''],
+        ['', 'MÉTRICAS ADICIONALES', '', ''],
+        ['', 'Promedio diario:', stats.total > 0 ? (stats.total / Math.max(1, Math.ceil((Date.now() - Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24)))).toFixed(2) : '0', ''],
+        ['', 'Nivel más popular:', stats.maternal >= stats.kinder && stats.maternal >= stats.primaria && stats.maternal >= stats.secundaria ? 'Maternal' :
                              stats.kinder >= stats.primaria && stats.kinder >= stats.secundaria ? 'Kinder' :
-                             stats.primaria >= stats.secundaria ? 'Primaria' : 'Secundaria']
+                             stats.primaria >= stats.secundaria ? 'Primaria' : 'Secundaria', '']
       ];
       
       const analisisSheet = XLSX.utils.aoa_to_sheet(analisisData);
-      analisisSheet['!cols'] = [{ width: 20 }, { width: 15 }, { width: 15 }, { width: 15 }];
+      analisisSheet['!cols'] = [
+        { width: 5 },   // Columna A (vacía)
+        { width: 20 }, // Columna B (títulos)
+        { width: 15 }, // Columna C (valores)
+        { width: 15 }  // Columna D (valores)
+      ];
       
       XLSX.utils.book_append_sheet(workbook, analisisSheet, 'Análisis Estadístico');
       
       // === HOJA 4: GRÁFICAS (Datos para gráfica) ===
       const graficaData = [
-        ['DATOS PARA GRÁFICA DE DISTRIBUCIÓN'],
-        [''],
-        ['Nivel', 'Cantidad', 'Porcentaje'],
-        ['Maternal', stats.maternal.toString(), (stats.maternal / stats.total) * 100],
-        ['Kinder', stats.kinder.toString(), (stats.kinder / stats.total) * 100],
-        ['Primaria', stats.primaria.toString(), (stats.primaria / stats.total) * 100],
-        ['Secundaria', stats.secundaria.toString(), (stats.secundaria / stats.total) * 100],
-        [''],
-        ['INSTRUCCIONES PARA CREAR GRÁFICA:'],
-        ['1. Selecciona los datos de las columnas A, B y C (filas 3-6)'],
-        ['2. Inserta un gráfico de barras o circular'],
-        ['3. Configura los colores:'],
-        ['   - Maternal: Rosa (#ec4899)'],
-        ['   - Kinder: Morado (#8b5cf6)'],
-        ['   - Primaria: Verde (#10b981)'],
-        ['   - Secundaria: Naranja (#f59e0b)'],
-        ['4. Añade título: "Distribución de Inscripciones por Nivel"'],
-        ['5. Añade etiquetas de datos con porcentajes']
+        ['', '', ''], // Fila vacía
+        ['', '', ''], // Fila vacía
+        ['', 'DATOS PARA GRÁFICA DE DISTRIBUCIÓN', ''],
+        ['', '', ''],
+        ['', 'Nivel', 'Cantidad'],
+        ['', 'Maternal', stats.maternal.toString()],
+        ['', 'Kinder', stats.kinder.toString()],
+        ['', 'Primaria', stats.primaria.toString()],
+        ['', 'Secundaria', stats.secundaria.toString()],
+        ['', '', ''],
+        ['', 'INSTRUCCIONES PARA CREAR GRÁFICA:', ''],
+        ['', '1. Selecciona los datos de las columnas B y C (filas 5-8)', ''],
+        ['', '2. Inserta un gráfico de barras o circular', ''],
+        ['', '3. Configura los colores:', ''],
+        ['', '   - Maternal: Rosa (#ec4899)', ''],
+        ['', '   - Kinder: Morado (#8b5cf6)', ''],
+        ['', '   - Primaria: Verde (#10b981)', ''],
+        ['', '   - Secundaria: Naranja (#f59e0b)', ''],
+        ['', '4. Añade título: "Distribución de Inscripciones por Nivel"', ''],
+        ['', '5. Añade etiquetas de datos con porcentajes', '']
       ];
       
       const graficaSheet = XLSX.utils.aoa_to_sheet(graficaData);
-      graficaSheet['!cols'] = [{ width: 15 }, { width: 12 }, { width: 12 }];
+      graficaSheet['!cols'] = [
+        { width: 5 },   // Columna A (vacía)
+        { width: 40 },  // Columna B (títulos e instrucciones)
+        { width: 15 }   // Columna C (datos)
+      ];
       
       XLSX.utils.book_append_sheet(workbook, graficaSheet, 'Datos para Gráficas');
       
