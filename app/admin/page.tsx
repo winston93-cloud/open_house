@@ -147,13 +147,13 @@ export default function AdminDashboard() {
         });
         
         // Agregar subtotal del nivel
-        datosDetallados.push([`SUBTOTAL ${nivel.toUpperCase()}:`, inscripcionesNivel.length, '', '', '', '']);
+        datosDetallados.push([`SUBTOTAL ${nivel.toUpperCase()}:`, inscripcionesNivel.length.toString(), '', '', '', '']);
         datosDetallados.push(['', '', '', '', '', '']); // Línea en blanco
       }
     });
     
     // Agregar total general
-    datosDetallados.push(['TOTAL GENERAL:', stats.total, '', '', '', '']);
+    datosDetallados.push(['TOTAL GENERAL:', stats.total.toString(), '', '', '', '']);
     
     const datosSheet = XLSX.utils.aoa_to_sheet(datosDetallados);
     
@@ -175,12 +175,12 @@ export default function AdminDashboard() {
       [''],
       ['DISTRIBUCIÓN POR NIVELES'],
       ['Nivel', 'Cantidad', 'Porcentaje', 'Color'],
-      ['Maternal', stats.maternal, `${((stats.maternal / stats.total) * 100).toFixed(1)}%`, 'Rosa'],
-      ['Kinder', stats.kinder, `${((stats.kinder / stats.total) * 100).toFixed(1)}%`, 'Morado'],
-      ['Primaria', stats.primaria, `${((stats.primaria / stats.total) * 100).toFixed(1)}%`, 'Verde'],
-      ['Secundaria', stats.secundaria, `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`, 'Naranja'],
+      ['Maternal', stats.maternal.toString(), `${((stats.maternal / stats.total) * 100).toFixed(1)}%`, 'Rosa'],
+      ['Kinder', stats.kinder.toString(), `${((stats.kinder / stats.total) * 100).toFixed(1)}%`, 'Morado'],
+      ['Primaria', stats.primaria.toString(), `${((stats.primaria / stats.total) * 100).toFixed(1)}%`, 'Verde'],
+      ['Secundaria', stats.secundaria.toString(), `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`, 'Naranja'],
       [''],
-      ['TOTAL', stats.total, '100.0%', ''],
+      ['TOTAL', stats.total.toString(), '100.0%', ''],
       [''],
       ['ANÁLISIS TEMPORAL'],
       ['Primera inscripción:', inscripciones.length > 0 ? new Date(Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A'],
@@ -206,10 +206,10 @@ export default function AdminDashboard() {
       ['DATOS PARA GRÁFICA DE DISTRIBUCIÓN'],
       [''],
       ['Nivel', 'Cantidad', 'Porcentaje'],
-      ['Maternal', stats.maternal, (stats.maternal / stats.total) * 100],
-      ['Kinder', stats.kinder, (stats.kinder / stats.total) * 100],
-      ['Primaria', stats.primaria, (stats.primaria / stats.total) * 100],
-      ['Secundaria', stats.secundaria, (stats.secundaria / stats.total) * 100],
+      ['Maternal', stats.maternal.toString(), (stats.maternal / stats.total) * 100],
+      ['Kinder', stats.kinder.toString(), (stats.kinder / stats.total) * 100],
+      ['Primaria', stats.primaria.toString(), (stats.primaria / stats.total) * 100],
+      ['Secundaria', stats.secundaria.toString(), (stats.secundaria / stats.total) * 100],
       [''],
       ['INSTRUCCIONES PARA CREAR GRÁFICA:'],
       ['1. Selecciona los datos de las columnas A, B y C (filas 3-6)'],
