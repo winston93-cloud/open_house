@@ -75,12 +75,12 @@ export default function AdminDashboard() {
   const exportToExcel = async () => {
     try {
       const XLSX = await import('xlsx');
-      if (!XLSX.default || !XLSX.default.utils) {
+      if (!XLSX.utils) {
         throw new Error('XLSX library not loaded properly');
       }
     
       // Crear workbook
-      const workbook = XLSX.default.utils.book_new();
+      const workbook = XLSX.utils.book_new();
     
       // === HOJA 1: RESUMEN EJECUTIVO ===
       const resumenData = [
@@ -103,13 +103,13 @@ export default function AdminDashboard() {
         ['Secundaria:', `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`]
       ];
       
-      const resumenSheet = XLSX.default.utils.aoa_to_sheet(resumenData);
+      const resumenSheet = XLSX.utils.aoa_to_sheet(resumenData);
       
       // Aplicar estilos al resumen
       resumenSheet['!cols'] = [{ width: 20 }, { width: 15 }];
       resumenSheet['!rows'] = Array(resumenData.length).fill({ hpx: 25 });
       
-      XLSX.default.utils.book_append_sheet(workbook, resumenSheet, 'Resumen Ejecutivo');
+      XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen Ejecutivo');
       
       // === HOJA 2: DATOS DETALLADOS ===
       const datosDetallados = [
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
       // Agregar total general
       datosDetallados.push(['TOTAL GENERAL:', stats.total.toString(), '', '', '', '']);
       
-      const datosSheet = XLSX.default.utils.aoa_to_sheet(datosDetallados);
+      const datosSheet = XLSX.utils.aoa_to_sheet(datosDetallados);
       
       // Configurar columnas
       datosSheet['!cols'] = [
@@ -171,7 +171,7 @@ export default function AdminDashboard() {
         { width: 25 }  // Fecha
       ];
       
-      XLSX.default.utils.book_append_sheet(workbook, datosSheet, 'Datos Detallados');
+      XLSX.utils.book_append_sheet(workbook, datosSheet, 'Datos Detallados');
       
       // === HOJA 3: ANÁLISIS ESTADÍSTICO ===
       const analisisData = [
@@ -200,10 +200,10 @@ export default function AdminDashboard() {
                              stats.primaria >= stats.secundaria ? 'Primaria' : 'Secundaria']
       ];
       
-      const analisisSheet = XLSX.default.utils.aoa_to_sheet(analisisData);
+      const analisisSheet = XLSX.utils.aoa_to_sheet(analisisData);
       analisisSheet['!cols'] = [{ width: 20 }, { width: 15 }, { width: 15 }, { width: 15 }];
       
-      XLSX.default.utils.book_append_sheet(workbook, analisisSheet, 'Análisis Estadístico');
+      XLSX.utils.book_append_sheet(workbook, analisisSheet, 'Análisis Estadístico');
       
       // === HOJA 4: GRÁFICAS (Datos para gráfica) ===
       const graficaData = [
@@ -227,14 +227,14 @@ export default function AdminDashboard() {
         ['5. Añade etiquetas de datos con porcentajes']
       ];
       
-      const graficaSheet = XLSX.default.utils.aoa_to_sheet(graficaData);
+      const graficaSheet = XLSX.utils.aoa_to_sheet(graficaData);
       graficaSheet['!cols'] = [{ width: 15 }, { width: 12 }, { width: 12 }];
       
-      XLSX.default.utils.book_append_sheet(workbook, graficaSheet, 'Datos para Gráficas');
+      XLSX.utils.book_append_sheet(workbook, graficaSheet, 'Datos para Gráficas');
       
       // Generar y descargar archivo
       const fileName = `Reporte_Inscripciones_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.default.writeFile(workbook, fileName);
+      XLSX.writeFile(workbook, fileName);
     } catch (error) {
       console.error('Error al generar Excel:', error);
       alert('Error al generar el archivo Excel. Por favor, intenta de nuevo.');
