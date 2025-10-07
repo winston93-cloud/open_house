@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import { supabase } from '../../../lib/supabase';
 
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
@@ -13,6 +14,12 @@ const transporter = nodemailer.createTransport({
 // Template para Instituto Educativo Winston (Maternal/Kinder)
 const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento: string, institucionNombre: string) => {
   const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
+  
+  // Formatear grado escolar con guión medio
+  const gradoFormateado = gradoEscolar
+    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')  // maternal1 -> maternal-1
+    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')  // 1primaria -> 1-Primaria
+    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2'); // maternalA -> maternal-A
   
   return `
 <!DOCTYPE html>
@@ -259,7 +266,7 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
                 </div>
                 <div class="educativo-info-row">
                     <span class="educativo-info-label">Grado Escolar:</span>
-                    <span class="educativo-info-value">${gradoEscolar}</span>
+                    <span class="educativo-info-value">${gradoFormateado}</span>
                 </div>
                 <div class="educativo-info-row">
                     <span class="educativo-info-label">Fecha de Nacimiento:</span>
@@ -294,6 +301,12 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
 // Template para Instituto Winston Churchill (Primaria/Secundaria)
 const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento: string, institucionNombre: string) => {
   const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
+  
+  // Formatear grado escolar con guión medio
+  const gradoFormateado = gradoEscolar
+    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')  // maternal1 -> maternal-1
+    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')  // 1primaria -> 1-Primaria
+    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2'); // maternalA -> maternal-A
   
   return `
 <!DOCTYPE html>
@@ -545,7 +558,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
                 </div>
                 <div class="churchill-info-row">
                     <span class="churchill-info-label">Grado Escolar:</span>
-                    <span class="churchill-info-value">${gradoEscolar}</span>
+                    <span class="churchill-info-value">${gradoFormateado}</span>
                 </div>
                 <div class="churchill-info-row">
                     <span class="churchill-info-label">Fecha de Nacimiento:</span>
@@ -619,6 +632,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Guardar en la base de datos
+    const { data: inscripcion, error: dbError } = await supabase
+      .from('inscripciones')
+      .insert([
+        {
+          nombre_aspirante: formData.nombreAspirante,
+          nivel_academico: formData.nivelAcademico,
+          grado_escolar: formData.gradoEscolar,
+          fecha_nacimiento: formData.fechaNacimiento,
+          nombre_padre: formData.nombreCompleto,
+          nombre_madre: formData.nombreCompleto, // Asumiendo que es el mismo para ambos padres
+          telefono: formData.telefono || '',
+          whatsapp: formData.whatsapp,
+          email: formData.correo,
+          direccion: formData.direccion || '',
+          fecha_inscripcion: new Date().toISOString()
+        }
+      ])
+      .select();
+
+    if (dbError) {
+      console.error('Error al guardar en la base de datos:', dbError);
+      return NextResponse.json(
+        { error: 'Error al guardar la inscripción' },
+        { status: 500 }
+      );
+    }
+
     // Crear el template del email
     const emailHtml = createEmailTemplate(formData);
     
@@ -640,7 +681,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ 
       success: true, 
-      message: 'Email enviado exitosamente' 
+      message: 'Inscripción guardada y email enviado exitosamente',
+      inscripcionId: inscripcion?.[0]?.id
     });
     
   } catch (error) {
