@@ -5,7 +5,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Inscripción - Instituto Cultural Tampico',
+  title: 'Inscripción - Instituto Tampico',
   description: 'Formulario de inscripción para sesión informativa ICT',
 }
 

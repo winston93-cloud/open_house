@@ -1,6 +1,6 @@
-# Formulario de Inscripción - Instituto Cultural Tampico
+# Formulario de Inscripción - Instituto Tampico
 
-Este proyecto contiene un formulario de inscripción para sesiones informativas del Instituto Cultural Tampico, desarrollado con Node.js (backend) y Next.js con TypeScript (frontend).
+Este proyecto contiene un formulario de inscripción para sesiones informativas del Instituto Tampico, desarrollado con Node.js (backend) y Next.js con TypeScript (frontend).
 
 ## Estructura del Proyecto
 

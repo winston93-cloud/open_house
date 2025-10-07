@@ -69,7 +69,7 @@ Para más información: 833 347 4507`;
 
 };
 
-// Template para WhatsApp - Instituto Cultural Winston Churchill
+// Template para WhatsApp - Instituto Winston Churchill
 const createChurchillWhatsAppMessage = (formData: any, fechaEvento: string, horaEvento: string) => {
   const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, whatsapp } = formData;
   
@@ -78,7 +78,7 @@ const createChurchillWhatsAppMessage = (formData: any, fechaEvento: string, hora
     .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
     .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2');
 
-  return `🏛️ *INSTITUTO CULTURAL WINSTON CHURCHILL*
+  return `🏛️ *INSTITUTO WINSTON CHURCHILL*
 📅 *OPEN HOUSE - ${fechaEvento}*
 
 ¡Hola! 👋
@@ -98,7 +98,7 @@ Confirmamos tu inscripción al Open House:
 📅 *Detalles del Evento:*
 • Fecha: ${fechaEvento}
 • Hora: ${horaEvento}
-• Lugar: Instituto Cultural Winston Churchill
+    • Lugar: Instituto Winston Churchill
 
 ¡Esperamos verte pronto! 🎉
 
