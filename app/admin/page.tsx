@@ -119,7 +119,7 @@ export default function AdminDashboard() {
       resumenSheet['!rows'] = Array(resumenData.length).fill({ hpx: 25 });
       
       // Aplicar colores a las celdas
-      const range = XLSX.utils.decode_range(resumenSheet['!ref']);
+      const range = XLSX.utils.decode_range(resumenSheet['!ref'] || 'A1:A1');
       for (let row = range.s.r; row <= range.e.r; row++) {
         for (let col = range.s.c; col <= range.e.c; col++) {
           const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
@@ -306,7 +306,7 @@ export default function AdminDashboard() {
       ];
       
       // Aplicar colores a las celdas del gráfico
-      const chartRange = XLSX.utils.decode_range(chartSheet['!ref']);
+      const chartRange = XLSX.utils.decode_range(chartSheet['!ref'] || 'A1:A1');
       for (let row = chartRange.s.r; row <= chartRange.e.r; row++) {
         for (let col = chartRange.s.c; col <= chartRange.e.c; col++) {
           const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
