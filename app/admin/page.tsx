@@ -564,7 +564,13 @@ export default function AdminDashboard() {
                           {inscripcion.nivel_academico.charAt(0).toUpperCase() + inscripcion.nivel_academico.slice(1)}
                         </span>
                       </td>
-                      <td className="admin-grade">{inscripcion.grado_escolar}</td>
+                      <td className="admin-grade">
+                        {inscripcion.grado_escolar
+                          .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')  // maternal1 -> maternal-1
+                          .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')  // 1primaria -> 1-Primaria
+                          .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2') // maternalA -> maternal-A
+                        }
+                      </td>
                       <td className="admin-email">{inscripcion.email}</td>
                       <td className="admin-whatsapp">{inscripcion.whatsapp}</td>
                       <td className="admin-date">
