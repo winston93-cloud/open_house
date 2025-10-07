@@ -2,35 +2,35 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
-// Función para enviar WhatsApp
-const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
-  try {
-    // Usar la API de WhatsApp Business (necesitarás configurar tu token)
-    const response = await fetch('https://graph.facebook.com/v18.0/YOUR_PHONE_NUMBER_ID/messages', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer YOUR_ACCESS_TOKEN`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: phoneNumber,
-        type: 'text',
-        text: { body: message }
-      })
-    });
+    // Función para enviar WhatsApp
+    const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
+      try {
+        // Usar la API de WhatsApp Business
+        const response = await fetch('https://graph.facebook.com/v18.0/872609622594319/messages', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer EAARaYqnPlqYBPuHi1mKmfbPM5SoyBMuZBQcZCmLWhP8eg4dcXsQofYCYmIZAn3FOoCHDhLgrZA7skQDX09ZBOIEDWA9oHNPin1uQlZCsZAEenvyDM4AxzQzH3jw14ckgsi9syviFn7XQ0R5XSIyMk8bBhYbsVNw7siEhZCbRZCQSosAtsgf15wEmGjcRL484ALpEjPn3FPHb8TZCZAbHFwWrfGTFozvZCRbcm7ZApU2KjtJiphdkZD`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            to: phoneNumber,
+            type: 'text',
+            text: { body: message }
+          })
+        });
 
-    if (!response.ok) {
-      console.error('Error sending WhatsApp:', await response.text());
-      return false;
-    }
+        if (!response.ok) {
+          console.error('Error sending WhatsApp:', await response.text());
+          return false;
+        }
 
-    return true;
-  } catch (error) {
-    console.error('WhatsApp error:', error);
-    return false;
-  }
-};
+        return true;
+      } catch (error) {
+        console.error('WhatsApp error:', error);
+        return false;
+      }
+    };
 
 // Template para WhatsApp - Instituto Educativo Winston
 const createEducativoWhatsAppMessage = (formData: any, fechaEvento: string, horaEvento: string) => {
@@ -789,27 +789,29 @@ export async function POST(request: NextRequest) {
       const horaEvento = '9:00 AM - 1:00 PM';
       
       let whatsappMessage = '';
-      let whatsappNumber = '';
       
       if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
         whatsappMessage = createEducativoWhatsAppMessage(formData, fechaEvento, horaEvento);
-        whatsappNumber = '8333474507'; // Instituto Educativo Winston
       } else {
         whatsappMessage = createChurchillWhatsAppMessage(formData, fechaEvento, horaEvento);
-        whatsappNumber = '8334378743'; // Instituto Cultural Winston Churchill
       }
       
       // Limpiar el número de WhatsApp del usuario (quitar espacios, guiones, etc.)
       const cleanWhatsapp = formData.whatsapp.replace(/[\s\-\(\)]/g, '');
       const formattedWhatsapp = cleanWhatsapp.startsWith('52') ? cleanWhatsapp : `52${cleanWhatsapp}`;
       
-      // Enviar WhatsApp (por ahora solo log, necesitarás configurar la API real)
+      // Enviar WhatsApp
       console.log('WhatsApp message to send:', whatsappMessage);
       console.log('To number:', formattedWhatsapp);
-      console.log('From number:', whatsappNumber);
       
-      // TODO: Implementar envío real de WhatsApp
-      // await sendWhatsAppMessage(formattedWhatsapp, whatsappMessage);
+      // Enviar WhatsApp real
+      const whatsappSent = await sendWhatsAppMessage(formattedWhatsapp, whatsappMessage);
+      
+      if (whatsappSent) {
+        console.log('WhatsApp enviado exitosamente a:', formattedWhatsapp);
+      } else {
+        console.log('Error al enviar WhatsApp a:', formattedWhatsapp);
+      }
       
     } catch (whatsappError) {
       console.error('Error al enviar WhatsApp:', whatsappError);
