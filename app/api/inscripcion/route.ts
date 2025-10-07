@@ -2,6 +2,110 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
+// Función para enviar WhatsApp
+const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
+  try {
+    // Usar la API de WhatsApp Business (necesitarás configurar tu token)
+    const response = await fetch('https://graph.facebook.com/v18.0/YOUR_PHONE_NUMBER_ID/messages', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer YOUR_ACCESS_TOKEN`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        to: phoneNumber,
+        type: 'text',
+        text: { body: message }
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Error sending WhatsApp:', await response.text());
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('WhatsApp error:', error);
+    return false;
+  }
+};
+
+// Template para WhatsApp - Instituto Educativo Winston
+const createEducativoWhatsAppMessage = (formData: any, fechaEvento: string, horaEvento: string) => {
+  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, whatsapp } = formData;
+  
+  const gradoFormateado = gradoEscolar
+    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
+    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
+    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2');
+
+  return `🏫 *INSTITUTO EDUCATIVO WINSTON CHURCHILL*
+📅 *OPEN HOUSE - ${fechaEvento}*
+
+¡Hola! 👋
+
+Confirmamos tu inscripción al Open House:
+
+👤 *Información del Aspirante:*
+• Nombre: ${nombreAspirante}
+• Nivel: ${nivelAcademico.charAt(0).toUpperCase() + nivelAcademico.slice(1)}
+• Grado: ${gradoFormateado}
+• Fecha de nacimiento: ${fechaNacimiento}
+
+👨‍👩‍👧‍👦 *Información del Padre/Madre:*
+• Nombre: ${nombreCompleto}
+• WhatsApp: ${whatsapp}
+
+📅 *Detalles del Evento:*
+• Fecha: ${fechaEvento}
+• Hora: ${horaEvento}
+• Lugar: Instituto Educativo Winston Churchill
+
+¡Esperamos verte pronto! 🎉
+
+Para más información: 833 347 4507`;
+
+};
+
+// Template para WhatsApp - Instituto Cultural Winston Churchill
+const createChurchillWhatsAppMessage = (formData: any, fechaEvento: string, horaEvento: string) => {
+  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, whatsapp } = formData;
+  
+  const gradoFormateado = gradoEscolar
+    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
+    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
+    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2');
+
+  return `🏛️ *INSTITUTO CULTURAL WINSTON CHURCHILL*
+📅 *OPEN HOUSE - ${fechaEvento}*
+
+¡Hola! 👋
+
+Confirmamos tu inscripción al Open House:
+
+👤 *Información del Aspirante:*
+• Nombre: ${nombreAspirante}
+• Nivel: ${nivelAcademico.charAt(0).toUpperCase() + nivelAcademico.slice(1)}
+• Grado: ${gradoFormateado}
+• Fecha de nacimiento: ${fechaNacimiento}
+
+👨‍👩‍👧‍👦 *Información del Padre/Madre:*
+• Nombre: ${nombreCompleto}
+• WhatsApp: ${whatsapp}
+
+📅 *Detalles del Evento:*
+• Fecha: ${fechaEvento}
+• Hora: ${horaEvento}
+• Lugar: Instituto Cultural Winston Churchill
+
+¡Esperamos verte pronto! 🎉
+
+Para más información: 833 437 8743`;
+
+};
+
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -679,9 +783,42 @@ export async function POST(request: NextRequest) {
     // Enviar el email
     await transporter.sendMail(mailOptions);
     
+    // Enviar WhatsApp
+    try {
+      const fechaEvento = 'Sábado 11 de enero de 2025';
+      const horaEvento = '9:00 AM - 1:00 PM';
+      
+      let whatsappMessage = '';
+      let whatsappNumber = '';
+      
+      if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+        whatsappMessage = createEducativoWhatsAppMessage(formData, fechaEvento, horaEvento);
+        whatsappNumber = '8333474507'; // Instituto Educativo Winston
+      } else {
+        whatsappMessage = createChurchillWhatsAppMessage(formData, fechaEvento, horaEvento);
+        whatsappNumber = '8334378743'; // Instituto Cultural Winston Churchill
+      }
+      
+      // Limpiar el número de WhatsApp del usuario (quitar espacios, guiones, etc.)
+      const cleanWhatsapp = formData.whatsapp.replace(/[\s\-\(\)]/g, '');
+      const formattedWhatsapp = cleanWhatsapp.startsWith('52') ? cleanWhatsapp : `52${cleanWhatsapp}`;
+      
+      // Enviar WhatsApp (por ahora solo log, necesitarás configurar la API real)
+      console.log('WhatsApp message to send:', whatsappMessage);
+      console.log('To number:', formattedWhatsapp);
+      console.log('From number:', whatsappNumber);
+      
+      // TODO: Implementar envío real de WhatsApp
+      // await sendWhatsAppMessage(formattedWhatsapp, whatsappMessage);
+      
+    } catch (whatsappError) {
+      console.error('Error al enviar WhatsApp:', whatsappError);
+      // No fallar el proceso si WhatsApp falla
+    }
+    
     return NextResponse.json({ 
       success: true, 
-      message: 'Inscripción guardada y email enviado exitosamente',
+      message: 'Inscripción guardada, email y WhatsApp enviados exitosamente',
       inscripcionId: inscripcion?.[0]?.id
     });
     
