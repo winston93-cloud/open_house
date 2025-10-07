@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase-client';
 
-interface Inscripcion {
+interface OpenHouse {
   id: string;
   nombre_aspirante: string;
   nivel_academico: string;
@@ -15,7 +15,7 @@ interface Inscripcion {
 }
 
 export default function AdminDashboard() {
-  const [inscripciones, setInscripciones] = useState<Inscripcion[]>([]);
+  const [openHouse, setOpenHouse] = useState<OpenHouse[]>([]);
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
@@ -40,11 +40,11 @@ export default function AdminDashboard() {
   // Cargar datos
   useEffect(() => {
     if (authenticated) {
-      fetchInscripciones();
+      fetchOpenHouse();
     }
   }, [authenticated]);
 
-  const fetchInscripciones = async () => {
+  const fetchOpenHouse = async () => {
     try {
       const { data, error } = await supabase
         .from('inscripciones')
@@ -53,7 +53,7 @@ export default function AdminDashboard() {
 
       if (error) throw error;
 
-      setInscripciones(data || []);
+      setOpenHouse(data || []);
       
       // Calcular estadísticas
       const stats = {
@@ -86,11 +86,11 @@ export default function AdminDashboard() {
       const resumenData = [
         ['', '', '', '', '', ''], // Fila vacía
         ['', '', '', '', '', ''], // Fila vacía
-        ['', 'REPORTE DE INSCRIPCIONES OPEN HOUSE WINSTON', '', '', '', ''],
+        ['', 'REPORTE DE OPEN HOUSE WINSTON', '', '', '', ''],
         ['', 'Fecha de generación:', new Date().toLocaleDateString('es-MX'), '', '', ''],
         ['', '', '', '', '', ''],
         ['', 'RESUMEN EJECUTIVO', '', '', '', ''],
-        ['', 'Total de Inscripciones:', stats.total, '', '', ''],
+        ['', 'Total de Open House:', stats.total, '', '', ''],
         ['', '', '', '', '', ''],
         ['', 'DESGLOSE POR NIVELES', '', '', '', ''],
         ['', 'Maternal:', stats.maternal, '', '', ''],
@@ -170,22 +170,22 @@ export default function AdminDashboard() {
       };
       
       niveles.forEach(nivel => {
-        const inscripcionesNivel = inscripciones.filter(i => i.nivel_academico === nivel);
+        const openHouseNivel = openHouse.filter(i => i.nivel_academico === nivel);
         
-            if (inscripcionesNivel.length > 0) {
+            if (openHouseNivel.length > 0) {
               // Agregar encabezado del nivel
-              datosDetallados.push(['', `=== ${nivel.toUpperCase()} (${inscripcionesNivel.length} inscripciones) ===`, '', '', '', '', '']);
+              datosDetallados.push(['', `=== ${nivel.toUpperCase()} (${openHouseNivel.length} Open House) ===`, '', '', '', '', '']);
               
               // Agregar datos del nivel
-              inscripcionesNivel.forEach(inscripcion => {
+              openHouseNivel.forEach(openHouse => {
                 datosDetallados.push([
                   '', // Columna A vacía
-                  inscripcion.nombre_aspirante,
-                  inscripcion.nivel_academico,
-                  inscripcion.grado_escolar,
-                  inscripcion.email,
-                  inscripcion.whatsapp,
-                  new Date(inscripcion.created_at).toLocaleDateString('es-MX', {
+                  openHouse.nombre_aspirante,
+                  openHouse.nivel_academico,
+                  openHouse.grado_escolar,
+                  openHouse.email,
+                  openHouse.whatsapp,
+                  new Date(openHouse.created_at).toLocaleDateString('es-MX', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
               });
               
               // Agregar subtotal del nivel
-              datosDetallados.push(['', `SUBTOTAL ${nivel.toUpperCase()}:`, inscripcionesNivel.length.toString(), '', '', '', '']);
+              datosDetallados.push(['', `SUBTOTAL ${nivel.toUpperCase()}:`, openHouseNivel.length.toString(), '', '', '', '']);
               datosDetallados.push(['', '', '', '', '', '', '']); // Línea en blanco
             }
       });
@@ -235,14 +235,14 @@ export default function AdminDashboard() {
         ['', 'TOTAL', stats.total.toString(), '100.0%'],
         ['', '', '', ''],
         ['', 'ANÁLISIS TEMPORAL', '', ''],
-        ['', 'Primera inscripción:', inscripciones.length > 0 ? new Date(Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
-        ['', 'Última inscripción:', inscripciones.length > 0 ? new Date(Math.max(...inscripciones.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
-        ['', 'Período de captación:', inscripciones.length > 0 ? 
-          `${Math.ceil((Math.max(...inscripciones.map(i => new Date(i.created_at).getTime())) - Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24))} días` : 'N/A', ''
+        ['', 'Primera Open House:', openHouse.length > 0 ? new Date(Math.min(...openHouse.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
+        ['', 'Última Open House:', openHouse.length > 0 ? new Date(Math.max(...openHouse.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
+        ['', 'Período de captación:', openHouse.length > 0 ? 
+          `${Math.ceil((Math.max(...openHouse.map(i => new Date(i.created_at).getTime())) - Math.min(...openHouse.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24))} días` : 'N/A', ''
         ],
         ['', '', '', ''],
         ['', 'MÉTRICAS ADICIONALES', '', ''],
-        ['', 'Promedio diario:', stats.total > 0 ? (stats.total / Math.max(1, Math.ceil((Date.now() - Math.min(...inscripciones.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24)))).toFixed(2) : '0', ''],
+        ['', 'Promedio diario:', stats.total > 0 ? (stats.total / Math.max(1, Math.ceil((Date.now() - Math.min(...openHouse.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24)))).toFixed(2) : '0', ''],
         ['', 'Nivel más popular:', stats.maternal >= stats.kinder && stats.maternal >= stats.primaria && stats.maternal >= stats.secundaria ? 'Maternal' :
                              stats.kinder >= stats.primaria && stats.kinder >= stats.secundaria ? 'Kinder' :
                              stats.primaria >= stats.secundaria ? 'Primaria' : 'Secundaria', '']
@@ -341,7 +341,7 @@ export default function AdminDashboard() {
       XLSX.utils.book_append_sheet(workbook, chartSheet, 'Gráfica de Distribución');
       
       // Generar y descargar archivo
-      const fileName = `Reporte_Inscripciones_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const fileName = `Reporte_Open_House_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
       XLSX.writeFile(workbook, fileName);
     } catch (error) {
       console.error('Error al generar Excel:', error);
@@ -360,7 +360,7 @@ export default function AdminDashboard() {
               </svg>
             </div>
             <h1>Panel de Administración</h1>
-            <p>Acceso seguro al sistema de inscripciones</p>
+            <p>Acceso seguro al sistema de Open House</p>
           </div>
 
           <div className="admin-login-form">
@@ -405,20 +405,20 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       <div className="admin-header">
         <div className="admin-header-content">
-          <div className="admin-header-left">
-            <div className="admin-header-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+            <div className="admin-header-left">
+              <div className="admin-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
+                <h1>Dashboard de Open House</h1>
+                <p>Sistema de gestión Winston</p>
+              </div>
             </div>
-            <div>
-              <h1>Dashboard de Inscripciones</h1>
-              <p>Sistema de gestión Winston</p>
-            </div>
-          </div>
           
           <div className="admin-header-actions">
-            <button onClick={fetchInscripciones} className="admin-refresh-button">
+            <button onClick={fetchOpenHouse} className="admin-refresh-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -514,7 +514,7 @@ export default function AdminDashboard() {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              Inscripciones Recientes
+              Open House Recientes
             </h2>
           </div>
           
@@ -535,46 +535,46 @@ export default function AdminDashboard() {
                   <tr>
                     <td colSpan={6} className="admin-loading">
                       <div className="admin-spinner"></div>
-                      <span>Cargando inscripciones...</span>
+                      <span>Cargando Open House...</span>
                     </td>
                   </tr>
-                ) : inscripciones.length === 0 ? (
+                ) : openHouse.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="admin-empty">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      <p className="admin-empty-title">No hay inscripciones registradas</p>
-                      <p className="admin-empty-subtitle">Las inscripciones aparecerán aquí una vez que los padres llenen el formulario.</p>
+                      <p className="admin-empty-title">No hay Open House registrados</p>
+                      <p className="admin-empty-subtitle">Los registros de Open House aparecerán aquí una vez que los padres llenen el formulario.</p>
                     </td>
                   </tr>
                 ) : (
-                  inscripciones.map((inscripcion, index) => (
-                    <tr key={inscripcion.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
+                  openHouse.map((openHouse, index) => (
+                    <tr key={openHouse.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
                       <td>
                         <div className="admin-user-info">
                           <div className="admin-user-avatar">
-                            {inscripcion.nombre_aspirante.charAt(0).toUpperCase()}
+                            {openHouse.nombre_aspirante.charAt(0).toUpperCase()}
                           </div>
-                          <div className="admin-user-name">{inscripcion.nombre_aspirante}</div>
+                          <div className="admin-user-name">{openHouse.nombre_aspirante}</div>
                         </div>
                       </td>
                       <td>
-                        <span className={`admin-level-badge admin-level-${inscripcion.nivel_academico}`}>
-                          {inscripcion.nivel_academico.charAt(0).toUpperCase() + inscripcion.nivel_academico.slice(1)}
+                        <span className={`admin-level-badge admin-level-${openHouse.nivel_academico}`}>
+                          {openHouse.nivel_academico.charAt(0).toUpperCase() + openHouse.nivel_academico.slice(1)}
                         </span>
                       </td>
                       <td className="admin-grade">
-                        {inscripcion.grado_escolar
+                        {openHouse.grado_escolar
                           .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')  // maternal1 -> maternal-1
                           .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')  // 1primaria -> 1-Primaria
                           .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2') // maternalA -> maternal-A
                         }
                       </td>
-                      <td className="admin-email">{inscripcion.email}</td>
-                      <td className="admin-whatsapp">{inscripcion.whatsapp}</td>
+                      <td className="admin-email">{openHouse.email}</td>
+                      <td className="admin-whatsapp">{openHouse.whatsapp}</td>
                       <td className="admin-date">
-                        {new Date(inscripcion.created_at).toLocaleDateString('es-MX', {
+                        {new Date(openHouse.created_at).toLocaleDateString('es-MX', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
