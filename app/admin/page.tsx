@@ -354,10 +354,17 @@ export default function AdminDashboard() {
       <div className="admin-login-container">
         <div className="admin-login-card">
           <div className="admin-login-header">
-            <div className="admin-logo">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
+            <div className="admin-logos-container">
+              <img 
+                src="/logos/logo_winston.png" 
+                alt="Logo Winston Churchill" 
+                className="admin-logo-winston"
+              />
+              <img 
+                src="/logos/educativo hd.png" 
+                alt="Logo Educativo" 
+                className="admin-logo-educativo"
+              />
             </div>
             <h1>Panel de Administración</h1>
             <p>Acceso seguro al sistema de Open House</p>
