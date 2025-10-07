@@ -289,7 +289,56 @@ export default function AdminDashboard() {
         { width: 15 }   // Columna C (datos)
       ];
       
+      // Agregar gráfico a la hoja
+      const chartData = [
+        ['Nivel', 'Cantidad'],
+        ['Maternal', stats.maternal],
+        ['Kinder', stats.kinder],
+        ['Primaria', stats.primaria],
+        ['Secundaria', stats.secundaria]
+      ];
+      
+      // Crear una nueva hoja para el gráfico
+      const chartSheet = XLSX.utils.aoa_to_sheet(chartData);
+      chartSheet['!cols'] = [
+        { width: 15 }, // Nivel
+        { width: 12 }  // Cantidad
+      ];
+      
+      // Aplicar colores a las celdas del gráfico
+      const chartRange = XLSX.utils.decode_range(chartSheet['!ref']);
+      for (let row = chartRange.s.r; row <= chartRange.e.r; row++) {
+        for (let col = chartRange.s.c; col <= chartRange.e.c; col++) {
+          const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+          if (!chartSheet[cellAddress]) chartSheet[cellAddress] = { v: '' };
+          
+          // Colores por nivel en la fila de datos
+          if (row >= 1 && row <= 4) { // Filas de datos (1-4)
+            if (col === 0) { // Columna de niveles
+              chartSheet[cellAddress].s = {
+                fill: { fgColor: { rgb: row === 1 ? 'FF69B4' : row === 2 ? '8B5CF6' : row === 3 ? '10B981' : 'F59E0B' } },
+                font: { color: { rgb: 'FFFFFF' }, bold: true },
+                alignment: { horizontal: 'center' }
+              };
+            } else if (col === 1) { // Columna de cantidades
+              chartSheet[cellAddress].s = {
+                fill: { fgColor: { rgb: row === 1 ? 'FF69B4' : row === 2 ? '8B5CF6' : row === 3 ? '10B981' : 'F59E0B' } },
+                font: { color: { rgb: 'FFFFFF' }, bold: true },
+                alignment: { horizontal: 'center' }
+              };
+            }
+          } else if (row === 0) { // Fila de encabezados
+            chartSheet[cellAddress].s = {
+              fill: { fgColor: { rgb: '1E3A8A' } },
+              font: { color: { rgb: 'FFFFFF' }, bold: true },
+              alignment: { horizontal: 'center' }
+            };
+          }
+        }
+      }
+      
       XLSX.utils.book_append_sheet(workbook, graficaSheet, 'Datos para Gráficas');
+      XLSX.utils.book_append_sheet(workbook, chartSheet, 'Gráfica de Distribución');
       
       // Generar y descargar archivo
       const fileName = `Reporte_Inscripciones_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
