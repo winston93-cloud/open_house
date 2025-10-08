@@ -18,8 +18,8 @@ import { supabase } from '../../../lib/supabase';
         
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
         
-        // Usar la API de WhatsApp Business con número real
-        const response = await fetch('https://graph.facebook.com/v18.0/8145348962/messages', {
+        // Usar la API de WhatsApp Business con ID del número de Meta
+        const response = await fetch('https://graph.facebook.com/v18.0/821192997746970/messages', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD`,
