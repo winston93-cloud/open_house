@@ -8,7 +8,7 @@ import { supabase } from '../../../lib/supabase';
         console.log('=== INICIANDO ENVÍO WHATSAPP ===');
         console.log('Número destino:', phoneNumber);
         console.log('Mensaje a enviar:', message.substring(0, 100) + '...');
-        console.log('URL API:', 'https://graph.facebook.com/v18.0/821192997746970/messages');
+        console.log('URL API:', 'https://graph.facebook.com/v22.0/821192997746970/messages');
         
         // Log para el navegador
         console.log('🔍 WHATSAPP DEBUG - Iniciando envío a:', phoneNumber);
@@ -16,18 +16,21 @@ import { supabase } from '../../../lib/supabase';
         const requestBody = {
           messaging_product: 'whatsapp',
           to: phoneNumber,
-          type: 'text',
-          text: { body: message }
+          type: 'template',
+          template: {
+            name: 'hello_world',
+            language: { code: 'en_US' }
+          }
         };
         
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
         console.log('Token (primeros 20 chars):', process.env.WHATSAPP_TOKEN?.substring(0, 20) || 'NO TOKEN');
         
         // Usar la API de WhatsApp Business con ID del número de Meta
-        const response = await fetch('https://graph.facebook.com/v18.0/821192997746970/messages', {
+        const response = await fetch('https://graph.facebook.com/v22.0/821192997746970/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer EAARaYqnPlqYBPoe0S17gTi6cQMvMmGDJQgOZCWIwPDawCzy4aqZBBBnVhZAlsmjW2vltiLhR7Ir8V424da3NtnW1ZAmicen87FVJSMEmErp9P9IKJpQ5te0szGYZATZBSqdhFsS1QAEO3V1x0AzZAwX8MTtb0Ju4F1xdyZBDTIZBbpx5NRr9Ih9tZBXFfNg7TCJWYGPUEPtrhSLNgqlidwXRZBDS5W2KpEP3uGSg9HpZAj7QRTI7MwFVkd6Q5vuzLIMZD`,
+            'Authorization': `Bearer EAARaYqnPlqYBPpNCAoOUEZCz5sj7p6smJs7oiX4ByQsi4UkvMoylu3YCKBRewmmGL7BVTqQKBqgGf1kWUBEwaiMZA9UjZAcZC79fqSPtaCTiuVKgZCVzIn1woNEXGWBe02hCuFavh5asAlOEvNq5VsVIcjKqUAZBq62uYvDZANHKmaRaTyPWaTgjjXbxsHAgfBMwyrlNgZBpgRSlaiATE2436QnGBxO7qRkJfD8M73R5rS3dZCkXKLqNgYehdg6MZD`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestBody)
