@@ -13,8 +13,13 @@ import { supabase } from '../../../lib/supabase';
         const requestBody = {
           messaging_product: 'whatsapp',
           to: phoneNumber,
-          type: 'text',
-          text: { body: message }
+          type: 'template',
+          template: {
+            name: 'hello_world',
+            language: {
+              code: 'en_US'
+            }
+          }
         };
         
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
