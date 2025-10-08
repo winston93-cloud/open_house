@@ -18,8 +18,8 @@ import { supabase } from '../../../lib/supabase';
           to: phoneNumber,
           type: 'template',
           template: {
-            name: 'hello_world',
-            language: { code: 'en_US' }
+            name: 'openhouse',
+            language: { code: 'es_MX' }
           }
         };
         
