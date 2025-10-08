@@ -5,6 +5,19 @@ import { supabase } from '../../../lib/supabase';
     // Función para enviar WhatsApp
     const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
       try {
+        console.log('=== INICIANDO ENVÍO WHATSAPP ===');
+        console.log('Número destino:', phoneNumber);
+        console.log('Mensaje a enviar:', message.substring(0, 100) + '...');
+        
+        const requestBody = {
+          messaging_product: 'whatsapp',
+          to: phoneNumber,
+          type: 'text',
+          text: { body: message }
+        };
+        
+        console.log('Request body:', JSON.stringify(requestBody, null, 2));
+        
         // Usar la API de WhatsApp Business con número real
         const response = await fetch('https://graph.facebook.com/v18.0/8145348962/messages', {
           method: 'POST',
@@ -12,19 +25,21 @@ import { supabase } from '../../../lib/supabase';
             'Authorization': `Bearer EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            to: phoneNumber,
-            type: 'text',
-            text: { body: message }
-          })
+          body: JSON.stringify(requestBody)
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        const responseText = await response.text();
+        console.log('Response body:', responseText);
+
         if (!response.ok) {
-          console.error('Error sending WhatsApp:', await response.text());
+          console.error('Error sending WhatsApp:', responseText);
           return false;
         }
 
+        console.log('=== WHATSAPP ENVIADO EXITOSAMENTE ===');
         return true;
       } catch (error) {
         console.error('WhatsApp error:', error);
