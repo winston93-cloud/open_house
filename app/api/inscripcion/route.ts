@@ -27,7 +27,7 @@ import { supabase } from '../../../lib/supabase';
         const response = await fetch('https://graph.facebook.com/v18.0/821192997746970/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${process.env.WHATSAPP_TOKEN || 'EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD'}`,
+            'Authorization': `Bearer EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestBody)
