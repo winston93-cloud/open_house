@@ -50,7 +50,7 @@ import { supabase } from '../../../lib/supabase';
         return { success: true, response: responseText };
       } catch (error) {
         console.error('WhatsApp error:', error);
-        return false;
+        return { success: false, error: 'Error en el proceso de envío', status: 0 };
       }
     };
 
@@ -840,12 +840,15 @@ export async function POST(request: NextRequest) {
       } else {
         console.log('Error al enviar WhatsApp a:', formattedWhatsapp);
         console.log('WhatsApp error details:', whatsappResult);
+        const errorMessage = (whatsappResult && typeof whatsappResult === 'object' && 'error' in whatsappResult) 
+          ? whatsappResult.error 
+          : 'Error desconocido';
         return NextResponse.json({ 
           success: true, 
           message: 'Inscripción guardada, email enviado exitosamente',
           inscripcionId: inscripcion?.[0]?.id,
           whatsappStatus: 'failed',
-          whatsappError: whatsappResult?.error || 'Error desconocido'
+          whatsappError: errorMessage
         });
       }
       
