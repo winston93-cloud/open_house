@@ -9,7 +9,7 @@ import { supabase } from '../../../lib/supabase';
         const response = await fetch('https://graph.facebook.com/v18.0/8145348962/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer EAARaYqnPlqYBPvc8UBZCW5F8HNuTCH0IpPBcdZBfGtK6dQZB8PwMPvx3oesr6Kb1dh4V4rHNI2oAZBqR7IUrAfta2o3ZAjhExNuCGw543MCpbiJ4ga3arCfZBytJScfIIVuXNbVWqG8DSijkZBXWpfZBI9ZBsaSu1dazOBZCTd58qzoloUgzcM433nHCYWdEwoI6sVZC0fU2UpN4CvCa5txqfixFABZCkTXeeEaZAiqOpZBuSQgz4ZD`,
+            'Authorization': `Bearer EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
