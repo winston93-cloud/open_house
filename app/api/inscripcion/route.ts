@@ -8,6 +8,7 @@ import { supabase } from '../../../lib/supabase';
         console.log('=== INICIANDO ENVÍO WHATSAPP ===');
         console.log('Número destino:', phoneNumber);
         console.log('Mensaje a enviar:', message.substring(0, 100) + '...');
+        console.log('URL API:', 'https://graph.facebook.com/v18.0/821192997746970/messages');
         
         const requestBody = {
           messaging_product: 'whatsapp',
@@ -17,12 +18,13 @@ import { supabase } from '../../../lib/supabase';
         };
         
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
+        console.log('Token (primeros 20 chars):', process.env.WHATSAPP_TOKEN?.substring(0, 20) || 'NO TOKEN');
         
         // Usar la API de WhatsApp Business con ID del número de Meta
         const response = await fetch('https://graph.facebook.com/v18.0/821192997746970/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD`,
+            'Authorization': `Bearer ${process.env.WHATSAPP_TOKEN || 'EAARaYqnPlqYBPqOJEn5uZAmy0tBb5xo5hS29dPYdmTUYU5XQRYRa0iWoaEunqfpf9v9aCfUvgQ2qSPul6Yn0bZAOKzmg9tLWTdZAQExiXfbdDIn7E8aY9I9BA04r0QZBaVlg3xHwaCEVee2Itn6LueZCjsLyf9AnSZBmbL1J87g1ElMSDnVC9oV7zXsAvCGgZCSe9VNQe8DeePpDeCfTJvWHR9MFm1gcANlIQZCZARmlDMGgZD'}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestBody)
