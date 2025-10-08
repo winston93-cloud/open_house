@@ -10,16 +10,14 @@ import { supabase } from '../../../lib/supabase';
         console.log('Mensaje a enviar:', message.substring(0, 100) + '...');
         console.log('URL API:', 'https://graph.facebook.com/v18.0/821192997746970/messages');
         
+        // Log para el navegador
+        console.log('🔍 WHATSAPP DEBUG - Iniciando envío a:', phoneNumber);
+        
         const requestBody = {
           messaging_product: 'whatsapp',
           to: phoneNumber,
-          type: 'template',
-          template: {
-            name: 'hello_world',
-            language: {
-              code: 'en_US'
-            }
-          }
+          type: 'text',
+          text: { body: message }
         };
         
         console.log('Request body:', JSON.stringify(requestBody, null, 2));
@@ -43,11 +41,13 @@ import { supabase } from '../../../lib/supabase';
 
         if (!response.ok) {
           console.error('Error sending WhatsApp:', responseText);
-          return false;
+          console.log('❌ WHATSAPP ERROR - Status:', response.status, 'Response:', responseText);
+          return { success: false, error: responseText, status: response.status };
         }
 
         console.log('=== WHATSAPP ENVIADO EXITOSAMENTE ===');
-        return true;
+        console.log('✅ WHATSAPP SUCCESS - Mensaje enviado correctamente');
+        return { success: true, response: responseText };
       } catch (error) {
         console.error('WhatsApp error:', error);
         return false;
@@ -827,24 +827,38 @@ export async function POST(request: NextRequest) {
       console.log('To number:', formattedWhatsapp);
       
       // Enviar WhatsApp real
-      const whatsappSent = await sendWhatsAppMessage(formattedWhatsapp, whatsappMessage);
+      const whatsappResult = await sendWhatsAppMessage(formattedWhatsapp, whatsappMessage);
       
-      if (whatsappSent) {
+      if (whatsappResult && whatsappResult.success) {
         console.log('WhatsApp enviado exitosamente a:', formattedWhatsapp);
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Inscripción guardada, email y WhatsApp enviados exitosamente',
+          inscripcionId: inscripcion?.[0]?.id,
+          whatsappStatus: 'sent'
+        });
       } else {
         console.log('Error al enviar WhatsApp a:', formattedWhatsapp);
+        console.log('WhatsApp error details:', whatsappResult);
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Inscripción guardada, email enviado exitosamente',
+          inscripcionId: inscripcion?.[0]?.id,
+          whatsappStatus: 'failed',
+          whatsappError: whatsappResult?.error || 'Error desconocido'
+        });
       }
       
     } catch (whatsappError) {
       console.error('Error al enviar WhatsApp:', whatsappError);
-      // No fallar el proceso si WhatsApp falla
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Inscripción guardada, email enviado exitosamente',
+        inscripcionId: inscripcion?.[0]?.id,
+        whatsappStatus: 'failed',
+        whatsappError: 'Error en el proceso de envío'
+      });
     }
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Inscripción guardada, email y WhatsApp enviados exitosamente',
-      inscripcionId: inscripcion?.[0]?.id
-    });
     
   } catch (error) {
     console.error('Error al enviar email:', error);
