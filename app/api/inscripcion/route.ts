@@ -6,10 +6,10 @@ import { supabase } from '../../../lib/supabase';
     const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
       try {
         // Usar la API de WhatsApp Business con número real
-        const response = await fetch('https://graph.facebook.com/v18.0/8145378962/messages', {
+        const response = await fetch('https://graph.facebook.com/v18.0/8145348962/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer EAARaYqnPlqYBPuHi1mKmfbPM5SoyBMuZBQcZCmLWhP8eg4dcXsQofYCYmIZAn3FOoCHDhLgrZA7skQDX09ZBOIEDWA9oHNPin1uQlZCsZAEenvyDM4AxzQzH3jw14ckgsi9syviFn7XQ0R5XSIyMk8bBhYbsVNw7siEhZCbRZCQSosAtsgf15wEmGjcRL484ALpEjPn3FPHb8TZCZAbHFwWrfGTFozvZCRbcm7ZApU2KjtJiphdkZD`,
+            'Authorization': `Bearer EAARaYqnPlqYBPvc8UBZCW5F8HNuTCH0IpPBcdZBfGtK6dQZB8PwMPvx3oesr6Kb1dh4V4rHNI2oAZBqR7IUrAfta2o3ZAjhExNuCGw543MCpbiJ4ga3arCfZBytJScfIIVuXNbVWqG8DSijkZBXWpfZBI9ZBsaSu1dazOBZCTd58qzoloUgzcM433nHCYWdEwoI6sVZC0fU2UpN4CvCa5txqfixFABZCkTXeeEaZAiqOpZBuSQgz4ZD`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
