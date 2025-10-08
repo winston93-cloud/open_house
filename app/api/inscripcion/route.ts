@@ -6,7 +6,7 @@ import { supabase } from '../../../lib/supabase';
     const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
       try {
         // Usar la API de WhatsApp Business con número real
-        const response = await fetch('https://graph.facebook.com/v18.0/872609622594319/messages', {
+        const response = await fetch('https://graph.facebook.com/v18.0/8145378962/messages', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer EAARaYqnPlqYBPuHi1mKmfbPM5SoyBMuZBQcZCmLWhP8eg4dcXsQofYCYmIZAn3FOoCHDhLgrZA7skQDX09ZBOIEDWA9oHNPin1uQlZCsZAEenvyDM4AxzQzH3jw14ckgsi9syviFn7XQ0R5XSIyMk8bBhYbsVNw7siEhZCbRZCQSosAtsgf15wEmGjcRL484ALpEjPn3FPHb8TZCZAbHFwWrfGTFozvZCRbcm7ZApU2KjtJiphdkZD`,
