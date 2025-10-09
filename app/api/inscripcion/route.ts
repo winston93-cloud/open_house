@@ -13,39 +13,15 @@ import { supabase } from '../../../lib/supabase';
         // Log para el navegador
         console.log('🔍 WHATSAPP DEBUG - Iniciando envío a:', phoneNumber);
         
-        // Crear mensaje personalizado sin template (texto libre)
-        const customMessage = `🏛️ *INSTITUTO WINSTON CHURCHILL*
-📅 *OPEN HOUSE - Sábado 11 de enero de 2025*
-
-¡Hola! 👋
-
-Confirmamos tu inscripción al Open House:
-
-👤 *Información del Aspirante:*
-• Nombre: ${formData.nombre_aspirante || 'Aspirante'}
-• Nivel: ${formData.nivel_educativo || 'Nivel'}
-• Grado: ${formData.grado_escolar || 'Grado'}
-• Fecha de nacimiento: ${formData.fecha_nacimiento || 'Fecha'}
-
-👨‍👩‍👧‍👦 *Información del Padre/Madre:*
-• Nombre: ${formData.nombre_padre || 'Padre'}
-• WhatsApp: ${formData.telefono_whatsapp || 'Teléfono'}
-
-📅 *Detalles del Evento:*
-• Fecha: Sábado 11 de enero de 2025
-• Hora: 9:00 AM - 1:00 PM
-• Lugar: Instituto Winston Churchill
-
-¡Esperamos verte pronto! 🎉
-
-Para más información: 833 437 8743`;
-
         const requestBody = {
           messaging_product: 'whatsapp',
           to: phoneNumber,
-          type: 'text',
-          text: {
-            body: customMessage
+          type: 'template',
+          template: {
+            name: 'openhouse',
+            language: { 
+              code: 'es' 
+            }
           }
         };
         
