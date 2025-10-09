@@ -18,37 +18,10 @@ import { supabase } from '../../../lib/supabase';
           to: phoneNumber,
           type: 'template',
           template: {
-            name: 'openhouse',
+            name: 'hello_world',
             language: { 
-              code: 'es_MX' 
-            },
-            components: [
-              {
-                type: 'body',
-                parameters: [
-                  {
-                    type: 'text',
-                    text: formData.nombre_aspirante || 'Aspirante'
-                  },
-                  {
-                    type: 'text',
-                    text: formData.nivel_educativo || 'Nivel'
-                  },
-                  {
-                    type: 'text',
-                    text: formData.grado_escolar || 'Grado'
-                  },
-                  {
-                    type: 'text',
-                    text: formData.nombre_padre || 'Padre'
-                  },
-                  {
-                    type: 'text',
-                    text: formData.telefono_whatsapp || 'Teléfono'
-                  }
-                ]
-              }
-            ]
+              code: 'en_US' 
+            }
           }
         };
         
