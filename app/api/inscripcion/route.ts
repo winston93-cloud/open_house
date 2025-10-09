@@ -30,7 +30,7 @@ import { supabase } from '../../../lib/supabase';
         const response = await fetch('https://graph.facebook.com/v22.0/821192997746970/messages', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer EAARaYqnPlqYBPpNCAoOUEZCz5sj7p6smJs7oiX4ByQsi4UkvMoylu3YCKBRewmmGL7BVTqQKBqgGf1kWUBEwaiMZA9UjZAcZC79fqSPtaCTiuVKgZCVzIn1woNEXGWBe02hCuFavh5asAlOEvNq5VsVIcjKqUAZBq62uYvDZANHKmaRaTyPWaTgjjXbxsHAgfBMwyrlNgZBpgRSlaiATE2436QnGBxO7qRkJfD8M73R5rS3dZCkXKLqNgYehdg6MZD`,
+            'Authorization': `Bearer EAARaYqnPlqYBPsgLZCwP3kHsaM4bLK3yhGjX2ieuylGawDh8HXGU2Y6sb3ZAIevKEFv8iuMWXKlpBnMzveBJqIRmFDKZAkqtjFyTd47UICmtLImvucdQrYeH1S0cV0k4gLt8U2ZAaGpohJBmMgloP8DalA6bk1t2gNvdEuQfZAZCZBcpQmoplvdtVnLgPEIWvObebuwx5ont0jW9QktI2VNlONJObESr5gdvcrv0buhUx0NCPdEB6tRAoZCUcZAnp`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(requestBody)
