@@ -3,11 +3,11 @@ import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
     // Función para enviar WhatsApp
-    const sendWhatsAppMessage = async (phoneNumber: string, message: string) => {
+    const sendWhatsAppMessage = async (phoneNumber: string, formData: any) => {
       try {
         console.log('=== INICIANDO ENVÍO WHATSAPP ===');
         console.log('Número destino:', phoneNumber);
-        console.log('Mensaje a enviar:', message.substring(0, 100) + '...');
+        console.log('Mensaje a enviar: Template openhouse con parámetros');
         console.log('URL API:', 'https://graph.facebook.com/v22.0/821192997746970/messages');
         
         // Log para el navegador
@@ -859,7 +859,7 @@ export async function POST(request: NextRequest) {
       console.log('To number:', formattedWhatsapp);
       
       // Enviar WhatsApp real
-      const whatsappResult = await sendWhatsAppMessage(formattedWhatsapp, whatsappMessage);
+      const whatsappResult = await sendWhatsAppMessage(formattedWhatsapp, formData);
       
       if (whatsappResult && whatsappResult.success) {
         console.log('WhatsApp enviado exitosamente a:', formattedWhatsapp);
