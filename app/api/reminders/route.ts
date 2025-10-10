@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
 // Configuración del transporter de email
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'sistemas.desarrollo@winston93.edu.mx',
