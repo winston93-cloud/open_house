@@ -763,6 +763,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Calcular fecha para el recordatorio (1 día después)
+    const reminderDate = new Date();
+    reminderDate.setDate(reminderDate.getDate() + 1);
+
     // Guardar en la base de datos
     const { data: inscripcion, error: dbError } = await supabase
       .from('inscripciones')
@@ -778,7 +782,9 @@ export async function POST(request: NextRequest) {
           whatsapp: formData.whatsapp,
           email: formData.correo,
           direccion: formData.direccion || '',
-          fecha_inscripcion: new Date().toISOString()
+          fecha_inscripcion: new Date().toISOString(),
+          reminder_sent: false,
+          reminder_scheduled_for: reminderDate.toISOString()
         }
       ])
       .select();

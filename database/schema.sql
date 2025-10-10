@@ -13,13 +13,19 @@ CREATE TABLE IF NOT EXISTS inscripciones (
     direccion TEXT NOT NULL,
     fecha_inscripcion TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    -- Campos para recordatorios
+    reminder_sent BOOLEAN DEFAULT FALSE,
+    reminder_scheduled_for TIMESTAMP WITH TIME ZONE,
+    reminder_sent_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Índices para mejorar el rendimiento
 CREATE INDEX IF NOT EXISTS idx_inscripciones_nivel_academico ON inscripciones(nivel_academico);
 CREATE INDEX IF NOT EXISTS idx_inscripciones_fecha_inscripcion ON inscripciones(fecha_inscripcion);
 CREATE INDEX IF NOT EXISTS idx_inscripciones_email ON inscripciones(email);
+CREATE INDEX IF NOT EXISTS idx_inscripciones_reminder_sent ON inscripciones(reminder_sent);
+CREATE INDEX IF NOT EXISTS idx_inscripciones_reminder_scheduled ON inscripciones(reminder_scheduled_for);
 
 -- Función para actualizar updated_at automáticamente
 CREATE OR REPLACE FUNCTION update_updated_at_column()
