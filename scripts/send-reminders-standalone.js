@@ -1,9 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+#!/usr/bin/env node
+
+/**
+ * Script independiente para enviar recordatorios automáticos
+ * Este script funciona sin depender de Next.js
+ */
+
+const nodemailer = require('nodemailer');
+const { createClient } = require('@supabase/supabase-js');
+
+// Configuración de Supabase
+const supabaseUrl = 'https://nmxrccrbnoenkahefrrw.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5teHJjY3Jibm9lbmthaGVmcnJ3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDE1MTg0OCwiZXhwIjoyMDY5NzI3ODQ4fQ._SIR3rmq7TWukuym30cCP4BAKGe-dhnillDV0Bz6Hf0';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Configuración del transporter de email
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: 'sistemas.desarrollo@winston93.edu.mx',
@@ -12,7 +23,7 @@ const transporter = nodemailer.createTransporter({
 });
 
 // Template del email de recordatorio
-const createReminderEmailTemplate = (formData: any) => {
+const createReminderEmailTemplate = (formData) => {
   const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
   
   // Determinar fecha y hora del evento según el nivel
@@ -423,7 +434,7 @@ const createReminderEmailTemplate = (formData: any) => {
 };
 
 // Función para calcular días restantes hasta el evento
-const calculateDaysUntilEvent = (nivelAcademico: string): number => {
+const calculateDaysUntilEvent = (nivelAcademico) => {
   const now = new Date();
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
@@ -440,7 +451,7 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
 };
 
 // Función para obtener la información del evento según el nivel
-const getEventInfo = (nivelAcademico: string) => {
+const getEventInfo = (nivelAcademico) => {
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
     return {
       fechaEvento: '29 de noviembre de 2025',
@@ -469,14 +480,18 @@ const getEventInfo = (nivelAcademico: string) => {
 };
 
 // Función para enviar email de recordatorio
-const sendReminderEmail = async (inscripcion: any) => {
+const sendReminderEmail = async (inscripcion) => {
   try {
     const diasRestantes = calculateDaysUntilEvent(inscripcion.nivel_academico);
     const eventInfo = getEventInfo(inscripcion.nivel_academico);
     
     // Crear el template del email con los días restantes calculados
     const emailHtml = createReminderEmailTemplate({
-      ...inscripcion,
+      nombreAspirante: inscripcion.nombre_aspirante,
+      nivelAcademico: inscripcion.nivel_academico,
+      gradoEscolar: inscripcion.grado_escolar,
+      fechaNacimiento: inscripcion.fecha_nacimiento,
+      nombreCompleto: inscripcion.nombre_padre,
       diasRestantes,
       fechaEvento: eventInfo.fechaEvento,
       horaEvento: eventInfo.horaEvento,
@@ -502,21 +517,10 @@ const sendReminderEmail = async (inscripcion: any) => {
   }
 };
 
-// Endpoint POST para procesar recordatorios (llamado por el cron job)
-export async function POST(request: NextRequest) {
+// Función principal
+async function sendReminders() {
   try {
-    // Verificar que la petición viene de una fuente autorizada
-    const authHeader = request.headers.get('authorization');
-    const expectedToken = process.env.REMINDER_API_TOKEN || 'default-secret-token';
-    
-    if (authHeader !== `Bearer ${expectedToken}`) {
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 401 }
-      );
-    }
-
-    console.log('🔄 Iniciando procesamiento de recordatorios...');
+    console.log('🔄 Iniciando envío de recordatorios...');
     
     // Buscar inscripciones que necesitan recordatorio
     const oneDayAgo = new Date();
@@ -530,26 +534,18 @@ export async function POST(request: NextRequest) {
 
     if (dbError) {
       console.error('Error al consultar inscripciones:', dbError);
-      return NextResponse.json(
-        { error: 'Error al consultar la base de datos' },
-        { status: 500 }
-      );
+      return;
     }
 
     if (!inscripciones || inscripciones.length === 0) {
       console.log('✅ No hay recordatorios pendientes');
-      return NextResponse.json({
-        success: true,
-        message: 'No hay recordatorios pendientes',
-        processed: 0
-      });
+      return;
     }
 
     console.log(`📧 Procesando ${inscripciones.length} recordatorios...`);
     
     let successCount = 0;
     let errorCount = 0;
-    const results = [];
 
     // Procesar cada inscripción
     for (const inscripcion of inscripciones) {
@@ -570,53 +566,27 @@ export async function POST(request: NextRequest) {
             console.error(`Error al actualizar recordatorio para ${inscripcion.email}:`, updateError);
           } else {
             successCount++;
-            results.push({
-              email: inscripcion.email,
-              status: 'success',
-              message: 'Recordatorio enviado exitosamente'
-            });
+            console.log(`✅ Recordatorio enviado exitosamente a: ${inscripcion.email}`);
           }
         } else {
           errorCount++;
-          results.push({
-            email: inscripcion.email,
-            status: 'error',
-            message: 'Error al enviar recordatorio'
-          });
+          console.error(`❌ Error al enviar recordatorio a: ${inscripcion.email}`);
         }
       } catch (error) {
         errorCount++;
         console.error(`Error procesando recordatorio para ${inscripcion.email}:`, error);
-        results.push({
-          email: inscripcion.email,
-          status: 'error',
-          message: 'Error inesperado'
-        });
       }
     }
 
     console.log(`✅ Procesamiento completado: ${successCount} exitosos, ${errorCount} errores`);
 
-    return NextResponse.json({
-      success: true,
-      message: 'Procesamiento de recordatorios completado',
-      processed: inscripciones.length,
-      successful: successCount,
-      errors: errorCount,
-      results
-    });
-
   } catch (error) {
     console.error('Error general en procesamiento de recordatorios:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
   }
 }
 
-// Endpoint GET para verificar el estado del sistema de recordatorios
-export async function GET() {
+// Función para verificar el estado del sistema
+async function checkSystemStatus() {
   try {
     const { data: pendingReminders, error } = await supabase
       .from('inscripciones')
@@ -625,22 +595,54 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      return NextResponse.json(
-        { error: 'Error al consultar recordatorios pendientes' },
-        { status: 500 }
-      );
+      console.error('Error al consultar recordatorios pendientes:', error);
+      return;
     }
 
-    return NextResponse.json({
-      success: true,
-      pendingReminders: pendingReminders || [],
-      count: pendingReminders?.length || 0
-    });
+    console.log(`📊 Estado del sistema: ${pendingReminders?.length || 0} recordatorios pendientes`);
+    
+    if (pendingReminders && pendingReminders.length > 0) {
+      console.log('📋 Recordatorios pendientes:');
+      pendingReminders.forEach((reminder, index) => {
+        const daysSinceRegistration = Math.floor(
+          (new Date() - new Date(reminder.created_at)) / (1000 * 60 * 60 * 24)
+        );
+        console.log(`  ${index + 1}. ${reminder.email} (${reminder.nivel_academico}) - ${daysSinceRegistration} días desde registro`);
+      });
+    }
+    
   } catch (error) {
-    console.error('Error al obtener estado de recordatorios:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
+    console.error('Error al verificar estado del sistema:', error);
   }
 }
+
+// Función principal del script
+async function main() {
+  const args = process.argv.slice(2);
+  
+  if (args.includes('--status') || args.includes('-s')) {
+    await checkSystemStatus();
+  } else {
+    await sendReminders();
+  }
+}
+
+// Manejar señales de terminación
+process.on('SIGINT', () => {
+  console.log('\n⏹️ Script interrumpido por el usuario');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('\n⏹️ Script terminado por el sistema');
+  process.exit(0);
+});
+
+// Ejecutar el script principal
+main().then(() => {
+  console.log('🏁 Script completado exitosamente');
+  process.exit(0);
+}).catch((error) => {
+  console.error('💥 Error fatal en el script:', error);
+  process.exit(1);
+});
