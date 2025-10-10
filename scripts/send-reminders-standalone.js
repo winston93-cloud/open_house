@@ -9,16 +9,16 @@ const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
 // Configuración de Supabase
-const supabaseUrl = 'https://nmxrccrbnoenkahefrrw.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5teHJjY3Jibm9lbmthaGVmcnJ3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDE1MTg0OCwiZXhwIjoyMDY5NzI3ODQ4fQ._SIR3rmq7TWukuym30cCP4BAKGe-dhnillDV0Bz6Hf0';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://nmxrccrbnoenkahefrrw.supabase.co';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm'
+    user: process.env.EMAIL_USER || 'sistemas.desarrollo@winston93.edu.mx',
+    pass: process.env.EMAIL_PASS
   }
 });
 
