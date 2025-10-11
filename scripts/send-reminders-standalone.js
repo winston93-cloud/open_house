@@ -370,7 +370,7 @@ const createReminderEmailTemplate = (formData) => {
                 <div class="reminder-badge">🔔 Recordatorio</div>
                 
                 <div class="welcome">
-                    <h2>¡No te olvides de nuestro Open House!</h2>
+                    <h2>✨ ¡Mañana es el gran día! ✨</h2>
                     <p>Estimado(a) ${nombreCompleto},</p>
                 </div>
                 
@@ -379,38 +379,28 @@ const createReminderEmailTemplate = (formData) => {
                     <div class="countdown-text">días restantes</div>
                 </div>
                 
-                <div class="info-card">
-                    <h3>👤 Información del Aspirante</h3>
-                    <div class="info-row">
-                        <span class="info-label">Nombre del Aspirante:</span>
-                        <span class="info-value">${nombreAspirante}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Nivel Académico:</span>
-                        <span class="info-value">${nivelAcademico.charAt(0).toUpperCase() + nivelAcademico.slice(1)}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Grado Escolar:</span>
-                        <span class="info-value">${gradoEscolar}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Fecha de Nacimiento:</span>
-                        <span class="info-value">${fechaNacimiento}</span>
-                    </div>
-                </div>
-                
                 <div class="event-details">
                     <h3>🎉 Detalles del Evento</h3>
-                    <div class="event-date">${fechaEvento}</div>
-                    <div class="event-time">⏰ ${horaEvento}</div>
                     <div class="event-description">
-                        Te esperamos en nuestras instalaciones para conocer más sobre nuestro programa educativo y resolver todas tus dudas.
+                        Les recordamos que mañana los esperamos en nuestro Open House de <strong>${nivelAcademico.charAt(0).toUpperCase() + nivelAcademico.slice(1)}</strong>, una experiencia diseñada para que conozcan de cerca nuestro modelo educativo, recorran nuestras instalaciones y descubran por qué somos una comunidad que trabaja por un futuro más brillante. ✨
                     </div>
-                </div>
-                
-                <div class="cta-section">
-                    <h3>¡Nos vemos pronto!</h3>
-                    <p>Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.</p>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">📅 Fecha:</span>
+                            <span class="info-value">${fechaEvento}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">🕐 Hora:</span>
+                            <span class="info-value">${horaEvento}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">📍 Lugar:</span>
+                            <span class="info-value">Instituto Winston Churchill — Av. Universidad 1000, Col. Del Valle, Monterrey, N.L.</span>
+                        </div>
+                    </div>
+                    <div class="cta-section">
+                        <p>Será un gusto recibirlos 😊</p>
+                    </div>
                 </div>
             </div>
             
