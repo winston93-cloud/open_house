@@ -522,14 +522,18 @@ async function sendReminders() {
   try {
     console.log('🔄 Iniciando envío de recordatorios...');
     
-    // Buscar inscripciones que necesitan recordatorio (desde el mismo día)
+    // Buscar inscripciones que necesitan recordatorio (de ayer)
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Inicio del día
+    today.setHours(0, 0, 0, 0); // Inicio del día de hoy
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1); // Ayer
     
     const { data: inscripciones, error: dbError } = await supabase
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
+      .gte('created_at', yesterday.toISOString())
       .lt('created_at', today.toISOString());
 
     if (dbError) {
@@ -588,14 +592,18 @@ async function sendReminders() {
 // Función para verificar el estado del sistema
 async function checkSystemStatus() {
   try {
-    // Buscar recordatorios pendientes (desde el mismo día)
+    // Buscar recordatorios pendientes (de ayer)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
     
     const { data: pendingReminders, error } = await supabase
       .from('inscripciones')
       .select('id, email, nombre_aspirante, nivel_academico, created_at, reminder_sent')
       .eq('reminder_sent', false)
+      .gte('created_at', yesterday.toISOString())
       .lt('created_at', today.toISOString())
       .order('created_at', { ascending: false });
 
