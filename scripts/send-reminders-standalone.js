@@ -27,25 +27,28 @@ const createReminderEmailTemplate = (formData) => {
   const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
   
   // Determinar fecha y hora del evento según el nivel
-  let fechaEvento, horaEvento, institucionNombre, diasRestantes, telefono;
+  let fechaEvento, horaEvento, institucionNombre, diasRestantes, telefono, emailContacto;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
     fechaEvento = '29 de noviembre de 2025';
     horaEvento = '9:00 AM';
     institucionNombre = 'Instituto Educativo Winston';
     telefono = '833 347 4507';
+    emailContacto = 'recepcioniew@winston93.edu.mx';
     diasRestantes = 49;
   } else if (nivelAcademico === 'primaria') {
     fechaEvento = '6 de diciembre de 2025';
     horaEvento = '9:00 a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
     telefono = '833 437 8743';
+    emailContacto = 'vinculacionw@winston93.edu.mx';
     diasRestantes = 56;
   } else if (nivelAcademico === 'secundaria') {
     fechaEvento = '6 de diciembre de 2025';
     horaEvento = '11:30 AM a 2:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     telefono = '833 437 8743';
+    emailContacto = 'vinculacionw@winston93.edu.mx';
     diasRestantes = 56;
   }
 
@@ -410,12 +413,12 @@ const createReminderEmailTemplate = (formData) => {
             <div class="footer">
                 <h4>${institucionNombre}</h4>
                 <div class="contact-info">
-                    <p><strong>📧 Email:</strong> vinculacionw@winston93.edu.mx</p>
+                    <p><strong>📧 Email:</strong> ${emailContacto}</p>
                     <p><strong>🌐 Sitio Web:</strong> www.winston93.edu.mx</p>
                     <p><strong>📞 Teléfono:</strong> ${telefono}</p>
                 </div>
                 <div class="social-links">
-                    <a href="mailto:vinculacionw@winston93.edu.mx">Contactar</a>
+                    <a href="mailto:${emailContacto}">Contactar</a>
                     <a href="https://www.winston93.edu.mx">Visitar Sitio</a>
                 </div>
             </div>
@@ -450,21 +453,24 @@ const getEventInfo = (nivelAcademico) => {
       fechaEvento: '29 de noviembre de 2025',
       horaEvento: '9:00 AM',
       institucionNombre: 'Instituto Educativo Winston',
-      telefono: '833 347 4507'
+      telefono: '833 347 4507',
+      emailContacto: 'recepcioniew@winston93.edu.mx'
     };
   } else if (nivelAcademico === 'primaria') {
     return {
       fechaEvento: '6 de diciembre de 2025',
       horaEvento: '9:00 a 11:30 AM',
       institucionNombre: 'Instituto Winston Churchill',
-      telefono: '833 437 8743'
+      telefono: '833 437 8743',
+      emailContacto: 'vinculacionw@winston93.edu.mx'
     };
   } else if (nivelAcademico === 'secundaria') {
     return {
       fechaEvento: '6 de diciembre de 2025',
       horaEvento: '11:30 AM a 2:00 PM',
       institucionNombre: 'Instituto Winston Churchill',
-      telefono: '833 437 8743'
+      telefono: '833 437 8743',
+      emailContacto: 'vinculacionw@winston93.edu.mx'
     };
   }
   
@@ -472,7 +478,8 @@ const getEventInfo = (nivelAcademico) => {
     fechaEvento: 'Fecha no especificada',
     horaEvento: 'Hora no especificada',
     institucionNombre: 'Instituto Winston Churchill',
-    telefono: '833 437 8743'
+    telefono: '833 437 8743',
+    emailContacto: 'vinculacionw@winston93.edu.mx'
   };
 };
 
@@ -493,7 +500,8 @@ const sendReminderEmail = async (inscripcion) => {
       fechaEvento: eventInfo.fechaEvento,
       horaEvento: eventInfo.horaEvento,
       institucionNombre: eventInfo.institucionNombre,
-      telefono: eventInfo.telefono
+      telefono: eventInfo.telefono,
+      emailContacto: eventInfo.emailContacto
     });
     
     const mailOptions = {
