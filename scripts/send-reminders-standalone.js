@@ -412,6 +412,26 @@ const createReminderEmailTemplate = (formData) => {
                     </div>
                     <div class="cta-section">
                         <p>Será un gusto recibirlos 😊</p>
+                        
+                        <div class="confirmation-section" style="margin-top: 30px; text-align: center; background: #f8fafc; padding: 25px; border-radius: 12px; border: 2px solid #e2e8f0;">
+                            <h3 style="color: #1e3a8a; margin: 0 0 15px 0; font-size: 18px; font-weight: 600;">¿Podrás asistir al evento?</h3>
+                            <p style="color: #64748b; margin: 0 0 20px 0; font-size: 14px;">Por favor confirma tu asistencia haciendo clic en uno de los botones:</p>
+                            
+                            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                <a href="https://open-house-chi.vercel.app/confirmar?id=\${inscripcionId}&confirmacion=confirmado" 
+                                   style="display: inline-block; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;">
+                                    ✅ Sí, asistiré
+                                </a>
+                                <a href="https://open-house-chi.vercel.app/confirmar?id=\${inscripcionId}&confirmacion=no_confirmado" 
+                                   style="display: inline-block; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); transition: all 0.3s ease;">
+                                    ❌ No podré asistir
+                                </a>
+                            </div>
+                            
+                            <p style="color: #64748b; margin: 15px 0 0 0; font-size: 12px; line-height: 1.4;">
+                                Al hacer clic en cualquiera de los botones, serás dirigido a una página para confirmar tu respuesta.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -517,7 +537,8 @@ const sendReminderEmail = async (inscripcion) => {
       telefono: eventInfo.telefono,
       emailContacto: eventInfo.emailContacto,
       sitioWeb: eventInfo.sitioWeb,
-      direccion: eventInfo.direccion
+      direccion: eventInfo.direccion,
+      inscripcionId: inscripcion.id
     });
     
     const mailOptions = {

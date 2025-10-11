@@ -12,6 +12,8 @@ interface OpenHouse {
   whatsapp: string;
   fecha_inscripcion: string;
   created_at: string;
+  confirmacion_asistencia: string;
+  fecha_confirmacion?: string;
 }
 
 export default function AdminDashboard() {
@@ -24,7 +26,10 @@ export default function AdminDashboard() {
     maternal: 0,
     kinder: 0,
     primaria: 0,
-    secundaria: 0
+    secundaria: 0,
+    confirmados: 0,
+    no_confirmados: 0,
+    pendientes: 0
   });
 
   // Verificar autenticación
@@ -61,7 +66,10 @@ export default function AdminDashboard() {
         maternal: data?.filter(i => i.nivel_academico === 'maternal').length || 0,
         kinder: data?.filter(i => i.nivel_academico === 'kinder').length || 0,
         primaria: data?.filter(i => i.nivel_academico === 'primaria').length || 0,
-        secundaria: data?.filter(i => i.nivel_academico === 'secundaria').length || 0
+        secundaria: data?.filter(i => i.nivel_academico === 'secundaria').length || 0,
+        confirmados: data?.filter(i => i.confirmacion_asistencia === 'confirmado').length || 0,
+        no_confirmados: data?.filter(i => i.confirmacion_asistencia === 'no_confirmado').length || 0,
+        pendientes: data?.filter(i => i.confirmacion_asistencia === 'pendiente' || !i.confirmacion_asistencia).length || 0
       };
       
       setStats(stats);
@@ -97,6 +105,11 @@ export default function AdminDashboard() {
         ['', 'Kinder:', stats.kinder, '', '', ''],
         ['', 'Primaria:', stats.primaria, '', '', ''],
         ['', 'Secundaria:', stats.secundaria, '', '', ''],
+        ['', '', '', '', '', ''],
+        ['', 'CONFIRMACIONES DE ASISTENCIA', '', '', '', ''],
+        ['', 'Confirmados:', stats.confirmados, '', '', ''],
+        ['', 'No confirmados:', stats.no_confirmados, '', '', ''],
+        ['', 'Pendientes:', stats.pendientes, '', '', ''],
         ['', '', '', '', '', ''],
         ['', 'PORCENTAJES', '', '', '', ''],
         ['', 'Maternal:', `${((stats.maternal / stats.total) * 100).toFixed(1)}%`, '', '', ''],
@@ -155,9 +168,9 @@ export default function AdminDashboard() {
       
       // === HOJA 2: DATOS DETALLADOS ===
       const datosDetallados = [
-        ['', '', '', '', '', ''], // Fila vacía
-        ['', '', '', '', '', ''], // Fila vacía
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN']
+        ['', '', '', '', '', '', ''], // Fila vacía
+        ['', '', '', '', '', '', ''], // Fila vacía
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
       ];
       
       // Agregar datos agrupados por nivel
@@ -174,7 +187,7 @@ export default function AdminDashboard() {
         
             if (openHouseNivel.length > 0) {
               // Agregar encabezado del nivel
-              datosDetallados.push(['', `=== ${nivel.toUpperCase()} (${openHouseNivel.length} Open House) ===`, '', '', '', '', '']);
+              datosDetallados.push(['', `=== ${nivel.toUpperCase()} (${openHouseNivel.length} Open House) ===`, '', '', '', '', '', '']);
               
               // Agregar datos del nivel
               openHouseNivel.forEach(openHouse => {
@@ -191,18 +204,21 @@ export default function AdminDashboard() {
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
-                  })
+                  }),
+                  openHouse.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
+                  openHouse.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
+                  '⏳ PENDIENTE'
                 ]);
               });
               
               // Agregar subtotal del nivel
-              datosDetallados.push(['', `SUBTOTAL ${nivel.toUpperCase()}:`, openHouseNivel.length.toString(), '', '', '', '']);
-              datosDetallados.push(['', '', '', '', '', '', '']); // Línea en blanco
+              datosDetallados.push(['', `SUBTOTAL ${nivel.toUpperCase()}:`, openHouseNivel.length.toString(), '', '', '', '', '']);
+              datosDetallados.push(['', '', '', '', '', '', '', '']); // Línea en blanco
             }
       });
       
       // Agregar total general
-      datosDetallados.push(['', 'TOTAL GENERAL:', stats.total.toString(), '', '', '', '']);
+      datosDetallados.push(['', 'TOTAL GENERAL:', stats.total.toString(), '', '', '', '', '']);
       
       const datosSheet = XLSX.utils.aoa_to_sheet(datosDetallados);
       
@@ -214,7 +230,8 @@ export default function AdminDashboard() {
         { width: 15 }, // Grado
         { width: 35 }, // Email
         { width: 20 }, // WhatsApp
-        { width: 25 }  // Fecha
+        { width: 25 }, // Fecha
+        { width: 15 }  // Confirmación
       ];
       
       XLSX.utils.book_append_sheet(workbook, datosSheet, 'Datos Detallados');
@@ -515,6 +532,51 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Tarjetas de confirmación */}
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">Confirmados</p>
+                <p className="admin-stat-number admin-stat-green">{stats.confirmados}</p>
+              </div>
+              <div className="admin-stat-icon admin-stat-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">No Confirmados</p>
+                <p className="admin-stat-number admin-stat-red">{stats.no_confirmados}</p>
+              </div>
+              <div className="admin-stat-icon admin-stat-icon-red">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">Pendientes</p>
+                <p className="admin-stat-number admin-stat-yellow">{stats.pendientes}</p>
+              </div>
+              <div className="admin-stat-icon admin-stat-icon-yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="admin-table-container">
           <div className="admin-table-header">
             <h2>
@@ -535,19 +597,20 @@ export default function AdminDashboard() {
                   <th>Email</th>
                   <th>WhatsApp</th>
                   <th>Fecha</th>
+                  <th>Confirmación</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="admin-loading">
+                    <td colSpan={7} className="admin-loading">
                       <div className="admin-spinner"></div>
                       <span>Cargando Open House...</span>
                     </td>
                   </tr>
                 ) : openHouse.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="admin-empty">
+                    <td colSpan={7} className="admin-empty">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
@@ -588,6 +651,17 @@ export default function AdminDashboard() {
                           hour: '2-digit',
                           minute: '2-digit'
                         })}
+                      </td>
+                      <td>
+                        <span className={`admin-confirmation-badge ${
+                          openHouse.confirmacion_asistencia === 'confirmado' ? 'admin-confirmation-confirmed' :
+                          openHouse.confirmacion_asistencia === 'no_confirmado' ? 'admin-confirmation-denied' :
+                          'admin-confirmation-pending'
+                        }`}>
+                          {openHouse.confirmacion_asistencia === 'confirmado' ? '✅ Confirmado' :
+                           openHouse.confirmacion_asistencia === 'no_confirmado' ? '❌ No confirmado' :
+                           '⏳ Pendiente'}
+                        </span>
                       </td>
                     </tr>
                   ))

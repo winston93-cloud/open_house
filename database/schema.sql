@@ -17,7 +17,10 @@ CREATE TABLE IF NOT EXISTS inscripciones (
     -- Campos para recordatorios
     reminder_sent BOOLEAN DEFAULT FALSE,
     reminder_scheduled_for TIMESTAMP WITH TIME ZONE,
-    reminder_sent_at TIMESTAMP WITH TIME ZONE
+    reminder_sent_at TIMESTAMP WITH TIME ZONE,
+    -- Campo para confirmación de asistencia
+    confirmacion_asistencia VARCHAR(20) DEFAULT 'pendiente', -- 'confirmado', 'no_confirmado', 'pendiente'
+    fecha_confirmacion TIMESTAMP WITH TIME ZONE
 );
 
 -- Índices para mejorar el rendimiento
@@ -26,6 +29,7 @@ CREATE INDEX IF NOT EXISTS idx_inscripciones_fecha_inscripcion ON inscripciones(
 CREATE INDEX IF NOT EXISTS idx_inscripciones_email ON inscripciones(email);
 CREATE INDEX IF NOT EXISTS idx_inscripciones_reminder_sent ON inscripciones(reminder_sent);
 CREATE INDEX IF NOT EXISTS idx_inscripciones_reminder_scheduled ON inscripciones(reminder_scheduled_for);
+CREATE INDEX IF NOT EXISTS idx_inscripciones_confirmacion_asistencia ON inscripciones(confirmacion_asistencia);
 
 -- Función para actualizar updated_at automáticamente
 CREATE OR REPLACE FUNCTION update_updated_at_column()
