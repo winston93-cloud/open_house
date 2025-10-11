@@ -406,12 +406,12 @@ const createReminderEmailTemplate = (formData: any) => {
             <div class="footer">
                 <h4>${institucionNombre}</h4>
                 <div class="contact-info">
-                    <p><strong>📧 Email:</strong> sistemas.desarrollo@winston93.edu.mx</p>
+                    <p><strong>📧 Email:</strong> vinculacionw@winston93.edu.mx</p>
                     <p><strong>🌐 Sitio Web:</strong> www.winston93.edu.mx</p>
                     <p><strong>📞 Teléfono:</strong> 833 347 4507</p>
                 </div>
                 <div class="social-links">
-                    <a href="mailto:sistemas.desarrollo@winston93.edu.mx">Contactar</a>
+                    <a href="mailto:vinculacionw@winston93.edu.mx">Contactar</a>
                     <a href="https://www.winston93.edu.mx">Visitar Sitio</a>
                 </div>
             </div>
