@@ -419,8 +419,8 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             <p><strong>¡Esperamos verte pronto!</strong></p>
             <div class="contact-info">
                 <p><strong>${institucionNombre}</strong></p>
-                <p>📧 vinculacionw@winston93.edu.mx</p>
-                <p>🌐 www.winston93.edu.mx</p>
+                <p>📧 recepcioniew@winston93.edu.mx</p>
+                <p>🌐 www.winstonkinder.edu.mx</p>
             </div>
         </div>
     </div>
@@ -711,8 +711,8 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             <p><strong>¡Esperamos verte pronto!</strong></p>
             <div class="contact-info">
                 <p><strong>${institucionNombre}</strong></p>
-                <p>📧 vinculacionw@winston93.edu.mx</p>
-                <p>🌐 www.winston93.edu.mx</p>
+                <p>📧 recepcioniew@winston93.edu.mx</p>
+                <p>🌐 www.winstonkinder.edu.mx</p>
             </div>
         </div>
     </div>
