@@ -395,7 +395,7 @@ const createReminderEmailTemplate = (formData) => {
                         </div>
                         <div class="info-row">
                             <span class="info-label">📍 Lugar:</span>
-                            <span class="info-value">Instituto Winston Churchill — Av. Universidad 1000, Col. Del Valle, Monterrey, N.L.</span>
+                            <span class="info-value">Instituto Winston Churchill — Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas</span>
                         </div>
                     </div>
                     <div class="cta-section">

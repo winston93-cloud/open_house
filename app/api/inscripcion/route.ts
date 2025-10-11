@@ -88,7 +88,7 @@ Confirmamos tu inscripción al Open House:
 📅 *Detalles del Evento:*
 • Fecha: ${fechaEvento}
 • Hora: ${horaEvento}
-• Lugar: Instituto Educativo Winston Churchill
+• Lugar: Instituto Winston Churchill — Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas
 
 ¡Esperamos verte pronto! 🎉
 
@@ -125,7 +125,7 @@ Confirmamos tu inscripción al Open House:
 📅 *Detalles del Evento:*
 • Fecha: ${fechaEvento}
 • Hora: ${horaEvento}
-    • Lugar: Instituto Winston Churchill
+    • Lugar: Instituto Winston Churchill — Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas
 
 ¡Esperamos verte pronto! 🎉
 
