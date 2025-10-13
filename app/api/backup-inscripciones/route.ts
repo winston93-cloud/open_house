@@ -107,19 +107,57 @@ function createBackupFile(inscripciones: any[]) {
   return JSON.stringify(backupData, null, 2);
 }
 
-// Función para subir a GitHub (simulada - en producción usarías la GitHub API)
+// Función para subir a GitHub usando la GitHub API
 async function uploadToGitHub(backupContent: string, fileName: string) {
-  // En un entorno real, aquí usarías la GitHub API
-  // Por ahora, simulamos el proceso
   console.log(`📤 Subiendo backup a GitHub: ${fileName}`);
   console.log(`📊 Tamaño del archivo: ${backupContent.length} caracteres`);
   
-  // Simular subida exitosa
-  return {
-    success: true,
-    url: `https://github.com/winston93-cloud/inscripciones/blob/main/backups/${fileName}`,
-    sha: `sha-${Date.now()}`
-  };
+  try {
+    // GitHub API endpoint para crear/actualizar archivos
+    const githubUrl = `https://api.github.com/repos/winston93-cloud/inscripciones/contents/backups/${fileName}`;
+    
+    // Codificar el contenido en base64
+    const content = Buffer.from(backupContent).toString('base64');
+    
+    // Preparar el mensaje de commit
+    const commitMessage = `Backup automático: ${fileName}`;
+    
+    // Hacer la petición a la GitHub API
+    const response = await fetch(githubUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: commitMessage,
+        content: content,
+        branch: 'main',
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`❌ Error en GitHub API: ${response.status} - ${errorText}`);
+      throw new Error(`GitHub API error: ${response.status}`);
+    }
+
+    const result = await response.json();
+    
+    console.log(`✅ Backup subido exitosamente a GitHub`);
+    console.log(`🔗 URL: ${result.content.html_url}`);
+    
+    return {
+      success: true,
+      url: result.content.html_url,
+      sha: result.content.sha,
+      downloadUrl: result.content.download_url
+    };
+  } catch (error) {
+    console.error('❌ Error al subir a GitHub:', error);
+    throw error;
+  }
 }
 
 export async function GET(request: NextRequest) {
