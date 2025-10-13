@@ -54,63 +54,26 @@ async function downloadBackupFile(downloadUrl: string) {
   }
 }
 
-// Función para crear la tabla si no existe
+// Función para verificar si la tabla existe
 async function ensureTableExists() {
   try {
-    // Verificar si la tabla existe
-    const { data: tables, error: tableCheckError } = await supabase
-      .from('information_schema.tables')
-      .select('table_name')
-      .eq('table_schema', 'public')
-      .eq('table_name', 'inscripciones');
+    // Intentar hacer una consulta simple para verificar si la tabla existe
+    const { error: checkError } = await supabase
+      .from('inscripciones')
+      .select('id')
+      .limit(1);
 
-    if (tableCheckError) {
-      console.log('No se pudo verificar la existencia de la tabla, continuando...');
-    }
-
-    // Si la tabla no existe, crearla
-    if (!tables || tables.length === 0) {
-      console.log('Tabla inscripciones no existe, creándola...');
-      
-      const createTableSQL = `
-        CREATE TABLE IF NOT EXISTS inscripciones (
-          id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-          nombre_aspirante VARCHAR(255) NOT NULL,
-          nivel_academico VARCHAR(50) NOT NULL,
-          grado_escolar VARCHAR(50) NOT NULL,
-          fecha_nacimiento DATE NOT NULL,
-          genero VARCHAR(20) NOT NULL,
-          escuela_procedencia VARCHAR(255) NOT NULL,
-          nombre_completo VARCHAR(255) NOT NULL,
-          email VARCHAR(255) NOT NULL,
-          whatsapp VARCHAR(20) NOT NULL,
-          parentesco VARCHAR(50) NOT NULL,
-          personas_asistiran VARCHAR(20) NOT NULL,
-          medio_entero VARCHAR(50) NOT NULL,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          fecha_inscripcion TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          reminder_sent BOOLEAN DEFAULT FALSE,
-          reminder_scheduled_for TIMESTAMP WITH TIME ZONE,
-          reminder_sent_at TIMESTAMP WITH TIME ZONE,
-          confirmacion_asistencia VARCHAR(20) DEFAULT 'pendiente',
-          fecha_confirmacion TIMESTAMP WITH TIME ZONE
-        );
-      `;
-
-      const { error: createError } = await supabase.rpc('exec_sql', { sql: createTableSQL });
-      
-      if (createError) {
-        console.error('Error al crear tabla:', createError);
-        throw createError;
-      }
-      
-      console.log('✅ Tabla inscripciones creada exitosamente');
+    if (checkError) {
+      // Si hay error, probablemente la tabla no existe
+      console.log('⚠️ La tabla inscripciones no existe o no está accesible');
+      console.log('⚠️ Por favor, crea la tabla manualmente en Supabase usando el schema.sql');
+      console.log('⚠️ Continuando con la restauración (puede fallar si la tabla no existe)...');
     } else {
-      console.log('✅ Tabla inscripciones ya existe');
+      console.log('✅ Tabla inscripciones existe');
     }
   } catch (error) {
-    console.error('Error al verificar/crear tabla:', error);
-    throw error;
+    console.error('Error al verificar tabla:', error);
+    console.log('⚠️ Continuando con la restauración...');
   }
 }
 
