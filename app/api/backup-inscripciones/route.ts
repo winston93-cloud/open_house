@@ -197,6 +197,7 @@ export async function GET(request: NextRequest) {
 
     const totalRecords = inscripciones?.length || 0;
     console.log(`📊 [${logId}] Total de inscripciones encontradas: ${totalRecords}`);
+    console.log(`📋 [${logId}] IDs de inscripciones:`, inscripciones?.map((i: any) => i.id));
 
     if (totalRecords === 0) {
       console.log(`⚠️ [${logId}] No hay inscripciones para respaldar`);
