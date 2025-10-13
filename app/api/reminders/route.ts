@@ -592,7 +592,8 @@ export async function POST(request: NextRequest) {
     const results = [];
 
     // Procesar cada inscripción
-    for (const [index, inscripcion] of inscripciones.entries()) {
+    for (let index = 0; index < inscripciones.length; index++) {
+      const inscripcion = inscripciones[index];
       console.log(`\n📤 [${logId}] Procesando inscripción ${index + 1}/${inscripciones.length}: ${inscripcion.email}`);
       
       try {
