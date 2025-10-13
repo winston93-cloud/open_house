@@ -377,7 +377,6 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
         
         <div class="content">
             <div class="welcome">
-                <h2>¡Bienvenido a nuestra familia!</h2>
                 <p>Estimado(a) ${nombreCompleto},</p>
             </div>
             
@@ -669,7 +668,6 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
         
         <div class="content">
             <div class="welcome">
-                <h2>¡Bienvenido a nuestra familia!</h2>
                 <p>Estimado(a) ${nombreCompleto},</p>
             </div>
             
