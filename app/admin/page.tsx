@@ -31,6 +31,9 @@ export default function AdminDashboard() {
     no_confirmados: 0,
     pendientes: 0
   });
+  const [restoring, setRestoring] = useState(false);
+  const [restoreFiles, setRestoreFiles] = useState<any[]>([]);
+  const [showRestoreModal, setShowRestoreModal] = useState(false);
 
   // Verificar autenticación
   const handleLogin = (e: React.FormEvent) => {
@@ -46,8 +49,58 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (authenticated) {
       fetchOpenHouse();
+      fetchRestoreFiles();
     }
   }, [authenticated]);
+
+  // Obtener archivos de backup disponibles
+  const fetchRestoreFiles = async () => {
+    try {
+      const response = await fetch('/api/restore-database');
+      const data = await response.json();
+      if (data.success) {
+        setRestoreFiles(data.files || []);
+      }
+    } catch (error) {
+      console.error('Error al obtener archivos de backup:', error);
+    }
+  };
+
+  // Restaurar base de datos
+  const restoreDatabase = async (backupFile?: string) => {
+    if (!confirm('⚠️ ADVERTENCIA: Esta acción sobrescribirá los datos actuales. ¿Estás seguro?')) {
+      return;
+    }
+
+    setRestoring(true);
+    try {
+      const response = await fetch('/api/restore-database', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          backupFile: backupFile || 'latest'
+        }),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(`✅ Restauración exitosa!\n\n📊 Registros restaurados: ${result.successCount}\n⏱️ Duración: ${result.duration}\n📅 Backup: ${result.backupMetadata?.timestamp || 'N/A'}`);
+        // Recargar datos después de la restauración
+        await fetchOpenHouse();
+      } else {
+        alert(`❌ Error en la restauración: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error al restaurar:', error);
+      alert('❌ Error al restaurar la base de datos');
+    } finally {
+      setRestoring(false);
+      setShowRestoreModal(false);
+    }
+  };
 
   const fetchOpenHouse = async () => {
     try {
@@ -454,6 +507,16 @@ export default function AdminDashboard() {
               </svg>
               Generar Reporte Excel
             </button>
+            <button 
+              onClick={() => setShowRestoreModal(true)} 
+              className="admin-restore-button"
+              disabled={restoring}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              {restoring ? 'Restaurando...' : 'Restaurar Base de Datos'}
+            </button>
           </div>
         </div>
       </div>
@@ -671,6 +734,73 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Restauración */}
+      {showRestoreModal && (
+        <div className="admin-modal-overlay" onClick={() => setShowRestoreModal(false)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h3>🔄 Restaurar Base de Datos</h3>
+              <button 
+                className="admin-modal-close"
+                onClick={() => setShowRestoreModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="admin-modal-content">
+              <p className="admin-modal-warning">
+                ⚠️ <strong>ADVERTENCIA:</strong> Esta acción sobrescribirá los datos actuales con los datos del backup seleccionado.
+              </p>
+              
+              <div className="admin-restore-options">
+                <h4>📁 Archivos de Backup Disponibles:</h4>
+                
+                <div className="admin-backup-list">
+                  {restoreFiles.length > 0 ? (
+                    restoreFiles.map((file, index) => (
+                      <div key={index} className="admin-backup-item">
+                        <div className="admin-backup-info">
+                          <strong>{file.name}</strong>
+                          <span className="admin-backup-date">{file.lastModified}</span>
+                          <span className="admin-backup-size">({Math.round(file.size / 1024)} KB)</span>
+                        </div>
+                        <button 
+                          className="admin-backup-restore-btn"
+                          onClick={() => restoreDatabase(file.downloadUrl)}
+                          disabled={restoring}
+                        >
+                          {restoring ? 'Restaurando...' : 'Restaurar'}
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="admin-no-backups">No se encontraron archivos de backup</p>
+                  )}
+                </div>
+
+                <div className="admin-restore-actions">
+                  <button 
+                    className="admin-restore-latest-btn"
+                    onClick={() => restoreDatabase()}
+                    disabled={restoring || restoreFiles.length === 0}
+                  >
+                    {restoring ? 'Restaurando...' : '🔄 Restaurar Más Reciente'}
+                  </button>
+                  <button 
+                    className="admin-modal-cancel"
+                    onClick={() => setShowRestoreModal(false)}
+                    disabled={restoring}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
