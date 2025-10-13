@@ -816,6 +816,76 @@ export async function POST(request: NextRequest) {
     // Enviar el email
     await transporter.sendMail(mailOptions);
     
+    // Enviar copia a sistemas.desarrollo@winston93.edu.mx
+    const copyMailOptions = {
+      from: {
+        name: 'Sistema de Inscripciones - Open House 2025',
+        address: 'sistemas.desarrollo@winston93.edu.mx'
+      },
+      to: 'sistemas.desarrollo@winston93.edu.mx',
+      subject: `📋 Nueva Inscripción - ${formData.nombreCompleto} (${formData.nivelAcademico})`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc;">
+          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">📋 Nueva Inscripción Registrada</h2>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Open House 2025</p>
+          </div>
+          
+          <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h3 style="color: #1e3a8a; margin-top: 0;">👤 Información del Aspirante</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151; width: 40%;">Nombre del Aspirante:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${formData.nombreCompleto}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Nivel Académico:</td>
+                <td style="padding: 8px 0; color: #1e3a8a; text-transform: capitalize;">${formData.nivelAcademico}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Grado Escolar:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${formData.gradoEscolar}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Fecha de Nacimiento:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${formData.fechaNacimiento}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Email:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${formData.correo}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">WhatsApp:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${formData.whatsapp}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Fecha de Inscripción:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${new Date().toLocaleString('es-MX')}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">ID de Inscripción:</td>
+                <td style="padding: 8px 0; color: #1e3a8a; font-family: monospace;">${inscripcion?.[0]?.id}</td>
+              </tr>
+            </table>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-left: 4px solid #3b82f6; border-radius: 5px;">
+              <p style="margin: 0; color: #1e40af; font-size: 14px;">
+                <strong>📧 Email de confirmación enviado a:</strong> ${formData.correo}<br>
+                <strong>📱 WhatsApp enviado a:</strong> ${formData.whatsapp}
+              </p>
+            </div>
+          </div>
+          
+          <div style="text-align: center; margin-top: 20px; padding: 15px; background: #10b981; color: white; border-radius: 10px;">
+            <p style="margin: 0; font-weight: bold;">✅ Inscripción procesada exitosamente</p>
+          </div>
+        </div>
+      `
+    };
+    
+    await transporter.sendMail(copyMailOptions);
+    console.log('📧 Copia de inscripción enviada a sistemas.desarrollo@winston93.edu.mx');
+    
     // Enviar WhatsApp
     try {
       const fechaEvento = 'Sábado 11 de enero de 2025';
