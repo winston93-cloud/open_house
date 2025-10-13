@@ -112,7 +112,10 @@ export async function POST(request: NextRequest) {
       backupData = await downloadBackupFile(latestFile.download_url);
     }
 
+    console.log(`🔍 [${logId}] Backup data recibido:`, JSON.stringify(backupData).substring(0, 500));
+    
     if (!backupData || !backupData.inscripciones) {
+      console.error(`❌ [${logId}] Formato inválido. Estructura recibida:`, Object.keys(backupData || {}));
       throw new Error('Formato de archivo de backup inválido');
     }
 
