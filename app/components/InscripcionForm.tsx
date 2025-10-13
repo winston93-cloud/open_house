@@ -237,13 +237,13 @@ export default function InscripcionForm() {
       {/* Form Container */}
       <div className="form-container">
         <div className="form-intro">
-          <h2>Sesión Informativa</h2>
-          <p>Déjanos tus datos y confirma tu asistencia a nuestra Sesión Informativa.</p>
+          <h2>Open House</h2>
+          <p>Déjanos tus datos y confirma tu asistencia a nuestro Open House.</p>
         </div>
 
           {/* Dates Info */}
             <div className="dates-info">
-              <h3>Fechas de las sesiones</h3>
+              <h3>Fecha de Open House</h3>
               <div className="date-item">
                 <span className="date-label">Maternal y Kinder:</span>
                 <span className="date-value">29 de noviembre - 9:00 AM</span>
