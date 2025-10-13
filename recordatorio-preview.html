@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio Open House - Vista Previa</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            line-height: 1.6;
+        }
+        .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: white;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #e2e8f0;
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .reminder-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .welcome h2 {
+            color: #1e3a8a;
+            margin: 0 0 20px 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .welcome p {
+            color: #4a5568;
+            font-size: 16px;
+            margin: 0 0 30px 0;
+        }
+        .countdown-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+        .countdown-number {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1;
+        }
+        .countdown-text {
+            font-size: 16px;
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .event-details {
+            margin: 40px 0;
+        }
+        .event-details h3 {
+            color: #1e3a8a;
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .event-description {
+            color: #4a5568;
+            font-size: 16px;
+            margin: 0 0 25px 0;
+            line-height: 1.7;
+        }
+        .info-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 16px;
+        }
+        .info-value {
+            color: #4a5568;
+            font-size: 16px;
+            text-align: right;
+        }
+        .cta-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .cta-section p {
+            color: #4a5568;
+            font-size: 18px;
+            margin: 0;
+        }
+        .confirmation-section {
+            margin-top: 30px;
+            text-align: center;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+        .confirmation-section h3 {
+            color: #1e3a8a;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .confirmation-section p {
+            color: #64748b;
+            margin: 0 0 20px 0;
+            font-size: 14px;
+        }
+        .confirmation-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .confirmation-button {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        .confirmation-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        .confirmation-button.confirm {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .confirmation-button.deny {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        .footer {
+            background: #1f2937;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .footer h4 {
+            margin: 0 0 20px 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .contact-info {
+            margin: 20px 0;
+        }
+        .contact-info p {
+            margin: 8px 0;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+        .social-links {
+            margin: 30px 0 0 0;
+        }
+        .social-links a {
+            display: inline-block;
+            color: #60a5fa;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .social-links a:hover {
+            text-decoration: underline;
+        }
+        .preview-notice {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+        @media (max-width: 600px) {
+            .email-wrapper {
+                margin: 0;
+                box-shadow: none;
+            }
+            .header-gradient {
+                padding: 30px 15px;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .countdown-card {
+                padding: 25px 20px;
+            }
+            .countdown-number {
+                font-size: 40px;
+            }
+            .confirmation-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .confirmation-button {
+                width: 100%;
+                max-width: 200px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-notice">
+        📧 Vista Previa del Email de Recordatorio con Botones de Confirmación
+    </div>
+    
+    <div class="email-wrapper">
+        <div class="email-container">
+            <div class="header-gradient">
+                <div class="header">
+                    <h1>Instituto Winston Churchill</h1>
+                    <p class="subtitle">Open House 2025 - Recordatorio de Evento</p>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="reminder-badge">🔔 Recordatorio</div>
+
+                <div class="welcome">
+                    <h2>✨ ¡Mañana es el gran día! ✨</h2>
+                    <p>Estimado(a) Juan Pérez,</p>
+                </div>
+
+                <div class="countdown-card">
+                    <div class="countdown-number">1</div>
+                    <div class="countdown-text">días restantes</div>
+                </div>
+
+                <div class="event-details">
+                    <h3>🎉 Detalles del Evento</h3>
+                    <div class="event-description">
+                        Les recordamos que mañana los esperamos en nuestro Open House de <strong>Primaria</strong>, una experiencia diseñada para que conozcan de cerca nuestro modelo educativo, recorran nuestras instalaciones y descubran por qué somos una comunidad que trabaja por un futuro más brillante. ✨
+                    </div>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">📅 Fecha:</span>
+                            <span class="info-value">6 de diciembre de 2025</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">🕐 Hora:</span>
+                            <span class="info-value">9:00 a 11:30 AM</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">📍 Lugar:</span>
+                            <span class="info-value">Instituto Winston Churchill — Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas</span>
+                        </div>
+                    </div>
+                    <div class="cta-section">
+                        <p>Será un gusto recibirlos 😊</p>
+                        
+                        <div class="confirmation-section">
+                            <h3>¿Podrás asistir al evento?</h3>
+                            <p>Por favor confirma tu asistencia haciendo clic en uno de los botones:</p>
+                            
+                            <div class="confirmation-buttons">
+                                <a href="#" class="confirmation-button confirm">
+                                    ✅ Sí, asistiré
+                                </a>
+                                <a href="#" class="confirmation-button deny">
+                                    ❌ No podré asistir
+                                </a>
+                            </div>
+                            
+                            <p style="color: #64748b; margin: 15px 0 0 0; font-size: 12px; line-height: 1.4;">
+                                Al hacer clic en cualquiera de los botones, serás dirigido a una página para confirmar tu respuesta.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <h4>Instituto Winston Churchill</h4>
+                <div class="contact-info">
+                    <p><strong>📧 Email:</strong> vinculacionw@winston93.edu.mx</p>
+                    <p><strong>🌐 Sitio Web:</strong> www.winston93.edu.mx</p>
+                    <p><strong>📞 Teléfono:</strong> 833 437 8743</p>
+                </div>
+                <div class="social-links">
+                    <a href="mailto:vinculacionw@winston93.edu.mx">Contactar</a>
+                    <a href="https://www.winston93.edu.mx">Visitar Sitio</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ejemplo para Instituto Educativo Winston -->
+    <div style="margin-top: 50px;">
+        <div class="preview-notice">
+            📧 Ejemplo para Instituto Educativo Winston (Maternal/Kinder)
+        </div>
+        
+        <div class="email-wrapper">
+            <div class="email-container">
+                <div class="header-gradient">
+                    <div class="header">
+                        <h1>Instituto Educativo Winston</h1>
+                        <p class="subtitle">Open House 2025 - Recordatorio de Evento</p>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="reminder-badge">🔔 Recordatorio</div>
+
+                    <div class="welcome">
+                        <h2>✨ ¡Mañana es el gran día! ✨</h2>
+                        <p>Estimado(a) María García,</p>
+                    </div>
+
+                    <div class="countdown-card">
+                        <div class="countdown-number">1</div>
+                        <div class="countdown-text">días restantes</div>
+                    </div>
+
+                    <div class="event-details">
+                        <h3>🎉 Detalles del Evento</h3>
+                        <div class="event-description">
+                            Les recordamos que mañana los esperamos en nuestro Open House de <strong>Kinder</strong>, una experiencia diseñada para que conozcan de cerca nuestro modelo educativo, recorran nuestras instalaciones y descubran por qué somos una comunidad que trabaja por un futuro más brillante. ✨
+                        </div>
+                        <div class="info-card">
+                            <div class="info-row">
+                                <span class="info-label">📅 Fecha:</span>
+                                <span class="info-value">29 de noviembre de 2025</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">🕐 Hora:</span>
+                                <span class="info-value">9:00 AM</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">📍 Lugar:</span>
+                                <span class="info-value">Instituto Educativo Winston — C. 2 209, Jardín 20 de Noviembre, 89440 Cd Madero, Tamps.</span>
+                            </div>
+                        </div>
+                        <div class="cta-section">
+                            <p>Será un gusto recibirlos 😊</p>
+                            
+                            <div class="confirmation-section">
+                                <h3>¿Podrás asistir al evento?</h3>
+                                <p>Por favor confirma tu asistencia haciendo clic en uno de los botones:</p>
+                                
+                                <div class="confirmation-buttons">
+                                    <a href="#" class="confirmation-button confirm">
+                                        ✅ Sí, asistiré
+                                    </a>
+                                    <a href="#" class="confirmation-button deny">
+                                        ❌ No podré asistir
+                                    </a>
+                                </div>
+                                
+                                <p style="color: #64748b; margin: 15px 0 0 0; font-size: 12px; line-height: 1.4;">
+                                    Al hacer clic en cualquiera de los botones, serás dirigido a una página para confirmar tu respuesta.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <h4>Instituto Educativo Winston</h4>
+                    <div class="contact-info">
+                        <p><strong>📧 Email:</strong> recepcioniew@winston93.edu.mx</p>
+                        <p><strong>🌐 Sitio Web:</strong> www.winstonkinder.edu.mx</p>
+                        <p><strong>📞 Teléfono:</strong> 833 347 4507</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="mailto:recepcioniew@winston93.edu.mx">Contactar</a>
+                        <a href="https://www.winstonkinder.edu.mx">Visitar Sitio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

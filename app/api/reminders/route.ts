@@ -504,29 +504,57 @@ const sendReminderEmail = async (inscripcion: any) => {
 
 // Endpoint POST para procesar recordatorios (llamado por el cron job)
 export async function POST(request: NextRequest) {
+  const startTime = new Date();
+  const logId = `REMINDER_${startTime.getTime()}`;
+  
+  console.log(`\n🚀 [${logId}] ===== INICIO DE PROCESAMIENTO DE RECORDATORIOS =====`);
+  console.log(`📅 [${logId}] Fecha y hora: ${startTime.toLocaleString('es-MX')}`);
+  console.log(`🌍 [${logId}] Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+  
   try {
     // Verificar que la petición viene de una fuente autorizada
     const authHeader = request.headers.get('authorization');
     const expectedToken = process.env.REMINDER_API_TOKEN || 'default-secret-token';
     
+    console.log(`🔐 [${logId}] Verificando autorización...`);
+    console.log(`🔐 [${logId}] Auth header presente: ${authHeader ? 'SÍ' : 'NO'}`);
+    
     if (authHeader !== `Bearer ${expectedToken}`) {
+      console.log(`❌ [${logId}] Autorización fallida`);
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
       );
     }
+    
+    console.log(`✅ [${logId}] Autorización exitosa`);
 
-    console.log('🔄 Iniciando procesamiento de recordatorios...');
+    console.log(`🔄 [${logId}] Iniciando procesamiento de recordatorios...`);
     
-    // Buscar inscripciones que necesitan recordatorio
-    const oneDayAgo = new Date();
-    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+    // Buscar inscripciones que necesitan recordatorio (de ayer)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Inicio del día de hoy
     
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1); // Ayer
+    
+    console.log(`📅 [${logId}] Calculando rangos de fecha:`);
+    console.log(`📅 [${logId}] Fecha actual: ${new Date().toISOString()}`);
+    console.log(`📅 [${logId}] Hoy (inicio): ${today.toISOString()}`);
+    console.log(`📅 [${logId}] Ayer (inicio): ${yesterday.toISOString()}`);
+    
+    console.log(`🔍 [${logId}] Ejecutando consulta a Supabase...`);
     const { data: inscripciones, error: dbError } = await supabase
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
-      .lt('created_at', oneDayAgo.toISOString());
+      .gte('created_at', yesterday.toISOString())
+      .lt('created_at', today.toISOString());
+      
+    console.log(`📊 [${logId}] Resultado de la consulta:`);
+    console.log(`📊 [${logId}] Error: ${dbError ? 'SÍ' : 'NO'}`);
+    if (dbError) console.log(`📊 [${logId}] Detalle del error:`, dbError);
+    console.log(`📊 [${logId}] Inscripciones encontradas: ${inscripciones ? inscripciones.length : 0}`);
 
     if (dbError) {
       console.error('Error al consultar inscripciones:', dbError);
@@ -537,27 +565,45 @@ export async function POST(request: NextRequest) {
     }
 
     if (!inscripciones || inscripciones.length === 0) {
-      console.log('✅ No hay recordatorios pendientes');
+      console.log(`✅ [${logId}] No hay recordatorios pendientes`);
+      console.log(`📋 [${logId}] Esto significa que no hay inscripciones de ayer que necesiten recordatorio`);
       return NextResponse.json({
         success: true,
         message: 'No hay recordatorios pendientes',
-        processed: 0
+        processed: 0,
+        logId
       });
     }
 
-    console.log(`📧 Procesando ${inscripciones.length} recordatorios...`);
+    console.log(`📧 [${logId}] Procesando ${inscripciones.length} recordatorios...`);
+    
+    // Log detallado de cada inscripción encontrada
+    inscripciones.forEach((inscripcion, index) => {
+      console.log(`📝 [${logId}] Inscripción ${index + 1}:`);
+      console.log(`   - ID: ${inscripcion.id}`);
+      console.log(`   - Nombre: ${inscripcion.nombre_aspirante}`);
+      console.log(`   - Email: ${inscripcion.email}`);
+      console.log(`   - Fecha creación: ${new Date(inscripcion.created_at).toLocaleString('es-MX')}`);
+      console.log(`   - Recordatorio enviado: ${inscripcion.reminder_sent}`);
+    });
     
     let successCount = 0;
     let errorCount = 0;
     const results = [];
 
     // Procesar cada inscripción
-    for (const inscripcion of inscripciones) {
+    for (const [index, inscripcion] of inscripciones.entries()) {
+      console.log(`\n📤 [${logId}] Procesando inscripción ${index + 1}/${inscripciones.length}: ${inscripcion.email}`);
+      
       try {
+        console.log(`🔄 [${logId}] Enviando email a ${inscripcion.email}...`);
         const result = await sendReminderEmail(inscripcion);
         
         if (result.success) {
+          console.log(`✅ [${logId}] Email enviado exitosamente a ${inscripcion.email}`);
+          
           // Marcar como enviado en la base de datos
+          console.log(`💾 [${logId}] Actualizando base de datos para ${inscripcion.email}...`);
           const { error: updateError } = await supabase
             .from('inscripciones')
             .update({
@@ -567,8 +613,9 @@ export async function POST(request: NextRequest) {
             .eq('id', inscripcion.id);
 
           if (updateError) {
-            console.error(`Error al actualizar recordatorio para ${inscripcion.email}:`, updateError);
+            console.error(`❌ [${logId}] Error al actualizar BD para ${inscripcion.email}:`, updateError);
           } else {
+            console.log(`✅ [${logId}] Base de datos actualizada para ${inscripcion.email}`);
             successCount++;
             results.push({
               email: inscripcion.email,
@@ -577,6 +624,7 @@ export async function POST(request: NextRequest) {
             });
           }
         } else {
+          console.error(`❌ [${logId}] Error al enviar email a ${inscripcion.email}:`, result.error);
           errorCount++;
           results.push({
             email: inscripcion.email,
@@ -585,8 +633,8 @@ export async function POST(request: NextRequest) {
           });
         }
       } catch (error) {
+        console.error(`❌ [${logId}] Error inesperado procesando ${inscripcion.email}:`, error);
         errorCount++;
-        console.error(`Error procesando recordatorio para ${inscripcion.email}:`, error);
         results.push({
           email: inscripcion.email,
           status: 'error',
@@ -595,7 +643,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    console.log(`✅ Procesamiento completado: ${successCount} exitosos, ${errorCount} errores`);
+    const endTime = new Date();
+    const duration = endTime.getTime() - startTime.getTime();
+    
+    console.log(`\n🏁 [${logId}] ===== FINALIZACIÓN DEL PROCESAMIENTO =====`);
+    console.log(`✅ [${logId}] Procesamiento completado: ${successCount} exitosos, ${errorCount} errores`);
+    console.log(`⏱️ [${logId}] Duración total: ${duration}ms`);
+    console.log(`📅 [${logId}] Fecha de finalización: ${endTime.toLocaleString('es-MX')}`);
+    console.log(`🎯 [${logId}] ===== FIN DEL LOG =====\n`);
 
     return NextResponse.json({
       success: true,
@@ -603,13 +658,26 @@ export async function POST(request: NextRequest) {
       processed: inscripciones.length,
       successful: successCount,
       errors: errorCount,
-      results
+      results,
+      logId,
+      duration: `${duration}ms`,
+      timestamp: endTime.toISOString()
     });
 
   } catch (error) {
-    console.error('Error general en procesamiento de recordatorios:', error);
+    const endTime = new Date();
+    console.error(`\n💥 [${logId}] ===== ERROR CRÍTICO =====`);
+    console.error(`❌ [${logId}] Error general en procesamiento de recordatorios:`, error);
+    console.error(`📅 [${logId}] Fecha del error: ${endTime.toLocaleString('es-MX')}`);
+    console.error(`🎯 [${logId}] ===== FIN DEL LOG DE ERROR =====\n`);
+    
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { 
+        error: 'Error interno del servidor',
+        logId,
+        timestamp: endTime.toISOString(),
+        details: error instanceof Error ? error.message : 'Error desconocido'
+      },
       { status: 500 }
     );
   }
