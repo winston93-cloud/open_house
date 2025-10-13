@@ -8,7 +8,7 @@
     },
     {
       "path": "/api/backup-inscripciones",
-      "schedule": "0 14,16,18,20,22,0,2,4 * * *"
+      "schedule": "0 14,16,18,20,22,0,2,4,6 * * *"
     }
   ]
 }
