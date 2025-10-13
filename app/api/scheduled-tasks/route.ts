@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   if (currentHour === 15) {
     console.log(`📧 [${logId}] Ejecutando recordatorios...`);
     try {
-      const remindersResult = await remindersHandler(request);
+      const remindersResult = await remindersHandler();
       const remindersData = await remindersResult.json();
       results.tasks.push({
         type: 'reminders',
