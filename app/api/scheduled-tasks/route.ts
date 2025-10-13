@@ -16,9 +16,8 @@ export async function GET(request: NextRequest) {
     tasks: []
   };
 
-  // Ejecutar backups cada 2 horas (8, 10, 12, 14, 16, 18, 20, 22, 0, 2, 4, 6)
-  const backupHours = [8, 10, 12, 14, 16, 18, 20, 22, 0, 2, 4, 6];
-  if (backupHours.includes(currentHour)) {
+  // Ejecutar backup a las 13:30 PM México (19:30 UTC)
+  if (currentHour === 19) {
     console.log(`📊 [${logId}] Ejecutando backup...`);
     try {
       const backupResult = await backupHandler(request);
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest) {
       });
     }
   } else {
-    console.log(`⏭️ [${logId}] Backup no programado para esta hora`);
+    console.log(`⏭️ [${logId}] Backup no programado para esta hora (solo a las 13:30 PM México)`);
   }
 
   // Ejecutar recordatorios a las 9:00 AM (15:00 UTC)
