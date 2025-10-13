@@ -3,12 +3,8 @@
   "framework": "nextjs",
   "crons": [
     {
-      "path": "/api/reminders",
-      "schedule": "0 15 * * *"
-    },
-    {
-      "path": "/api/backup-inscripciones",
-      "schedule": "0 14,16,18,20,22,0,2,4,6 * * *"
+      "path": "/api/scheduled-tasks",
+      "schedule": "0 * * * *"
     }
   ]
 }
