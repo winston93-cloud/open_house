@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 
 // Template del email de recordatorio
 const createReminderEmailTemplate = (formData: any) => {
-  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
   
   // Determinar fecha y hora del evento según el nivel
   let fechaEvento, horaEvento, institucionNombre, diasRestantes;
@@ -398,8 +398,21 @@ const createReminderEmailTemplate = (formData: any) => {
                 </div>
                 
                 <div class="cta-section">
-                    <h3>¡Nos vemos pronto!</h3>
-                    <p>Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.</p>
+                    <h3>¿Podrás asistir al evento?</h3>
+                    <p>Por favor confirma tu asistencia haciendo clic en uno de los botones:</p>
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <a href="https://open-house-chi.vercel.app/confirmar?id=${id}&confirmacion=confirmado" style="display: inline-block; padding: 15px 30px; margin: 5px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                            ✅ Sí, asistiré
+                        </a>
+                        <a href="https://open-house-chi.vercel.app/confirmar?id=${id}&confirmacion=no_confirmado" style="display: inline-block; padding: 15px 30px; margin: 5px; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                            ❌ No podré asistir
+                        </a>
+                    </div>
+                    
+                    <p style="margin-top: 20px; font-size: 12px; opacity: 0.8;">
+                        Al hacer clic en cualquiera de los botones, serás dirigido a una página para confirmar tu respuesta.
+                    </p>
                 </div>
             </div>
             
