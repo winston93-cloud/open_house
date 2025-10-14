@@ -27,6 +27,8 @@ function ConfirmarAsistenciaContent() {
   useEffect(() => {
     if (id) {
       cargarInscripcion();
+      // Mostrar modal automáticamente al cargar la página
+      setShowModal(true);
     } else {
       setError('ID de inscripción no encontrado');
       setLoading(false);
