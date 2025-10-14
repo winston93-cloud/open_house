@@ -22,6 +22,7 @@ function ConfirmarAsistenciaContent() {
   const [confirmando, setConfirmando] = useState(false);
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -187,7 +188,7 @@ function ConfirmarAsistenciaContent() {
               
               <div className="flex justify-center">
                 <button
-                  onClick={() => confirmarAsistencia('confirmado')}
+                  onClick={() => setShowModal(true)}
                   disabled={confirmando}
                   className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-green-300 disabled:to-emerald-400 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed transform hover:scale-105"
                 >
@@ -216,6 +217,26 @@ function ConfirmarAsistenciaContent() {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+              ¡Confirmación Exitosa! 🎉
+            </h2>
+            <p className="text-gray-600 text-center mb-6">
+              Tu asistencia ha sido confirmada correctamente.
+            </p>
+            <button
+              onClick={() => setShowModal(false)}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
