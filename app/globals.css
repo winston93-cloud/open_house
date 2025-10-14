@@ -2174,6 +2174,17 @@ body.sesiones-page {
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Texto de fechas en blanco para mejor contraste */
+.sesiones-form-container .date-label,
+.sesiones-form-container .date-value {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sesiones-form-container .date-value {
+  font-weight: 700;
+}
+
 /* Título del modal naranja */
 .sesiones-form-container .modal-header h2 {
   color: #FA9D00;
