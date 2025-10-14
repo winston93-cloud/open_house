@@ -209,7 +209,13 @@ export default function AdminDashboard() {
         ['', 'CONFIRMACIONES DE ASISTENCIA (OPEN HOUSE)', '', '', '', ''],
         ['', 'Confirmados:', stats.confirmados, '', '', ''],
         ['', 'No confirmados:', stats.no_confirmados, '', '', ''],
-        ['', 'Pendientes:', stats.pendientes, '', '', '']
+        ['', 'Pendientes:', stats.pendientes, '', '', ''],
+        ['', '', '', '', '', ''],
+        ['', 'DESGLOSE POR NIVELES (SESIONES INFORMATIVAS)', '', '', '', ''],
+        ['', 'Maternal:', stats.sesionesMaternal, '', '', ''],
+        ['', 'Kinder:', stats.sesionesKinder, '', '', ''],
+        ['', 'Primaria:', stats.sesionesPrimaria, '', '', ''],
+        ['', 'Secundaria:', stats.sesionesSecundaria, '', '', '']
       ];
       
       const resumenSheet = XLSX.utils.aoa_to_sheet(resumenData);
