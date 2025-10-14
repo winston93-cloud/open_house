@@ -117,43 +117,43 @@ function ConfirmarAsistenciaContent() {
   const yaConfirmado = inscripcion.confirmacion_asistencia !== 'pendiente';
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full overflow-hidden border border-gray-200">
+    <div className="min-h-screen bg-yellow-300 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full overflow-hidden border-4 border-red-600">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-8 text-center">
-          <div className="text-6xl mb-3">🎓</div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Confirmación de Asistencia
+        <div className="bg-red-600 p-8 text-center">
+          <div className="text-6xl mb-3">🎉</div>
+          <h1 className="text-4xl font-bold text-yellow-300 mb-2">
+            ¡Confirmación de Asistencia! 🎓
           </h1>
-          <p className="text-blue-100 text-lg">
-            Open House 2025
+          <p className="text-yellow-200 text-xl">
+            Open House 2025 🏫
           </p>
         </div>
 
         {/* Contenido principal */}
 
-        <div className="p-8">
+        <div className="p-8 bg-yellow-50">
           {/* Información del aspirante */}
-          <div className="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
-              Información del Aspirante
+          <div className="bg-white rounded-lg p-6 mb-6 border-4 border-red-500">
+            <h2 className="text-2xl font-bold text-red-700 mb-4 text-center">
+              📝 Información del Aspirante
             </h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700">Nombre:</span>
-                <span className="text-gray-900 font-semibold">{inscripcion.nombre_aspirante}</span>
+              <div className="flex justify-between items-center bg-yellow-100 p-3 rounded">
+                <span className="font-bold text-red-700">👤 Nombre:</span>
+                <span className="text-red-900 font-bold text-lg">{inscripcion.nombre_aspirante}</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="font-semibold text-gray-700">Nivel:</span>
-                <span className="text-gray-900 font-semibold capitalize">{inscripcion.nivel_academico}</span>
+              <div className="flex justify-between items-center bg-yellow-100 p-3 rounded">
+                <span className="font-bold text-red-700">🎓 Nivel:</span>
+                <span className="text-red-900 font-bold text-lg capitalize">{inscripcion.nivel_academico}</span>
               </div>
               {yaConfirmado && (
-                <div className="flex justify-between items-center pt-3 border-t border-gray-300">
-                  <span className="font-semibold text-gray-700">Estado:</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                <div className="flex justify-between items-center pt-3 border-t-4 border-red-500">
+                  <span className="font-bold text-red-700">✅ Estado:</span>
+                  <span className={`px-4 py-2 rounded-full text-sm font-bold ${
                     inscripcion.confirmacion_asistencia === 'confirmado' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
+                      ? 'bg-green-500 text-white' 
+                      : 'bg-red-500 text-white'
                   }`}>
                     {inscripcion.confirmacion_asistencia === 'confirmado' ? '✅ Confirmado' : '❌ No confirmado'}
                   </span>
@@ -179,33 +179,25 @@ function ConfirmarAsistenciaContent() {
           {/* Botones de confirmación */}
           {!yaConfirmado ? (
             <div className="space-y-4">
-              <p className="text-center text-gray-700 text-lg mb-6">
-                ¿Podrás asistir al Open House?
+              <p className="text-center text-red-700 text-2xl font-bold mb-6">
+                🤔 ¿Podrás asistir al Open House? 🤔
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex justify-center">
                 <button
-                  onClick={() => window.location.href = 'https://www.winston93.edu.mx'}
+                  onClick={() => confirmarAsistencia('confirmado')}
                   disabled={confirmando}
-                  className="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
+                  className="bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-yellow-300 font-bold text-2xl py-6 px-12 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-200 disabled:cursor-not-allowed border-4 border-red-900"
                 >
-                  {confirmando ? 'Confirmando...' : '✅ Sí, asistiré'}
-                </button>
-                
-                <button
-                  onClick={() => window.location.href = 'https://www.winston93.edu.mx'}
-                  disabled={confirmando}
-                  className="bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
-                >
-                  {confirmando ? 'Confirmando...' : '❌ No podré asistir'}
+                  {confirmando ? '⏳ Confirmando...' : '🎉 ¡SÍ, ASISTIRÉ! 🎉'}
                 </button>
               </div>
             </div>
           ) : (
-            <div className="text-center bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-              <div className="text-5xl mb-3">🎉</div>
-              <p className="text-gray-800 text-lg mb-2 font-semibold">
-                Ya has confirmado tu asistencia. ¡Gracias!
+            <div className="text-center bg-yellow-100 border-4 border-red-500 rounded-lg p-6">
+              <div className="text-6xl mb-3">🎉🎊🎈</div>
+              <p className="text-red-700 text-2xl mb-2 font-bold">
+                ¡Ya confirmaste tu asistencia! ¡Gracias! 🙏
               </p>
               <p className="text-gray-600 text-sm">
                 Si necesitas cambiar tu respuesta, contacta a la institución.
