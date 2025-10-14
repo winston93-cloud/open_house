@@ -2146,23 +2146,20 @@ body {
 
 /* ===== SESIONES INFORMATIVAS - ESTILOS NARANJA ===== */
 
-/* Animación de degradado suave tipo clínica dental */
-@keyframes gradientShift {
-  0% {
-    background: linear-gradient(135deg, #FA9D00 0%, #FA9D00 100%);
+/* Animación de brillo suave tipo foco */
+@keyframes gentleGlow {
+  0%, 100% {
+    background: #FA9D00;
   }
   50% {
-    background: linear-gradient(135deg, #FFE4B5 0%, #FFD700 100%);
-  }
-  100% {
-    background: linear-gradient(135deg, #FA9D00 0%, #FA9D00 100%);
+    background: #FFB84D;
   }
 }
 
 /* Fondo naranja animado para página de sesiones */
 body.sesiones-page {
-  background: linear-gradient(135deg, #FA9D00 0%, #FA9D00 100%);
-  animation: gradientShift 15s ease-in-out infinite;
+  background: #FA9D00;
+  animation: gentleGlow 20s ease-in-out infinite;
 }
 
 /* Header section naranja */
@@ -2196,6 +2193,13 @@ body.sesiones-page {
 }
 
 .sesiones-form-container .date-value {
+  font-weight: 700;
+}
+
+/* Título de la sección de fechas en blanco para mejor contraste */
+.sesiones-form-container .dates-info h3 {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   font-weight: 700;
 }
 
