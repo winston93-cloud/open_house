@@ -277,8 +277,8 @@ export default function SesionesForm() {
       {/* Winston Banner */}
       <div className="winston-banner">
         <img 
-          src="/winston-banner.jpg" 
-          alt="Winston Sesiones Informativas 2025" 
+          src="/logos/banner sesiones.png" 
+          alt="Banner Sesiones Informativas" 
           className="winston-banner-image"
         />
       </div>
