@@ -389,7 +389,7 @@ const createReminderEmailTemplate = (formData: any) => {
                     <p>Por favor confirma tu asistencia haciendo clic en uno de los botones:</p>
                     
                     <div style="margin-top: 20px; text-align: center;">
-                        <a href="https://open-house-chi.vercel.app/confirmar-nuevo?id=${id}&confirmacion=confirmado" style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+                        <a href="https://open-house-chi.vercel.app/confirmar-asistencia?id=${id}&confirmacion=confirmado" style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
                             ✅ Sí, asistiré
                         </a>
                     </div>
