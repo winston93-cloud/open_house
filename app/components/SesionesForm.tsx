@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface FormData {
   nombreAspirante: string
@@ -41,6 +41,14 @@ export default function SesionesForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [showModal, setShowModal] = useState(false)
+
+  // Agregar clase al body para aplicar estilos naranjas
+  useEffect(() => {
+    document.body.classList.add('sesiones-page')
+    return () => {
+      document.body.classList.remove('sesiones-page')
+    }
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
