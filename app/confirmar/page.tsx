@@ -185,7 +185,7 @@ function ConfirmarAsistenciaContent() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
-                  onClick={() => confirmarAsistencia('confirmado')}
+                  onClick={() => window.location.href = 'https://www.winston93.edu.mx'}
                   disabled={confirmando}
                   className="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
                 >
@@ -193,7 +193,7 @@ function ConfirmarAsistenciaContent() {
                 </button>
                 
                 <button
-                  onClick={() => confirmarAsistencia('no_confirmado')}
+                  onClick={() => window.location.href = 'https://www.winston93.edu.mx'}
                   disabled={confirmando}
                   className="bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white font-semibold py-4 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
                 >
