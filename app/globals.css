@@ -721,7 +721,8 @@ body {
   border: 1px solid #e9ecef;
   position: relative;
   height: 160px;
-  max-width: 100%;
+  max-width: 900px;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -1556,7 +1557,8 @@ body {
     margin-bottom: 12px;
     border-radius: 8px;
     height: 120px;
-    max-width: 100%;
+    max-width: 700px;
+    width: 100%;
   }
   
   .winston-banner-image {
@@ -1770,6 +1772,8 @@ body {
   .winston-banner {
     height: 100px;
     margin-bottom: 10px;
+    max-width: 100%;
+    width: 100%;
   }
   
   .winston-banner-image {
