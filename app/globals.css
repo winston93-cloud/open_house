@@ -13,7 +13,7 @@ body {
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #1e3a8a;
+  background: #FA9D00;
   color: #333;
   line-height: 1.6;
   position: relative;
@@ -740,11 +740,11 @@ body {
 
 /* Form Header Styles */
 .form-header-section {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #FA9D00 0%, #E88D00 100%);
   border-radius: 16px;
   padding: 16px 24px;
   margin-bottom: 16px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 28px rgba(250, 157, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
 }
@@ -907,7 +907,7 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #1e3a8a, #1e40af, #FFD700, #FFA500);
+  background: linear-gradient(90deg, #FA9D00, #E88D00, #FFD700, #FFA500);
   border-radius: 20px 20px 0 0;
 }
 
@@ -935,11 +935,11 @@ body {
 }
 
 .dates-info {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #FA9D00 0%, #E88D00 100%);
   padding: 16px;
   border-radius: 12px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+  box-shadow: 0 4px 15px rgba(250, 157, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.15);
   position: relative;
   overflow: hidden;
@@ -972,9 +972,9 @@ body {
   align-items: center;
   padding: 8px 12px;
   margin: 6px 0;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   backdrop-filter: blur(5px);
 }
@@ -1070,7 +1070,7 @@ body {
 }
 
 .modal-header h2 {
-  color: #1e3a8a;
+  color: #FA9D00;
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0;
@@ -1112,7 +1112,7 @@ body {
 }
 
 .modal-button {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #FA9D00 0%, #E88D00 100%);
   color: white;
   border: none;
   padding: 15px 40px;
@@ -1121,14 +1121,14 @@ body {
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+  box-shadow: 0 4px 15px rgba(250, 157, 0, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .modal-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+  box-shadow: 0 6px 20px rgba(250, 157, 0, 0.4);
 }
 
 .modal-button:active {
@@ -1456,7 +1456,7 @@ body {
 
 /* Submit Button */
 .submit-button {
-  background: #1e3a8a;
+  background: #FA9D00;
   color: #ffffff;
   border: none;
   padding: 12px 32px;
@@ -1466,7 +1466,7 @@ body {
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 12px 32px rgba(30, 58, 138, 0.4),
+    0 12px 32px rgba(250, 157, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.2);
   margin-top: 32px;
   width: 100%;
@@ -1494,9 +1494,9 @@ body {
 .submit-button:hover {
   transform: translateY(-6px) scale(1.02);
   box-shadow: 
-    0 20px 48px rgba(30, 58, 138, 0.5),
+    0 20px 48px rgba(250, 157, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.3);
-  background: #1e40af;
+  background: #E88D00;
   animation: none;
 }
 
