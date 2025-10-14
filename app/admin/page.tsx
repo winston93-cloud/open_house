@@ -134,24 +134,18 @@ export default function AdminDashboard() {
 
       setOpenHouse(data || []);
       
-      // Calcular estadísticas
-      const stats = {
+      // Actualizar solo las estadísticas de Open House, preservando las de Sesiones
+      setStats(prev => ({
+        ...prev,
         totalOpenHouse: data?.length || 0,
-        totalSesiones: sesiones.length,
         maternal: data?.filter(i => i.nivel_academico === 'maternal').length || 0,
         kinder: data?.filter(i => i.nivel_academico === 'kinder').length || 0,
         primaria: data?.filter(i => i.nivel_academico === 'primaria').length || 0,
         secundaria: data?.filter(i => i.nivel_academico === 'secundaria').length || 0,
-        sesionesMaternal: 0,
-        sesionesKinder: 0,
-        sesionesPrimaria: 0,
-        sesionesSecundaria: 0,
         confirmados: data?.filter(i => i.confirmacion_asistencia === 'confirmado').length || 0,
         no_confirmados: data?.filter(i => i.confirmacion_asistencia === 'no_confirmado').length || 0,
         pendientes: data?.filter(i => i.confirmacion_asistencia === 'pendiente' || !i.confirmacion_asistencia).length || 0
-      };
-      
-      setStats(stats);
+      }));
     } catch (error) {
       console.error('Error:', error);
     } finally {
