@@ -142,6 +142,10 @@ export default function AdminDashboard() {
         kinder: data?.filter(i => i.nivel_academico === 'kinder').length || 0,
         primaria: data?.filter(i => i.nivel_academico === 'primaria').length || 0,
         secundaria: data?.filter(i => i.nivel_academico === 'secundaria').length || 0,
+        sesionesMaternal: 0,
+        sesionesKinder: 0,
+        sesionesPrimaria: 0,
+        sesionesSecundaria: 0,
         confirmados: data?.filter(i => i.confirmacion_asistencia === 'confirmado').length || 0,
         no_confirmados: data?.filter(i => i.confirmacion_asistencia === 'no_confirmado').length || 0,
         pendientes: data?.filter(i => i.confirmacion_asistencia === 'pendiente' || !i.confirmacion_asistencia).length || 0
