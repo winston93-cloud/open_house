@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase-client';
 
-interface OpenHouse {
+interface Inscripcion {
   id: string;
   nombre_aspirante: string;
   nivel_academico: string;
@@ -16,13 +16,28 @@ interface OpenHouse {
   fecha_confirmacion?: string;
 }
 
+interface Sesion {
+  id: string;
+  nombre_aspirante: string;
+  nivel_academico: string;
+  grado_escolar: string;
+  email: string;
+  whatsapp: string;
+  fecha_inscripcion: string;
+  created_at: string;
+  reminder_sent: boolean;
+}
+
 export default function AdminDashboard() {
-  const [openHouse, setOpenHouse] = useState<OpenHouse[]>([]);
+  const [activeTab, setActiveTab] = useState<'openhouse' | 'sesiones'>('openhouse');
+  const [openHouse, setOpenHouse] = useState<Inscripcion[]>([]);
+  const [sesiones, setSesiones] = useState<Sesion[]>([]);
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
   const [stats, setStats] = useState({
-    total: 0,
+    totalOpenHouse: 0,
+    totalSesiones: 0,
     maternal: 0,
     kinder: 0,
     primaria: 0,
@@ -49,6 +64,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (authenticated) {
       fetchOpenHouse();
+      fetchSesiones();
       fetchRestoreFiles();
     }
   }, [authenticated]);
@@ -90,6 +106,7 @@ export default function AdminDashboard() {
         alert(`✅ Restauración exitosa!\n\n📊 Registros restaurados: ${result.successCount}\n⏱️ Duración: ${result.duration}\n📅 Backup: ${result.backupMetadata?.timestamp || 'N/A'}`);
         // Recargar datos después de la restauración
         await fetchOpenHouse();
+        await fetchSesiones();
       } else {
         alert(`❌ Error en la restauración: ${result.message}`);
       }
@@ -115,7 +132,8 @@ export default function AdminDashboard() {
       
       // Calcular estadísticas
       const stats = {
-        total: data?.length || 0,
+        totalOpenHouse: data?.length || 0,
+        totalSesiones: sesiones.length,
         maternal: data?.filter(i => i.nivel_academico === 'maternal').length || 0,
         kinder: data?.filter(i => i.nivel_academico === 'kinder').length || 0,
         primaria: data?.filter(i => i.nivel_academico === 'primaria').length || 0,
@@ -133,6 +151,27 @@ export default function AdminDashboard() {
     }
   };
 
+  const fetchSesiones = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('sesiones')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setSesiones(data || []);
+      
+      // Actualizar estadísticas
+      setStats(prev => ({
+        ...prev,
+        totalSesiones: data?.length || 0
+      }));
+    } catch (error) {
+      console.error('Error al cargar sesiones:', error);
+    }
+  };
+
   const exportToExcel = async () => {
     try {
       const XLSX = await import('xlsx');
@@ -145,273 +184,114 @@ export default function AdminDashboard() {
     
       // === HOJA 1: RESUMEN EJECUTIVO ===
       const resumenData = [
-        ['', '', '', '', '', ''], // Fila vacía
-        ['', '', '', '', '', ''], // Fila vacía
+        ['', '', '', '', '', ''],
+        ['', '', '', '', '', ''],
         ['', 'REPORTE DE OPEN HOUSE WINSTON', '', '', '', ''],
         ['', 'Fecha de generación:', new Date().toLocaleDateString('es-MX'), '', '', ''],
         ['', '', '', '', '', ''],
         ['', 'RESUMEN EJECUTIVO', '', '', '', ''],
-        ['', 'Total de Open House:', stats.total, '', '', ''],
+        ['', 'Total de Open House:', stats.totalOpenHouse, '', '', ''],
+        ['', 'Total de Sesiones Informativas:', stats.totalSesiones, '', '', ''],
+        ['', 'Total General:', stats.totalOpenHouse + stats.totalSesiones, '', '', ''],
         ['', '', '', '', '', ''],
-        ['', 'DESGLOSE POR NIVELES', '', '', '', ''],
+        ['', 'DESGLOSE POR NIVELES (OPEN HOUSE)', '', '', '', ''],
         ['', 'Maternal:', stats.maternal, '', '', ''],
         ['', 'Kinder:', stats.kinder, '', '', ''],
         ['', 'Primaria:', stats.primaria, '', '', ''],
         ['', 'Secundaria:', stats.secundaria, '', '', ''],
         ['', '', '', '', '', ''],
-        ['', 'CONFIRMACIONES DE ASISTENCIA', '', '', '', ''],
+        ['', 'CONFIRMACIONES DE ASISTENCIA (OPEN HOUSE)', '', '', '', ''],
         ['', 'Confirmados:', stats.confirmados, '', '', ''],
         ['', 'No confirmados:', stats.no_confirmados, '', '', ''],
-        ['', 'Pendientes:', stats.pendientes, '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'PORCENTAJES', '', '', '', ''],
-        ['', 'Maternal:', `${((stats.maternal / stats.total) * 100).toFixed(1)}%`, '', '', ''],
-        ['', 'Kinder:', `${((stats.kinder / stats.total) * 100).toFixed(1)}%`, '', '', ''],
-        ['', 'Primaria:', `${((stats.primaria / stats.total) * 100).toFixed(1)}%`, '', '', ''],
-        ['', 'Secundaria:', `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`, '', '', '']
+        ['', 'Pendientes:', stats.pendientes, '', '', '']
       ];
       
       const resumenSheet = XLSX.utils.aoa_to_sheet(resumenData);
-      
-      // Aplicar estilos al resumen
       resumenSheet['!cols'] = [
-        { width: 5 },   // Columna A (vacía)
-        { width: 25 }, // Columna B (títulos)
-        { width: 20 }, // Columna C (valores)
-        { width: 10 }, // Columna D
-        { width: 10 }, // Columna E
-        { width: 10 }  // Columna F
+        { width: 5 },
+        { width: 30 },
+        { width: 20 },
+        { width: 10 },
+        { width: 10 },
+        { width: 10 }
       ];
-      resumenSheet['!rows'] = Array(resumenData.length).fill({ hpx: 25 });
-      
-      // Aplicar colores a las celdas
-      const range = XLSX.utils.decode_range(resumenSheet['!ref'] || 'A1:A1');
-      for (let row = range.s.r; row <= range.e.r; row++) {
-        for (let col = range.s.c; col <= range.e.c; col++) {
-          const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-          if (!resumenSheet[cellAddress]) resumenSheet[cellAddress] = { v: '' };
-          
-          // Colores por nivel
-          if (row >= 9 && row <= 12) { // Filas de niveles
-            if (col === 1) { // Columna B (nombres de niveles)
-              resumenSheet[cellAddress].s = {
-                fill: { fgColor: { rgb: row === 9 ? 'FF69B4' : row === 10 ? '8B5CF6' : row === 11 ? '10B981' : 'F59E0B' } },
-                font: { color: { rgb: 'FFFFFF' }, bold: true }
-              };
-            }
-          }
-          
-          // Título principal
-          if (row === 2 && col === 1) {
-            resumenSheet[cellAddress].s = {
-              font: { bold: true, size: 16, color: { rgb: '1E3A8A' } }
-            };
-          }
-          
-          // Subtítulos
-          if ((row === 5 || row === 8 || row === 14) && col === 1) {
-            resumenSheet[cellAddress].s = {
-              font: { bold: true, size: 14, color: { rgb: '374151' } }
-            };
-          }
-        }
-      }
       
       XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen Ejecutivo');
       
-      // === HOJA 2: DATOS DETALLADOS ===
-      const datosDetallados = [
-        ['', '', '', '', '', '', ''], // Fila vacía
-        ['', '', '', '', '', '', ''], // Fila vacía
+      // === HOJA 2: DATOS DETALLADOS OPEN HOUSE ===
+      const datosOpenHouse = [
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
         ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
       ];
       
-      // Agregar datos agrupados por nivel
-      const niveles = ['maternal', 'kinder', 'primaria', 'secundaria'];
-      const coloresNivel = {
-        maternal: '#ec4899',
-        kinder: '#8b5cf6', 
-        primaria: '#10b981',
-        secundaria: '#f59e0b'
-      };
-      
-      niveles.forEach(nivel => {
-        const openHouseNivel = openHouse.filter(i => i.nivel_academico === nivel);
-        
-            if (openHouseNivel.length > 0) {
-              // Agregar encabezado del nivel
-              datosDetallados.push(['', `=== ${nivel.toUpperCase()} (${openHouseNivel.length} Open House) ===`, '', '', '', '', '', '']);
-              
-              // Agregar datos del nivel
-              openHouseNivel.forEach(openHouse => {
-                datosDetallados.push([
-                  '', // Columna A vacía
-                  openHouse.nombre_aspirante,
-                  openHouse.nivel_academico,
-                  openHouse.grado_escolar,
-                  openHouse.email,
-                  openHouse.whatsapp,
-                  new Date(openHouse.created_at).toLocaleDateString('es-MX', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  }),
-                  openHouse.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
-                  openHouse.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
-                  '⏳ PENDIENTE'
-                ]);
-              });
-              
-              // Agregar subtotal del nivel
-              datosDetallados.push(['', `SUBTOTAL ${nivel.toUpperCase()}:`, openHouseNivel.length.toString(), '', '', '', '', '']);
-              datosDetallados.push(['', '', '', '', '', '', '', '']); // Línea en blanco
-            }
+      openHouse.forEach(item => {
+        datosOpenHouse.push([
+          '',
+          item.nombre_aspirante,
+          item.nivel_academico,
+          item.grado_escolar,
+          item.email,
+          item.whatsapp,
+          new Date(item.created_at).toLocaleDateString('es-MX'),
+          item.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
+          item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
+          '⏳ PENDIENTE'
+        ]);
       });
       
-      // Agregar total general
-      datosDetallados.push(['', 'TOTAL GENERAL:', stats.total.toString(), '', '', '', '', '']);
-      
-      const datosSheet = XLSX.utils.aoa_to_sheet(datosDetallados);
-      
-      // Configurar columnas
-      datosSheet['!cols'] = [
-        { width: 5 },   // Columna A (vacía)
-        { width: 30 }, // Nombre
-        { width: 15 }, // Nivel
-        { width: 15 }, // Grado
-        { width: 35 }, // Email
-        { width: 20 }, // WhatsApp
-        { width: 25 }, // Fecha
-        { width: 15 }  // Confirmación
+      const openHouseSheet = XLSX.utils.aoa_to_sheet(datosOpenHouse);
+      openHouseSheet['!cols'] = [
+        { width: 5 },
+        { width: 30 },
+        { width: 15 },
+        { width: 15 },
+        { width: 35 },
+        { width: 20 },
+        { width: 25 },
+        { width: 15 }
       ];
       
-      XLSX.utils.book_append_sheet(workbook, datosSheet, 'Datos Detallados');
+      XLSX.utils.book_append_sheet(workbook, openHouseSheet, 'Open House');
       
-      // === HOJA 3: ANÁLISIS ESTADÍSTICO ===
-      const analisisData = [
-        ['', '', '', ''], // Fila vacía
-        ['', '', '', ''], // Fila vacía
-        ['', 'ANÁLISIS ESTADÍSTICO DE INSCRIPCIONES', '', ''],
-        ['', '', '', ''],
-        ['', 'DISTRIBUCIÓN POR NIVELES', '', ''],
-        ['', 'Nivel', 'Cantidad', 'Porcentaje'],
-        ['', 'Maternal', stats.maternal.toString(), `${((stats.maternal / stats.total) * 100).toFixed(1)}%`],
-        ['', 'Kinder', stats.kinder.toString(), `${((stats.kinder / stats.total) * 100).toFixed(1)}%`],
-        ['', 'Primaria', stats.primaria.toString(), `${((stats.primaria / stats.total) * 100).toFixed(1)}%`],
-        ['', 'Secundaria', stats.secundaria.toString(), `${((stats.secundaria / stats.total) * 100).toFixed(1)}%`],
-        ['', '', '', ''],
-        ['', 'TOTAL', stats.total.toString(), '100.0%'],
-        ['', '', '', ''],
-        ['', 'ANÁLISIS TEMPORAL', '', ''],
-        ['', 'Primera Open House:', openHouse.length > 0 ? new Date(Math.min(...openHouse.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
-        ['', 'Última Open House:', openHouse.length > 0 ? new Date(Math.max(...openHouse.map(i => new Date(i.created_at).getTime()))).toLocaleDateString('es-MX') : 'N/A', ''],
-        ['', 'Período de captación:', openHouse.length > 0 ? 
-          `${Math.ceil((Math.max(...openHouse.map(i => new Date(i.created_at).getTime())) - Math.min(...openHouse.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24))} días` : 'N/A', ''
-        ],
-        ['', '', '', ''],
-        ['', 'MÉTRICAS ADICIONALES', '', ''],
-        ['', 'Promedio diario:', stats.total > 0 ? (stats.total / Math.max(1, Math.ceil((Date.now() - Math.min(...openHouse.map(i => new Date(i.created_at).getTime()))) / (1000 * 60 * 60 * 24)))).toFixed(2) : '0', ''],
-        ['', 'Nivel más popular:', stats.maternal >= stats.kinder && stats.maternal >= stats.primaria && stats.maternal >= stats.secundaria ? 'Maternal' :
-                             stats.kinder >= stats.primaria && stats.kinder >= stats.secundaria ? 'Kinder' :
-                             stats.primaria >= stats.secundaria ? 'Primaria' : 'Secundaria', '']
+      // === HOJA 3: DATOS DETALLADOS SESIONES INFORMATIVAS ===
+      const datosSesiones = [
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN']
       ];
       
-      const analisisSheet = XLSX.utils.aoa_to_sheet(analisisData);
-      analisisSheet['!cols'] = [
-        { width: 5 },   // Columna A (vacía)
-        { width: 20 }, // Columna B (títulos)
-        { width: 15 }, // Columna C (valores)
-        { width: 15 }  // Columna D (valores)
+      sesiones.forEach(item => {
+        datosSesiones.push([
+          '',
+          item.nombre_aspirante,
+          item.nivel_academico,
+          item.grado_escolar,
+          item.email,
+          item.whatsapp,
+          new Date(item.created_at).toLocaleDateString('es-MX')
+        ]);
+      });
+      
+      const sesionesSheet = XLSX.utils.aoa_to_sheet(datosSesiones);
+      sesionesSheet['!cols'] = [
+        { width: 5 },
+        { width: 30 },
+        { width: 15 },
+        { width: 15 },
+        { width: 35 },
+        { width: 20 },
+        { width: 25 }
       ];
       
-      XLSX.utils.book_append_sheet(workbook, analisisSheet, 'Análisis Estadístico');
-      
-      // === HOJA 4: GRÁFICAS (Datos para gráfica) ===
-      const graficaData = [
-        ['', '', ''], // Fila vacía
-        ['', '', ''], // Fila vacía
-        ['', 'DATOS PARA GRÁFICA DE DISTRIBUCIÓN', ''],
-        ['', '', ''],
-        ['', 'Nivel', 'Cantidad'],
-        ['', 'Maternal', stats.maternal.toString()],
-        ['', 'Kinder', stats.kinder.toString()],
-        ['', 'Primaria', stats.primaria.toString()],
-        ['', 'Secundaria', stats.secundaria.toString()],
-        ['', '', ''],
-        ['', 'INSTRUCCIONES PARA CREAR GRÁFICA:', ''],
-        ['', '1. Selecciona los datos de las columnas B y C (filas 5-8)', ''],
-        ['', '2. Inserta un gráfico de barras o circular', ''],
-        ['', '3. Configura los colores:', ''],
-        ['', '   - Maternal: Rosa (#ec4899)', ''],
-        ['', '   - Kinder: Morado (#8b5cf6)', ''],
-        ['', '   - Primaria: Verde (#10b981)', ''],
-        ['', '   - Secundaria: Naranja (#f59e0b)', ''],
-        ['', '4. Añade título: "Distribución de Inscripciones por Nivel"', ''],
-        ['', '5. Añade etiquetas de datos con porcentajes', '']
-      ];
-      
-      const graficaSheet = XLSX.utils.aoa_to_sheet(graficaData);
-      graficaSheet['!cols'] = [
-        { width: 5 },   // Columna A (vacía)
-        { width: 40 },  // Columna B (títulos e instrucciones)
-        { width: 15 }   // Columna C (datos)
-      ];
-      
-      // Agregar gráfico a la hoja
-      const chartData = [
-        ['Nivel', 'Cantidad'],
-        ['Maternal', stats.maternal],
-        ['Kinder', stats.kinder],
-        ['Primaria', stats.primaria],
-        ['Secundaria', stats.secundaria]
-      ];
-      
-      // Crear una nueva hoja para el gráfico
-      const chartSheet = XLSX.utils.aoa_to_sheet(chartData);
-      chartSheet['!cols'] = [
-        { width: 15 }, // Nivel
-        { width: 12 }  // Cantidad
-      ];
-      
-      // Aplicar colores a las celdas del gráfico
-      const chartRange = XLSX.utils.decode_range(chartSheet['!ref'] || 'A1:A1');
-      for (let row = chartRange.s.r; row <= chartRange.e.r; row++) {
-        for (let col = chartRange.s.c; col <= chartRange.e.c; col++) {
-          const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-          if (!chartSheet[cellAddress]) chartSheet[cellAddress] = { v: '' };
-          
-          // Colores por nivel en la fila de datos
-          if (row >= 1 && row <= 4) { // Filas de datos (1-4)
-            if (col === 0) { // Columna de niveles
-              chartSheet[cellAddress].s = {
-                fill: { fgColor: { rgb: row === 1 ? 'FF69B4' : row === 2 ? '8B5CF6' : row === 3 ? '10B981' : 'F59E0B' } },
-                font: { color: { rgb: 'FFFFFF' }, bold: true },
-                alignment: { horizontal: 'center' }
-              };
-            } else if (col === 1) { // Columna de cantidades
-              chartSheet[cellAddress].s = {
-                fill: { fgColor: { rgb: row === 1 ? 'FF69B4' : row === 2 ? '8B5CF6' : row === 3 ? '10B981' : 'F59E0B' } },
-                font: { color: { rgb: 'FFFFFF' }, bold: true },
-                alignment: { horizontal: 'center' }
-              };
-            }
-          } else if (row === 0) { // Fila de encabezados
-            chartSheet[cellAddress].s = {
-              fill: { fgColor: { rgb: '1E3A8A' } },
-              font: { color: { rgb: 'FFFFFF' }, bold: true },
-              alignment: { horizontal: 'center' }
-            };
-          }
-        }
-      }
-      
-      XLSX.utils.book_append_sheet(workbook, graficaSheet, 'Datos para Gráficas');
-      XLSX.utils.book_append_sheet(workbook, chartSheet, 'Gráfica de Distribución');
+      XLSX.utils.book_append_sheet(workbook, sesionesSheet, 'Sesiones Informativas');
       
       // Generar y descargar archivo
-      const fileName = `Reporte_Open_House_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
+      const fileName = `Reporte_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
       XLSX.writeFile(workbook, fileName);
     } catch (error) {
       console.error('Error al generar Excel:', error);
@@ -437,7 +317,7 @@ export default function AdminDashboard() {
               />
             </div>
             <h1>Panel de Administración</h1>
-            <p>Acceso seguro al sistema de Open House</p>
+            <p>Acceso seguro al sistema</p>
           </div>
 
           <div className="admin-login-form">
@@ -471,7 +351,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className="admin-login-footer">
-            <p>Sistema de Gestión de Inscripciones Winston</p>
+            <p>Sistema de Gestión Winston</p>
           </div>
         </div>
       </div>
@@ -482,20 +362,20 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       <div className="admin-header">
         <div className="admin-header-content">
-            <div className="admin-header-left">
-              <div className="admin-header-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <div>
-                <h1>Dashboard de Open House</h1>
-                <p>Sistema de gestión Winston</p>
-              </div>
+          <div className="admin-header-left">
+            <div className="admin-header-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
             </div>
-          
+            <div>
+              <h1>Dashboard de Gestión Winston</h1>
+              <p>Sistema de gestión de inscripciones</p>
+            </div>
+          </div>
+        
           <div className="admin-header-actions">
-            <button onClick={fetchOpenHouse} className="admin-refresh-button">
+            <button onClick={() => { fetchOpenHouse(); fetchSesiones(); }} className="admin-refresh-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -522,217 +402,301 @@ export default function AdminDashboard() {
       </div>
 
       <div className="admin-content">
-        <div className="admin-stats-grid">
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Total Inscripciones</p>
-                <p className="admin-stat-number admin-stat-blue">{stats.total}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Maternal</p>
-                <p className="admin-stat-number admin-stat-pink">{stats.maternal}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-pink">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Kinder</p>
-                <p className="admin-stat-number admin-stat-purple">{stats.kinder}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-purple">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Primaria</p>
-                <p className="admin-stat-number admin-stat-green">{stats.primaria}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Secundaria</p>
-                <p className="admin-stat-number admin-stat-orange">{stats.secundaria}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-orange">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-            </div>
-          </div>
+        {/* Pestañas */}
+        <div className="admin-tabs">
+          <button 
+            className={`admin-tab ${activeTab === 'openhouse' ? 'active' : ''}`}
+            onClick={() => setActiveTab('openhouse')}
+          >
+            🎓 Open House ({stats.totalOpenHouse})
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'sesiones' ? 'active' : ''}`}
+            onClick={() => setActiveTab('sesiones')}
+          >
+            📋 Sesiones Informativas ({stats.totalSesiones})
+          </button>
         </div>
 
-        {/* Tarjetas de confirmación */}
-        <div className="admin-stats-grid">
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Confirmados</p>
-                <p className="admin-stat-number admin-stat-green">{stats.confirmados}</p>
+        {/* Contenido de las pestañas */}
+        {activeTab === 'openhouse' ? (
+          <>
+            <div className="admin-stats-grid">
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Total Open House</p>
+                    <p className="admin-stat-number admin-stat-blue">{stats.totalOpenHouse}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                </div>
               </div>
-              <div className="admin-stat-icon admin-stat-icon-green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Maternal</p>
+                    <p className="admin-stat-number admin-stat-pink">{stats.maternal}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-pink">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Kinder</p>
+                    <p className="admin-stat-number admin-stat-purple">{stats.kinder}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Primaria</p>
+                    <p className="admin-stat-number admin-stat-green">{stats.primaria}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Secundaria</p>
+                    <p className="admin-stat-number admin-stat-orange">{stats.secundaria}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">No Confirmados</p>
-                <p className="admin-stat-number admin-stat-red">{stats.no_confirmados}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-          
-          <div className="admin-stat-card">
-            <div className="admin-stat-content">
-              <div>
-                <p className="admin-stat-label">Pendientes</p>
-                <p className="admin-stat-number admin-stat-yellow">{stats.pendientes}</p>
-              </div>
-              <div className="admin-stat-icon admin-stat-icon-yellow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="admin-table-container">
-          <div className="admin-table-header">
-            <h2>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Open House Recientes
-            </h2>
-          </div>
-          
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Nivel</th>
-                  <th>Grado</th>
-                  <th>Email</th>
-                  <th>WhatsApp</th>
-                  <th>Fecha</th>
-                  <th>Confirmación</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan={7} className="admin-loading">
-                      <div className="admin-spinner"></div>
-                      <span>Cargando Open House...</span>
-                    </td>
-                  </tr>
-                ) : openHouse.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="admin-empty">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <p className="admin-empty-title">No hay Open House registrados</p>
-                      <p className="admin-empty-subtitle">Los registros de Open House aparecerán aquí una vez que los padres llenen el formulario.</p>
-                    </td>
-                  </tr>
-                ) : (
-                  openHouse.map((openHouse, index) => (
-                    <tr key={openHouse.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
-                      <td>
-                        <div className="admin-user-info">
-                          <div className="admin-user-avatar">
-                            {openHouse.nombre_aspirante.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="admin-user-name">{openHouse.nombre_aspirante}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`admin-level-badge admin-level-${openHouse.nivel_academico}`}>
-                          {openHouse.nivel_academico.charAt(0).toUpperCase() + openHouse.nivel_academico.slice(1)}
-                        </span>
-                      </td>
-                      <td className="admin-grade">
-                        {openHouse.grado_escolar
-                          .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')  // maternal1 -> maternal-1
-                          .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')  // 1primaria -> 1-Primaria
-                          .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2') // maternalA -> maternal-A
-                        }
-                      </td>
-                      <td className="admin-email">{openHouse.email}</td>
-                      <td className="admin-whatsapp">{openHouse.whatsapp}</td>
-                      <td className="admin-date">
-                        {new Date(openHouse.created_at).toLocaleDateString('es-MX', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </td>
-                      <td>
-                        <span className={`admin-confirmation-badge ${
-                          openHouse.confirmacion_asistencia === 'confirmado' ? 'admin-confirmation-confirmed' :
-                          openHouse.confirmacion_asistencia === 'no_confirmado' ? 'admin-confirmation-denied' :
-                          'admin-confirmation-pending'
-                        }`}>
-                          {openHouse.confirmacion_asistencia === 'confirmado' ? '✅ Confirmado' :
-                           openHouse.confirmacion_asistencia === 'no_confirmado' ? '❌ No confirmado' :
-                           '⏳ Pendiente'}
-                        </span>
-                      </td>
+            <div className="admin-table-container">
+              <div className="admin-table-header">
+                <h2>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Open House Recientes
+                </h2>
+              </div>
+              
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Nivel</th>
+                      <th>Grado</th>
+                      <th>Email</th>
+                      <th>WhatsApp</th>
+                      <th>Fecha</th>
+                      <th>Confirmación</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  </thead>
+                  <tbody>
+                    {loading ? (
+                      <tr>
+                        <td colSpan={7} className="admin-loading">
+                          <div className="admin-spinner"></div>
+                          <span>Cargando Open House...</span>
+                        </td>
+                      </tr>
+                    ) : openHouse.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="admin-empty">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <p className="admin-empty-title">No hay Open House registrados</p>
+                          <p className="admin-empty-subtitle">Los registros de Open House aparecerán aquí una vez que los padres llenen el formulario.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      openHouse.map((item, index) => (
+                        <tr key={item.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
+                          <td>
+                            <div className="admin-user-info">
+                              <div className="admin-user-avatar">
+                                {item.nombre_aspirante.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="admin-user-name">{item.nombre_aspirante}</div>
+                            </div>
+                          </td>
+                          <td>
+                            <span className={`admin-level-badge admin-level-${item.nivel_academico}`}>
+                              {item.nivel_academico.charAt(0).toUpperCase() + item.nivel_academico.slice(1)}
+                            </span>
+                          </td>
+                          <td className="admin-grade">
+                            {item.grado_escolar
+                              .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
+                              .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
+                              .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2')
+                            }
+                          </td>
+                          <td className="admin-email">{item.email}</td>
+                          <td className="admin-whatsapp">{item.whatsapp}</td>
+                          <td className="admin-date">
+                            {new Date(item.created_at).toLocaleDateString('es-MX', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </td>
+                          <td>
+                            <span className={`admin-confirmation-badge ${
+                              item.confirmacion_asistencia === 'confirmado' ? 'admin-confirmation-confirmed' :
+                              item.confirmacion_asistencia === 'no_confirmado' ? 'admin-confirmation-denied' :
+                              'admin-confirmation-pending'
+                            }`}>
+                              {item.confirmacion_asistencia === 'confirmado' ? '✅ Confirmado' :
+                               item.confirmacion_asistencia === 'no_confirmado' ? '❌ No confirmado' :
+                               '⏳ Pendiente'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="admin-stats-grid">
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Total Sesiones Informativas</p>
+                    <p className="admin-stat-number" style={{ color: '#FA9D00' }}>{stats.totalSesiones}</p>
+                  </div>
+                  <div className="admin-stat-icon" style={{ background: '#FA9D00' }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-table-container">
+              <div className="admin-table-header">
+                <h2>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Sesiones Informativas Recientes
+                </h2>
+              </div>
+              
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Nivel</th>
+                      <th>Grado</th>
+                      <th>Email</th>
+                      <th>WhatsApp</th>
+                      <th>Fecha</th>
+                      <th>Recordatorio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loading ? (
+                      <tr>
+                        <td colSpan={7} className="admin-loading">
+                          <div className="admin-spinner"></div>
+                          <span>Cargando Sesiones Informativas...</span>
+                        </td>
+                      </tr>
+                    ) : sesiones.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="admin-empty">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <p className="admin-empty-title">No hay Sesiones Informativas registradas</p>
+                          <p className="admin-empty-subtitle">Los registros de Sesiones Informativas aparecerán aquí una vez que los padres llenen el formulario.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      sesiones.map((item, index) => (
+                        <tr key={item.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
+                          <td>
+                            <div className="admin-user-info">
+                              <div className="admin-user-avatar">
+                                {item.nombre_aspirante.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="admin-user-name">{item.nombre_aspirante}</div>
+                            </div>
+                          </td>
+                          <td>
+                            <span className={`admin-level-badge admin-level-${item.nivel_academico}`}>
+                              {item.nivel_academico.charAt(0).toUpperCase() + item.nivel_academico.slice(1)}
+                            </span>
+                          </td>
+                          <td className="admin-grade">
+                            {item.grado_escolar
+                              .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
+                              .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
+                              .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2')
+                            }
+                          </td>
+                          <td className="admin-email">{item.email}</td>
+                          <td className="admin-whatsapp">{item.whatsapp}</td>
+                          <td className="admin-date">
+                            {new Date(item.created_at).toLocaleDateString('es-MX', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </td>
+                          <td>
+                            <span className={`admin-confirmation-badge ${
+                              item.reminder_sent ? 'admin-confirmation-confirmed' : 'admin-confirmation-pending'
+                            }`}>
+                              {item.reminder_sent ? '✅ Enviado' : '⏳ Pendiente'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Modal de Restauración */}
@@ -804,3 +768,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
