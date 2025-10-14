@@ -721,6 +721,9 @@ body {
   border: 1px solid #e9ecef;
   position: relative;
   height: 160px;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .winston-banner-image {
@@ -728,8 +731,9 @@ body {
   height: 100%;
   display: block;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
+  background: #fff;
 }
 
 
@@ -1551,10 +1555,14 @@ body {
   .winston-banner {
     margin-bottom: 12px;
     border-radius: 8px;
+    height: 120px;
+    max-width: 100%;
   }
   
   .winston-banner-image {
     border-radius: 8px;
+    object-fit: contain;
+    object-position: center;
   }
   
   .form-header-section {
@@ -1571,6 +1579,20 @@ body {
   .dates-info h3 {
     font-size: 0.95rem;
     margin-bottom: 10px;
+  }
+  
+  .date-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .date-label {
+    font-size: 0.85rem;
+  }
+  
+  .date-value {
+    font-size: 0.9rem;
   }
   
   .date-item {
@@ -1745,6 +1767,16 @@ body {
     padding: 8px;
   }
   
+  .winston-banner {
+    height: 100px;
+    margin-bottom: 10px;
+  }
+  
+  .winston-banner-image {
+    object-fit: contain;
+    object-position: center;
+  }
+  
   .form-header-section {
     padding: 10px 12px;
   }
@@ -1768,6 +1800,30 @@ body {
   
   .form-intro p {
     font-size: 0.75rem;
+  }
+  
+  .dates-info {
+    padding: 12px;
+  }
+  
+  .dates-info h3 {
+    font-size: 0.9rem;
+  }
+  
+  .date-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 8px 0;
+  }
+  
+  .date-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  
+  .date-value {
+    font-size: 0.85rem;
   }
   
   .dates-info {
