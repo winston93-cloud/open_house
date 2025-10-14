@@ -3,8 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-// Force bundle regeneration
-
 interface Inscripcion {
   id: string;
   nombre_aspirante: string;
@@ -19,16 +17,11 @@ function ConfirmarAsistenciaContent() {
   
   const [inscripcion, setInscripcion] = useState<Inscripcion | null>(null);
   const [loading, setLoading] = useState(true);
-  const [confirmando, setConfirmando] = useState(false);
-  const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     if (id) {
       cargarInscripcion();
-      // Mostrar modal automáticamente al cargar la página
-      setShowModal(true);
     } else {
       setError('ID de inscripción no encontrado');
       setLoading(false);
@@ -52,44 +45,10 @@ function ConfirmarAsistenciaContent() {
     }
   };
 
-  const confirmarAsistencia = async (confirmacion: 'confirmado' | 'no_confirmado') => {
-    if (!inscripcion) return;
-
-    setConfirmando(true);
-    setError('');
-    setMensaje('');
-
-    try {
-      const response = await fetch('/api/confirmar-asistencia', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: inscripcion.id,
-          confirmacion
-        })
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setMensaje(data.mensaje);
-        setInscripcion(data.inscripcion);
-      } else {
-        setError(data.error || 'Error al confirmar asistencia');
-      }
-    } catch (error) {
-      setError('Error al confirmar asistencia');
-    } finally {
-      setConfirmando(false);
-    }
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full border border-gray-200">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
           <p className="text-gray-700">Cargando información...</p>
         </div>
@@ -99,8 +58,8 @@ function ConfirmarAsistenciaContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full border border-red-200">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full">
           <div className="text-red-500 text-6xl mb-4">❌</div>
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Error</h1>
           <p className="text-gray-600">{error}</p>
@@ -111,134 +70,30 @@ function ConfirmarAsistenciaContent() {
 
   if (!inscripcion) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full border border-gray-200">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full">
           <p className="text-gray-600">Inscripción no encontrada</p>
         </div>
       </div>
     );
   }
 
-  const yaConfirmado = inscripcion.confirmacion_asistencia !== 'pendiente';
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 text-center">
-          <div className="text-6xl mb-3">🎓</div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Confirmación de Asistencia
-          </h1>
-          <p className="text-blue-100 text-lg">
-            Open House 2025
-          </p>
-        </div>
-
-        {/* Contenido principal */}
-
-        <div className="p-8">
-          {/* Información del aspirante */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 mb-6 border border-blue-200">
-            <h2 className="text-xl font-bold text-gray-800 mb-4 text-center">
-              Información del Aspirante
-            </h2>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center bg-white p-3 rounded-lg shadow-sm">
-                <span className="font-semibold text-gray-700">Nombre:</span>
-                <span className="text-gray-900 font-semibold">{inscripcion.nombre_aspirante}</span>
-              </div>
-              <div className="flex justify-between items-center bg-white p-3 rounded-lg shadow-sm">
-                <span className="font-semibold text-gray-700">Nivel:</span>
-                <span className="text-gray-900 font-semibold capitalize">{inscripcion.nivel_academico}</span>
-              </div>
-              {yaConfirmado && (
-                <div className="flex justify-between items-center pt-3 border-t border-gray-300">
-                  <span className="font-semibold text-gray-700">Estado:</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                    inscripcion.confirmacion_asistencia === 'confirmado' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {inscripcion.confirmacion_asistencia === 'confirmado' ? '✅ Confirmado' : '❌ No confirmado'}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Mensaje de éxito */}
-          {mensaje && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-              <p className="text-green-800 text-center font-semibold">{mensaje}</p>
-            </div>
-          )}
-
-          {/* Mensaje de error */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-              <p className="text-red-800 text-center font-semibold">{error}</p>
-            </div>
-          )}
-
-          {/* Botones de confirmación */}
-          {!yaConfirmado ? (
-            <div className="space-y-4">
-              <p className="text-center text-gray-700 text-lg mb-6">
-                ¿Podrás asistir al Open House?
-              </p>
-              
-              <div className="flex justify-center">
-                <button
-                  onClick={() => setShowModal(true)}
-                  disabled={confirmando}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-green-300 disabled:to-emerald-400 text-white font-semibold py-4 px-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 disabled:cursor-not-allowed transform hover:scale-105"
-                >
-                  {confirmando ? 'Confirmando...' : '✅ Sí, asistiré'}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-              <div className="text-5xl mb-3">🎉</div>
-              <p className="text-gray-800 text-lg mb-2 font-semibold">
-                Ya has confirmado tu asistencia. ¡Gracias!
-              </p>
-              <p className="text-gray-600 text-sm">
-                Si necesitas cambiar tu respuesta, contacta a la institución.
-              </p>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-center text-gray-600">
-              <strong>Instituto Winston Churchill</strong><br />
-              Open House 2025
-            </p>
-          </div>
-        </div>
+      <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          ¡Confirmación Exitosa! 🎉
+        </h2>
+        <p className="text-gray-600 text-center mb-6">
+          Tu asistencia ha sido confirmada correctamente.
+        </p>
+        <button
+          onClick={() => window.location.href = 'https://www.winston93.edu.mx'}
+          className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+        >
+          Aceptar
+        </button>
       </div>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-              ¡Confirmación Exitosa! 🎉
-            </h2>
-            <p className="text-gray-600 text-center mb-6">
-              Tu asistencia ha sido confirmada correctamente.
-            </p>
-            <button
-              onClick={() => setShowModal(false)}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              Aceptar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -246,8 +101,8 @@ function ConfirmarAsistenciaContent() {
 export default function ConfirmarAsistencia() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full border border-gray-200">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md w-full">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
           <p className="text-gray-700">Cargando...</p>
         </div>
