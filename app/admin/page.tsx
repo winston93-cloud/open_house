@@ -374,18 +374,18 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       <div className="admin-header">
         <div className="admin-header-content">
-          <div className="admin-header-left">
-            <div className="admin-header-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </div>
-            <div>
+            <div className="admin-header-left">
+              <div className="admin-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <div>
               <h1>Dashboard de Gestión Winston</h1>
               <p>Sistema de gestión de inscripciones</p>
             </div>
-          </div>
-        
+            </div>
+          
           <div className="admin-header-actions">
             <button onClick={() => { fetchOpenHouse(); fetchSesiones(); }} className="admin-refresh-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -433,154 +433,154 @@ export default function AdminDashboard() {
         {/* Contenido de las pestañas */}
         {activeTab === 'openhouse' ? (
           <>
-            <div className="admin-stats-grid">
-              <div className="admin-stat-card">
-                <div className="admin-stat-content">
-                  <div>
+        <div className="admin-stats-grid">
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
                     <p className="admin-stat-label">Total Open House</p>
                     <p className="admin-stat-number admin-stat-blue">{stats.totalOpenHouse}</p>
-                  </div>
-                  <div className="admin-stat-icon admin-stat-icon-blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                </div>
               </div>
-              
-              <div className="admin-stat-card">
-                <div className="admin-stat-content">
-                  <div>
-                    <p className="admin-stat-label">Maternal</p>
-                    <p className="admin-stat-number admin-stat-pink">{stats.maternal}</p>
-                  </div>
-                  <div className="admin-stat-icon admin-stat-icon-pink">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="admin-stat-card">
-                <div className="admin-stat-content">
-                  <div>
-                    <p className="admin-stat-label">Kinder</p>
-                    <p className="admin-stat-number admin-stat-purple">{stats.kinder}</p>
-                  </div>
-                  <div className="admin-stat-icon admin-stat-icon-purple">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="admin-stat-card">
-                <div className="admin-stat-content">
-                  <div>
-                    <p className="admin-stat-label">Primaria</p>
-                    <p className="admin-stat-number admin-stat-green">{stats.primaria}</p>
-                  </div>
-                  <div className="admin-stat-icon admin-stat-icon-green">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="admin-stat-card">
-                <div className="admin-stat-content">
-                  <div>
-                    <p className="admin-stat-label">Secundaria</p>
-                    <p className="admin-stat-number admin-stat-orange">{stats.secundaria}</p>
-                  </div>
-                  <div className="admin-stat-icon admin-stat-icon-orange">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                  </div>
-                </div>
+              <div className="admin-stat-icon admin-stat-icon-blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
               </div>
             </div>
-
-            <div className="admin-table-container">
-              <div className="admin-table-header">
-                <h2>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Open House Recientes
-                </h2>
+          </div>
+          
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">Maternal</p>
+                <p className="admin-stat-number admin-stat-pink">{stats.maternal}</p>
               </div>
-              
-              <div className="admin-table-wrapper">
-                <table className="admin-table">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Nivel</th>
-                      <th>Grado</th>
-                      <th>Email</th>
-                      <th>WhatsApp</th>
-                      <th>Fecha</th>
+              <div className="admin-stat-icon admin-stat-icon-pink">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">Kinder</p>
+                <p className="admin-stat-number admin-stat-purple">{stats.kinder}</p>
+              </div>
+              <div className="admin-stat-icon admin-stat-icon-purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">Primaria</p>
+                <p className="admin-stat-number admin-stat-green">{stats.primaria}</p>
+              </div>
+              <div className="admin-stat-icon admin-stat-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          
+          <div className="admin-stat-card">
+            <div className="admin-stat-content">
+              <div>
+                <p className="admin-stat-label">Secundaria</p>
+                <p className="admin-stat-number admin-stat-orange">{stats.secundaria}</p>
+              </div>
+              <div className="admin-stat-icon admin-stat-icon-orange">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="admin-table-container">
+          <div className="admin-table-header">
+            <h2>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Open House Recientes
+            </h2>
+          </div>
+          
+          <div className="admin-table-wrapper">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Nivel</th>
+                  <th>Grado</th>
+                  <th>Email</th>
+                  <th>WhatsApp</th>
+                  <th>Fecha</th>
                       <th>Confirmación</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {loading ? (
-                      <tr>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
                         <td colSpan={7} className="admin-loading">
-                          <div className="admin-spinner"></div>
-                          <span>Cargando Open House...</span>
-                        </td>
-                      </tr>
-                    ) : openHouse.length === 0 ? (
-                      <tr>
+                      <div className="admin-spinner"></div>
+                      <span>Cargando Open House...</span>
+                    </td>
+                  </tr>
+                ) : openHouse.length === 0 ? (
+                  <tr>
                         <td colSpan={7} className="admin-empty">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                          <p className="admin-empty-title">No hay Open House registrados</p>
-                          <p className="admin-empty-subtitle">Los registros de Open House aparecerán aquí una vez que los padres llenen el formulario.</p>
-                        </td>
-                      </tr>
-                    ) : (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      <p className="admin-empty-title">No hay Open House registrados</p>
+                      <p className="admin-empty-subtitle">Los registros de Open House aparecerán aquí una vez que los padres llenen el formulario.</p>
+                    </td>
+                  </tr>
+                ) : (
                       openHouse.map((item, index) => (
                         <tr key={item.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
-                          <td>
-                            <div className="admin-user-info">
-                              <div className="admin-user-avatar">
+                      <td>
+                        <div className="admin-user-info">
+                          <div className="admin-user-avatar">
                                 {item.nombre_aspirante.charAt(0).toUpperCase()}
-                              </div>
+                          </div>
                               <div className="admin-user-name">{item.nombre_aspirante}</div>
-                            </div>
-                          </td>
-                          <td>
+                        </div>
+                      </td>
+                      <td>
                             <span className={`admin-level-badge admin-level-${item.nivel_academico}`}>
                               {item.nivel_academico.charAt(0).toUpperCase() + item.nivel_academico.slice(1)}
-                            </span>
-                          </td>
-                          <td className="admin-grade">
+                        </span>
+                      </td>
+                      <td className="admin-grade">
                             {item.grado_escolar
                               .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
                               .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
                               .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2')
-                            }
-                          </td>
+                        }
+                      </td>
                           <td className="admin-email">{item.email}</td>
                           <td className="admin-whatsapp">{item.whatsapp}</td>
-                          <td className="admin-date">
+                      <td className="admin-date">
                             {new Date(item.created_at).toLocaleDateString('es-MX', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </td>
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </td>
                           <td>
                             <span className={`admin-confirmation-badge ${
                               item.confirmacion_asistencia === 'confirmado' ? 'admin-confirmation-confirmed' :
@@ -592,13 +592,13 @@ export default function AdminDashboard() {
                                '⏳ Pendiente'}
                             </span>
                           </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
           </>
         ) : (
           <>
