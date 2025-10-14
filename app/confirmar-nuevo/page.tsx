@@ -185,7 +185,7 @@ function ConfirmarAsistenciaContent() {
               
               <div className="flex justify-center">
                 <button
-                  onClick={() => window.location.href = 'https://www.winston93.edu.mx'}
+                  onClick={() => confirmarAsistencia('confirmado')}
                   disabled={confirmando}
                   className="bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-semibold py-4 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 disabled:cursor-not-allowed"
                 >
