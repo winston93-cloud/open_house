@@ -130,6 +130,8 @@ function ConfirmarAsistenciaContent() {
           </p>
         </div>
 
+        {/* Contenido principal */}
+
         <div className="p-8">
           {/* Información del aspirante */}
           <div className="bg-gray-50 rounded-lg p-6 mb-6 border border-gray-200">
