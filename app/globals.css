@@ -2146,13 +2146,13 @@ body {
 
 /* ===== SESIONES INFORMATIVAS - ESTILOS NARANJA ===== */
 
-/* Animación de brillo suave tipo foco */
+/* Animación de brillo suave tipo foco - blanco a naranja */
 @keyframes gentleGlow {
   0%, 100% {
     background: #FA9D00;
   }
   50% {
-    background: #FFB84D;
+    background: #ffffff;
   }
 }
 
