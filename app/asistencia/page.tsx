@@ -3,6 +3,8 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+// Force bundle regeneration
+
 interface Inscripcion {
   id: string;
   nombre_aspirante: string;
