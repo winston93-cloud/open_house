@@ -494,11 +494,11 @@ export async function POST(request: NextRequest) {
     // Enviar el email
     const mailOptions = {
       from: {
-        name: institucionNombre,
+        name: institucionNombre || 'Instituto Winston Churchill',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: inscripcion.email,
-      subject: `🔔 Recordatorio - Open House ${institucionNombre} (1 día restante)`,
+      subject: `🔔 Recordatorio - Open House ${institucionNombre || 'Instituto Winston Churchill'} (1 día restante)`,
       html: emailHtml
     };
 
