@@ -194,7 +194,7 @@ function ConfirmarAsistenciaContent() {
               </div>
             </div>
           ) : (
-            <div className="text-center bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
+            <div className="text-center bg-yellow-50 border border-yellow-200 rounded-lg p-6">
               <div className="text-5xl mb-3">🎉</div>
               <p className="text-gray-800 text-lg mb-2 font-semibold">
                 Ya has confirmado tu asistencia. ¡Gracias!
