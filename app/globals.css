@@ -2146,9 +2146,23 @@ body {
 
 /* ===== SESIONES INFORMATIVAS - ESTILOS NARANJA ===== */
 
-/* Fondo naranja para página de sesiones */
+/* Animación de degradado para el fondo */
+@keyframes gradientShift {
+  0% {
+    background: linear-gradient(135deg, #ffffff 0%, #FA9D00 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #FA9D00 0%, #E88D00 100%);
+  }
+  100% {
+    background: linear-gradient(135deg, #ffffff 0%, #FA9D00 100%);
+  }
+}
+
+/* Fondo naranja animado para página de sesiones */
 body.sesiones-page {
-  background: #FA9D00;
+  background: linear-gradient(135deg, #ffffff 0%, #FA9D00 100%);
+  animation: gradientShift 8s ease-in-out infinite;
 }
 
 /* Header section naranja */
