@@ -117,9 +117,10 @@ export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 
     // Determine WhatsApp number based on plantel
     const whatsappNumber = WHATSAPP_NUMBERS[plantel];
     
-    const messageUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/chats`;
+    // Por ahora, solo agregar una nota al lead en lugar de enviar WhatsApp
+    const noteUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}/notes`;
     
-    // Create WhatsApp confirmation message based on plantel
+    // Create confirmation message based on plantel
     const message = plantel === 'educativo' 
       ? `¡Hola! 👋
 
@@ -160,36 +161,32 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
 ¡Nos vemos pronto! 🎓`;
 
-    const messagePayload = {
-      entity_id: leadId,
-      entity_type: 'lead',
-      message: message,
-      phone: phone.replace(/\D/g, ''), // Remove non-digits
-      source: {
-        external_id: whatsappNumber,
-        type: 'whatsapp'
+    const notePayload = {
+      note_type: 'common',
+      params: {
+        text: `WhatsApp automático para enviar:\n\n${message}\n\nTeléfono: ${phone}`
       }
     };
 
-    const response = await fetch(messageUrl, {
+    const response = await fetch(noteUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(messagePayload),
+      body: JSON.stringify(notePayload),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error sending WhatsApp message:', errorText);
-      throw new Error(`Error sending WhatsApp: ${response.status}`);
+      console.error('Error adding note to lead:', errorText);
+      throw new Error(`Error adding note: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error sending Kommo WhatsApp:', error);
+    console.error('Error adding note to Kommo lead:', error);
     throw error;
   }
 }
