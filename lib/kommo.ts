@@ -162,8 +162,9 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 ¡Nos vemos pronto! 🎓`;
 
     const notePayload = {
-      note_type: 'common',
+      note_type: ['common'],
       params: {
+        note_type: 'common',
         text: `WhatsApp automático para enviar:\n\n${message}\n\nTeléfono: ${phone}`
       }
     };
