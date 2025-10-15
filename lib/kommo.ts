@@ -117,8 +117,10 @@ export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 
     // Determine WhatsApp number based on plantel
     const whatsappNumber = WHATSAPP_NUMBERS[plantel];
     
-    // Enviar WhatsApp automático usando el endpoint correcto (v2)
+    // Enviar WhatsApp automático usando el endpoint correcto (v3 - FORCE DEPLOY)
     const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/messages`;
+    
+    console.log('🔍 URL que se está usando:', messagesUrl);
     
     // Create confirmation message based on plantel
     const message = plantel === 'educativo' 
