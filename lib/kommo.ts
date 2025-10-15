@@ -17,69 +17,18 @@ const WHATSAPP_NUMBERS = {
   educativo: '8333474507',    // Educativo Winston
 };
 
-// Get access token using OAuth 2.0
+// Get access token using long-lived token directly
 async function getKommoAccessToken(): Promise<string> {
   try {
-    const tokenUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/oauth2/access_token`;
+    // Usar directamente el token de larga duración
+    const longLivedToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE1YThkY2UyZmU2MTZhNDIxNWM5YzFlM2RiNWY2ZTUxN2JlM2VmODMwZjA1OTA2NDgyNTkxM2Q0ZjRmMDdmZjRkNWNmNWE0ODUyMjZmZWQyIn0.eyJhdWQiOiIwYzgyY2Q1My1lMDU5LTQ4YjctOTQ3OC1lM2ZkNzFmNTFmMWYiLCJqdGkiOiIxNWE4ZGNlMmZlNjE2YTQyMTVjOWMxZTNkYjVmNmU1MTdiZTNlZjgzMGYwNTkwNjQ4MjU5MTNkNGY0ZjA3ZmY0ZDVjZjVhNDg1MjI2ZmVkMiIsImlhdCI6MTc2MDU1Njc2MSwibmJmIjoxNzYwNTU2NzYxLCJleHAiOjE3NjE4Njg4MDAsInN1YiI6Ijc4ODIzMDEiLCJncmFudF90eXBlIjoiIiwiYWNjb3VudF9pZCI6Mjk5MzI2MDcsImJhc2VfZG9tYWluIjoia29tbW8uY29tIiwidmVyc2lvbiI6Miwic2NvcGVzIjpbImNybSIsImZpbGVzIiwiZmlsZXNfZGVsZXRlIiwibm90aWZpY2F0aW9ucyIsInB1c2hfbm90aWZpY2F0aW9ucyJdLCJ1c2VyX2ZsYWdzIjowLCJoYXNoX3V1aWQiOiIzZWE0ZTUyOS0yYWQ4LTQyMGUtYWQzYy05NmUzOTAwODJhMzAiLCJhcGlfZG9tYWluIjoiYXBpLWcua29tbW8uY29tIn0.bfiUhdxV_EaAHB7B5WYM49LjkXcNStSZr48Jx3wZFFq00GYYmRUPFab0Ae5SX71v0pdgMgnqiKVfHZhDKfW3ykXJbmSAxcCTi2snoD4sBlvBur8G1pDKZ6YGuqqKboCAER2HbCcZFA5aFrgVHf5L1hl6o_YKCO4VkIFR8MwLv753b3jtdgOvHGc_scXT3JRHCtu4WAXWVw8w7Obo2wBtiefxx_zL4ZGRRSWj8WoIr9LYRc_yfEVm1HgGAJkyrkvWiFKZggRvyZkx1VB6_cKxu_A5751MscI8UlnpJvyzAbJ7HRsrAuRxnFDBjKo2cVrHo8TQ2hwVwSYTQtviSF9aYA';
     
-    console.log('🔑 Configuración Kommo:', {
-      subdomain: KOMMO_CONFIG.subdomain,
-      clientId: KOMMO_CONFIG.clientId ? 'SET' : 'MISSING',
-      clientSecret: KOMMO_CONFIG.clientSecret ? 'SET' : 'MISSING',
-      redirectUri: KOMMO_CONFIG.redirectUri,
-      refreshToken: process.env.KOMMO_REFRESH_TOKEN ? 'SET' : 'MISSING',
-      tokenUrl: tokenUrl
-    });
+    console.log('🔑 Usando token de larga duración directamente');
+    console.log('✅ Token obtenido exitosamente');
     
-    // Create URLSearchParams for form-encoded data
-    const params = new URLSearchParams();
-    params.append('client_id', KOMMO_CONFIG.clientId!);
-    params.append('client_secret', KOMMO_CONFIG.clientSecret!);
-    params.append('grant_type', 'refresh_token');
-    params.append('refresh_token', process.env.KOMMO_REFRESH_TOKEN!);
-    params.append('redirect_uri', KOMMO_CONFIG.redirectUri!);
-    
-    console.log('📤 Enviando request a Kommo:', {
-      client_id: KOMMO_CONFIG.clientId,
-      client_secret: KOMMO_CONFIG.clientSecret,
-      grant_type: 'refresh_token',
-      refresh_token: process.env.KOMMO_REFRESH_TOKEN ? process.env.KOMMO_REFRESH_TOKEN.substring(0, 50) + '...' : 'MISSING',
-      redirect_uri: KOMMO_CONFIG.redirectUri
-    });
-    
-    console.log('🔍 URL completa:', tokenUrl);
-    console.log('🔍 Headers enviados:', {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    });
-    
-    const response = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: params,
-    });
-
-    console.log('📥 Response status:', response.status);
-    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Error response body:', errorText);
-      console.error('🔍 Request que falló:', {
-        url: tokenUrl,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params.toString()
-      });
-      throw new Error(`Error getting access token: ${response.status} - ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Access token obtenido exitosamente');
-    return data.access_token;
+    return longLivedToken;
   } catch (error) {
-    console.error('Error getting Kommo access token:', error);
+    console.error('❌ Error getting Kommo access token:', error);
     throw error;
   }
 }
