@@ -162,17 +162,16 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 ¡Nos vemos pronto! 🎓`;
 
     const notePayload = {
-      note_type: [
+      note_type: ['common'],
+      params: [
         {
           note_type: 'common',
-          params: {
-            text: `📱 WHATSAPP PARA ENVIAR MANUALMENTE:
+          text: `📱 WHATSAPP PARA ENVIAR MANUALMENTE:
 
 ${message}
 
 📞 Teléfono: ${phone}
 🏫 Plantel: ${plantel === 'educativo' ? 'Instituto Educativo Winston' : 'Instituto Winston Churchill'}`
-          }
         }
       ]
     };
