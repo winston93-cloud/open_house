@@ -52,9 +52,9 @@ export async function createKommoLead(leadData: {
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
     const leadPayload = {
-      name: `Open House - ${leadData.nombreAspirante}`,
-      price: 0,
-      pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
+      name: [`Open House - ${leadData.nombreAspirante}`],
+      price: [0],
+      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
       status_id: null, // Will use default stage
       responsible_user_id: null,
       custom_fields_values: [
