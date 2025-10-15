@@ -31,30 +31,33 @@ async function getKommoAccessToken(): Promise<string> {
       tokenUrl: tokenUrl
     });
     
-    const requestBody = {
+    // Create URLSearchParams for form-encoded data
+    const params = new URLSearchParams();
+    params.append('client_id', KOMMO_CONFIG.clientId!);
+    params.append('client_secret', KOMMO_CONFIG.clientSecret!);
+    params.append('grant_type', 'refresh_token');
+    params.append('refresh_token', process.env.KOMMO_REFRESH_TOKEN!);
+    params.append('redirect_uri', KOMMO_CONFIG.redirectUri!);
+    
+    console.log('📤 Enviando request a Kommo:', {
       client_id: KOMMO_CONFIG.clientId,
       client_secret: KOMMO_CONFIG.clientSecret,
       grant_type: 'refresh_token',
-      refresh_token: process.env.KOMMO_REFRESH_TOKEN,
-      redirect_uri: KOMMO_CONFIG.redirectUri,
-    };
-    
-    console.log('📤 Enviando request a Kommo:', {
-      ...requestBody,
-      refresh_token: requestBody.refresh_token ? requestBody.refresh_token.substring(0, 50) + '...' : 'MISSING' // Solo mostrar primeros 50 caracteres
+      refresh_token: process.env.KOMMO_REFRESH_TOKEN ? process.env.KOMMO_REFRESH_TOKEN.substring(0, 50) + '...' : 'MISSING',
+      redirect_uri: KOMMO_CONFIG.redirectUri
     });
     
     console.log('🔍 URL completa:', tokenUrl);
     console.log('🔍 Headers enviados:', {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/x-www-form-urlencoded'
     });
     
     const response = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(requestBody),
+      body: params,
     });
 
     console.log('📥 Response status:', response.status);
@@ -66,8 +69,8 @@ async function getKommoAccessToken(): Promise<string> {
       console.error('🔍 Request que falló:', {
         url: tokenUrl,
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: requestBody
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString()
       });
       throw new Error(`Error getting access token: ${response.status} - ${errorText}`);
     }
