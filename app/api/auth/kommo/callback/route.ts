@@ -24,9 +24,9 @@ export async function GET(request: NextRequest) {
     
     console.log('✅ Código de autorización recibido:', code);
     
-    // Configuración de la nueva integración
-    const clientId = '12c033df-d837-4802-aeb6-49e8b430d834';
-    const clientSecret = 'ILczgs8mBj4yL10V98Our18weSywFGr3cYJ27cMD9AHsHenRV1J8N1tx0xkz5b4g';
+    // Configuración de la integración original de Open House
+    const clientId = '0c82cd53-e059-48b7-9478-e3fd71f51f1f';
+    const clientSecret = 'EZGNNwdY3UmmDw6ryQqArm0dLaq2kjDlkTbo0tQP3cxwiVZPEb9A4fWzjXNyoHqq';
     const redirectUri = 'https://open-house-chi.vercel.app/api/auth/kommo/callback';
     
     // Intercambiar code por tokens

@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    // Configuración de la nueva integración
-    const clientId = '12c033df-d837-4802-aeb6-49e8b430d834';
+    // Configuración de la integración original de Open House
+    const clientId = '0c82cd53-e059-48b7-9478-e3fd71f51f1f';
     const redirectUri = 'https://open-house-chi.vercel.app/api/auth/kommo/callback';
     
-    // URL de autorización de Kommo
+    // URL de autorización de Kommo (CORREGIDA)
     const authUrl = new URL('https://winstonchurchill.kommo.com/oauth2/authorize');
     authUrl.searchParams.append('client_id', clientId);
     authUrl.searchParams.append('response_type', 'code');
