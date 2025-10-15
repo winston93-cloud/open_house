@@ -39,7 +39,15 @@ async function getKommoAccessToken(): Promise<string> {
       redirect_uri: KOMMO_CONFIG.redirectUri,
     };
     
-    console.log('📤 Enviando request a Kommo:', requestBody);
+    console.log('📤 Enviando request a Kommo:', {
+      ...requestBody,
+      refresh_token: requestBody.refresh_token.substring(0, 50) + '...' // Solo mostrar primeros 50 caracteres
+    });
+    
+    console.log('🔍 URL completa:', tokenUrl);
+    console.log('🔍 Headers enviados:', {
+      'Content-Type': 'application/json'
+    });
     
     const response = await fetch(tokenUrl, {
       method: 'POST',
@@ -55,6 +63,12 @@ async function getKommoAccessToken(): Promise<string> {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('❌ Error response body:', errorText);
+      console.error('🔍 Request que falló:', {
+        url: tokenUrl,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: requestBody
+      });
       throw new Error(`Error getting access token: ${response.status} - ${errorText}`);
     }
 
