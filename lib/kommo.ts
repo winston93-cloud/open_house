@@ -134,8 +134,28 @@ export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 
     
     const messageUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/chats`;
     
-    // Create WhatsApp confirmation message
-    const message = `¡Hola! 👋
+    // Create WhatsApp confirmation message based on plantel
+    const message = plantel === 'educativo' 
+      ? `¡Hola! 👋
+
+Gracias por tu interés en el Open House del Instituto Educativo Winston.
+
+✅ Tu registro ha sido confirmado exitosamente.
+
+📅 Fecha: [Fecha del evento]
+🕐 Hora: [Hora del evento]
+📍 Ubicación: Instituto Educativo Winston
+🏫 Dirección: [Dirección Educativo Winston]
+
+📞 Contacto:
+• Teléfono: 833 347 4507
+• WhatsApp: 833 347 4507
+• Email: [Email Educativo Winston]
+
+Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
+
+¡Nos vemos pronto! 🎓`
+      : `¡Hola! 👋
 
 Gracias por tu interés en el Open House del Instituto Winston Churchill.
 
@@ -143,7 +163,13 @@ Gracias por tu interés en el Open House del Instituto Winston Churchill.
 
 📅 Fecha: [Fecha del evento]
 🕐 Hora: [Hora del evento]
-📍 Ubicación: [Dirección del plantel]
+📍 Ubicación: Instituto Winston Churchill
+🏫 Dirección: [Dirección Winston Churchill]
+
+📞 Contacto:
+• Teléfono: 833 437 8743
+• WhatsApp: 833 437 8743
+• Email: [Email Winston Churchill]
 
 Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
