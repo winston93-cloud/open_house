@@ -3,12 +3,12 @@ import { NextResponse } from 'next/server';
 
 // Kommo API Configuration
 const KOMMO_CONFIG = {
-  subdomain: process.env.KOMMO_SUBDOMAIN,
-  clientId: process.env.KOMMO_CLIENT_ID,
-  clientSecret: process.env.KOMMO_CLIENT_SECRET,
-  redirectUri: process.env.KOMMO_REDIRECT_URI,
-  pipelineId: process.env.KOMMO_PIPELINE_ID,
-  whatsappNumber: process.env.KOMMO_WHATSAPP_NUMBER,
+  subdomain: 'winstonchurchill',
+  clientId: '0c82cd53-e059-48b7-9478-e3fd71f51f1f',
+  clientSecret: 'EZGNNwdY3UmmDw6ryQqArm0dLaq2kjDlkTbo0tQP3cxwiVZPEb9A4fWzjXNyoHqq',
+  redirectUri: 'https://open-house-chi.vercel.app/api/auth/kommo/callback',
+  pipelineId: '5030645', // Pipeline ID que me diste antes
+  whatsappNumber: '8334378743',
 };
 
 // WhatsApp Numbers by Plantel
