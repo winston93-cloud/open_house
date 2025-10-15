@@ -117,8 +117,8 @@ export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 
     // Determine WhatsApp number based on plantel
     const whatsappNumber = WHATSAPP_NUMBERS[plantel];
     
-    // Por ahora, solo agregar una nota al lead en lugar de enviar WhatsApp
-    const noteUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}/notes`;
+    // Intentar enviar WhatsApp real usando el endpoint de chats
+    const chatUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/chats`;
     
     // Create confirmation message based on plantel
     const message = plantel === 'educativo' 
@@ -161,36 +161,36 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
 ¡Nos vemos pronto! 🎓`;
 
-    const notePayload = {
-      note_type: [
-        {
-          note_type: 'common',
-          params: {
-            text: `WhatsApp automático para enviar:\n\n${message}\n\nTeléfono: ${phone}`
-          }
-        }
-      ]
+    const chatPayload = {
+      entity_id: leadId,
+      entity_type: 'lead',
+      message: message,
+      phone: phone.replace(/\D/g, ''), // Remove non-digits
+      source: {
+        external_id: whatsappNumber,
+        type: 'whatsapp'
+      }
     };
 
-    const response = await fetch(noteUrl, {
+    const response = await fetch(chatUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(notePayload),
+      body: JSON.stringify(chatPayload),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error adding note to lead:', errorText);
-      throw new Error(`Error adding note: ${response.status}`);
+      console.error('Error sending WhatsApp message:', errorText);
+      throw new Error(`Error sending WhatsApp: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error adding note to Kommo lead:', error);
+    console.error('Error sending Kommo WhatsApp:', error);
     throw error;
   }
 }
