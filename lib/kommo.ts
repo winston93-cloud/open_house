@@ -185,7 +185,11 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
 // Determine plantel based on form data or logic
 export function determinePlantel(formData: any): 'winston' | 'educativo' {
-  // Por ahora, usaremos Winston Churchill por defecto
-  // Puedes cambiar esta lógica según tus necesidades
+  // Maternal y Kinder → Educativo Winston
+  // Primaria y Secundaria → Winston Churchill
+  if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+    return 'educativo';
+  }
+  // Por defecto, Primaria y Secundaria van a Winston Churchill
   return 'winston';
 }
