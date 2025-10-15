@@ -557,8 +557,7 @@ body {
   color: #1f2937;
 }
 
-.admin-email,
-.admin-whatsapp {
+.admin-email {
   color: #6b7280;
   font-size: 0.9rem;
 }

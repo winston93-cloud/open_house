@@ -9,7 +9,6 @@ interface Inscripcion {
   nivel_academico: string;
   grado_escolar: string;
   email: string;
-  whatsapp: string;
   fecha_inscripcion: string;
   created_at: string;
   confirmacion_asistencia: string;
@@ -22,7 +21,6 @@ interface Sesion {
   nivel_academico: string;
   grado_escolar: string;
   email: string;
-  whatsapp: string;
   fecha_inscripcion: string;
   created_at: string;
   reminder_sent: boolean;
@@ -236,7 +234,7 @@ export default function AdminDashboard() {
         ['', '', '', '', '', '', ''],
         ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', ''],
         ['', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
       ];
       
       openHouse.forEach(item => {
@@ -246,7 +244,6 @@ export default function AdminDashboard() {
           item.nivel_academico,
           item.grado_escolar,
           item.email,
-          item.whatsapp,
           new Date(item.created_at).toLocaleDateString('es-MX'),
           item.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
           item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
@@ -261,7 +258,6 @@ export default function AdminDashboard() {
         { width: 15 },
         { width: 15 },
         { width: 35 },
-        { width: 20 },
         { width: 25 },
         { width: 15 }
       ];
@@ -274,7 +270,7 @@ export default function AdminDashboard() {
         ['', '', '', '', '', '', ''],
         ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', ''],
         ['', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'WHATSAPP', 'FECHA DE INSCRIPCIÓN']
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'FECHA DE INSCRIPCIÓN']
       ];
       
       sesiones.forEach(item => {
@@ -284,7 +280,6 @@ export default function AdminDashboard() {
           item.nivel_academico,
           item.grado_escolar,
           item.email,
-          item.whatsapp,
           new Date(item.created_at).toLocaleDateString('es-MX')
         ]);
       });
@@ -296,7 +291,6 @@ export default function AdminDashboard() {
         { width: 15 },
         { width: 15 },
         { width: 35 },
-        { width: 20 },
         { width: 25 }
       ];
       
@@ -383,7 +377,7 @@ export default function AdminDashboard() {
               <div>
               <h1>Dashboard de Gestión Winston</h1>
               <p>Sistema de gestión de inscripciones</p>
-            </div>
+              </div>
             </div>
           
           <div className="admin-header-actions">
@@ -524,7 +518,6 @@ export default function AdminDashboard() {
                   <th>Nivel</th>
                   <th>Grado</th>
                   <th>Email</th>
-                  <th>WhatsApp</th>
                   <th>Fecha</th>
                       <th>Confirmación</th>
                 </tr>
@@ -571,7 +564,6 @@ export default function AdminDashboard() {
                         }
                       </td>
                           <td className="admin-email">{item.email}</td>
-                          <td className="admin-whatsapp">{item.whatsapp}</td>
                       <td className="admin-date">
                             {new Date(item.created_at).toLocaleDateString('es-MX', {
                           year: 'numeric',
@@ -591,7 +583,7 @@ export default function AdminDashboard() {
                                item.confirmacion_asistencia === 'no_confirmado' ? '❌ No confirmado' :
                                '⏳ Pendiente'}
                             </span>
-                          </td>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -693,7 +685,6 @@ export default function AdminDashboard() {
                       <th>Nivel</th>
                       <th>Grado</th>
                       <th>Email</th>
-                      <th>WhatsApp</th>
                       <th>Fecha</th>
                       <th>Recordatorio</th>
                     </tr>
@@ -740,7 +731,6 @@ export default function AdminDashboard() {
                             }
                           </td>
                           <td className="admin-email">{item.email}</td>
-                          <td className="admin-whatsapp">{item.whatsapp}</td>
                           <td className="admin-date">
                             {new Date(item.created_at).toLocaleDateString('es-MX', {
                               year: 'numeric',

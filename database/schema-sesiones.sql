@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS sesiones (
     nombre_padre VARCHAR(255) NOT NULL,
     nombre_madre VARCHAR(255) NOT NULL,
     telefono VARCHAR(20) NOT NULL,
-    whatsapp VARCHAR(20) NOT NULL,
     email VARCHAR(255) NOT NULL,
     direccion TEXT NOT NULL,
     parentesco VARCHAR(50),

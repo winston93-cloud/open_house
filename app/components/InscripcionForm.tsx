@@ -11,7 +11,6 @@ interface FormData {
   escuelaProcedencia: string
   nombreCompleto: string
   correo: string
-  whatsapp: string
   parentesco: string
   personasAsistiran: string
   medioEntero: string
@@ -31,7 +30,6 @@ export default function InscripcionForm() {
     escuelaProcedencia: '',
     nombreCompleto: '',
     correo: '',
-    whatsapp: '',
     parentesco: '',
     personasAsistiran: '',
     medioEntero: ''
@@ -89,7 +87,7 @@ export default function InscripcionForm() {
     const requiredFields = [
       'nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento',
       'genero', 'escuelaProcedencia', 'nombreCompleto', 'correo',
-      'whatsapp', 'parentesco', 'personasAsistiran', 'medioEntero'
+      'parentesco', 'personasAsistiran', 'medioEntero'
     ]
 
     requiredFields.forEach(field => {
@@ -121,7 +119,6 @@ export default function InscripcionForm() {
       escuelaProcedencia: 'Escuela de procedencia',
       nombreCompleto: 'Nombre completo',
       correo: 'Correo electrónico',
-      whatsapp: 'WhatsApp',
       parentesco: 'Parentesco',
       personasAsistiran: 'Personas que asistirán al evento',
       medioEntero: 'Medio por el cual se enteró'
@@ -200,7 +197,6 @@ export default function InscripcionForm() {
           escuelaProcedencia: '',
           nombreCompleto: '',
           correo: '',
-          whatsapp: '',
           parentesco: '',
           personasAsistiran: '',
           medioEntero: ''
@@ -430,22 +426,6 @@ export default function InscripcionForm() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="whatsapp">
-                  WhatsApp <span className="required">*</span>
-                </label>
-                <input
-                  type="tel"
-                  id="whatsapp"
-                  name="whatsapp"
-                  value={formData.whatsapp}
-                  onChange={handleInputChange}
-                  placeholder="833..."
-                />
-                {errors.whatsapp && (
-                  <div className="error-message">{errors.whatsapp}</div>
-                )}
-              </div>
 
               <div className="form-group">
                 <label htmlFor="parentesco">

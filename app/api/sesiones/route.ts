@@ -2,136 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
-    // Función para enviar WhatsApp
-    const sendWhatsAppMessage = async (phoneNumber: string, formData: any) => {
-      try {
-        console.log('=== INICIANDO ENVÍO WHATSAPP ===');
-        console.log('Número destino:', phoneNumber);
-        console.log('Mensaje a enviar: Template sesiones informativas con parámetros');
-        console.log('URL API:', 'https://graph.facebook.com/v22.0/821192997746970/messages');
-        
-        // Log para el navegador
-        console.log('🔍 WHATSAPP DEBUG - Iniciando envío a:', phoneNumber);
-        
-        const requestBody = {
-          messaging_product: 'whatsapp',
-          to: phoneNumber,
-          type: 'template',
-          template: {
-            name: 'openhouse',
-            language: { 
-              code: 'es' 
-            }
-          }
-        };
-        
-        console.log('Request body:', JSON.stringify(requestBody, null, 2));
-        console.log('Token (primeros 20 chars):', process.env.WHATSAPP_TOKEN?.substring(0, 20) || 'NO TOKEN');
-        
-        // Usar la API de WhatsApp Business con ID del número de Meta
-        const response = await fetch('https://graph.facebook.com/v22.0/821192997746970/messages', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer EAARaYqnPlqYBPsgLZCwP3kHsaM4bLK3yhGjX2ieuylGawDh8HXGU2Y6sb3ZAIevKEFv8iuMWXKlpBnMzveBJqIRmFDKZAkqtjFyTd47UICmtLImvucdQrYeH1S0cV0k4gLt8U2ZAaGpohJBmMgloP8DalA6bk1t2gNvdEuQfZAZCZBcpQmoplvdtVnLgPEIWvObebuwx5ont0jW9QktI2VNlONJObESr5gdvcrv0buhUx0NCPdEB6tRAoZCUcZAnp`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody)
-        });
 
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-        
-        const responseText = await response.text();
-        console.log('Response body:', responseText);
 
-        if (!response.ok) {
-          console.error('Error sending WhatsApp:', responseText);
-          console.log('❌ WHATSAPP ERROR - Status:', response.status, 'Response:', responseText);
-          return { success: false, error: responseText, status: response.status };
-        }
-
-        console.log('=== WHATSAPP ENVIADO EXITOSAMENTE ===');
-        console.log('✅ WHATSAPP SUCCESS - Mensaje enviado correctamente');
-        return { success: true, response: responseText };
-      } catch (error) {
-        console.error('WhatsApp error:', error);
-        return { success: false, error: 'Error en el proceso de envío', status: 0 };
-      }
-    };
-
-// Template para WhatsApp - Instituto Educativo Winston
-const createEducativoWhatsAppMessage = (formData: any, fechaEvento: string, horaEvento: string) => {
-  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, whatsapp } = formData;
-  
-  const gradoFormateado = gradoEscolar
-    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
-    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
-    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2');
-
-  return `🏫 *INSTITUTO EDUCATIVO WINSTON CHURCHILL*
-📅 *SESIÓN INFORMATIVA - ${fechaEvento}*
-
-¡Hola! 👋
-
-Confirmamos tu inscripción a la Sesión Informativa:
-
-👤 *Información del Aspirante:*
-• Nombre: ${nombreAspirante}
-• Nivel: ${nivelAcademico.charAt(0).toUpperCase() + nivelAcademico.slice(1)}
-• Grado: ${gradoFormateado}
-• Fecha de nacimiento: ${fechaNacimiento}
-
-👨‍👩‍👧‍👦 *Información del Padre/Madre:*
-• Nombre: ${nombreCompleto}
-• WhatsApp: ${whatsapp}
-
-📅 *Detalles del Evento:*
-• Fecha: ${fechaEvento}
-• Hora: ${horaEvento}
-• Lugar: Instituto Winston Churchill — Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas
-
-¡Esperamos verte pronto! 🎉
-
-Para más información: 833 347 4507`;
-
-};
-
-// Template para WhatsApp - Instituto Winston Churchill
-const createChurchillWhatsAppMessage = (formData: any, fechaEvento: string, horaEvento: string) => {
-  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, whatsapp } = formData;
-  
-  const gradoFormateado = gradoEscolar
-    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')
-    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')
-    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2');
-
-  return `🏛️ *INSTITUTO WINSTON CHURCHILL*
-📅 *SESIÓN INFORMATIVA - ${fechaEvento}*
-
-¡Hola! 👋
-
-Confirmamos tu inscripción a la Sesión Informativa:
-
-👤 *Información del Aspirante:*
-• Nombre: ${nombreAspirante}
-• Nivel: ${nivelAcademico.charAt(0).toUpperCase() + nivelAcademico.slice(1)}
-• Grado: ${gradoFormateado}
-• Fecha de nacimiento: ${fechaNacimiento}
-
-👨‍👩‍👧‍👦 *Información del Padre/Madre:*
-• Nombre: ${nombreCompleto}
-• WhatsApp: ${whatsapp}
-
-📅 *Detalles del Evento:*
-• Fecha: ${fechaEvento}
-• Hora: ${horaEvento}
-    • Lugar: Instituto Winston Churchill — Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas
-
-¡Esperamos verte pronto! 🎉
-
-Para más información: 833 437 8743`;
-
-};
 
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
@@ -751,7 +623,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.json();
     
     // Validar datos requeridos
-    const requiredFields = ['nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento', 'nombreCompleto', 'correo', 'whatsapp', 'medioEntero'];
+    const requiredFields = ['nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento', 'nombreCompleto', 'correo', 'medioEntero'];
     const missingFields = requiredFields.filter(field => !formData[field]);
     
     if (missingFields.length > 0) {
@@ -777,7 +649,7 @@ export async function POST(request: NextRequest) {
           nombre_padre: formData.nombreCompleto,
           nombre_madre: formData.nombreCompleto, // Asumiendo que es el mismo para ambos padres
           telefono: formData.telefono || '',
-          whatsapp: formData.whatsapp,
+          whatsapp: '',
           email: formData.correo,
           direccion: formData.direccion || '',
           fecha_inscripcion: new Date().toISOString(),
@@ -853,8 +725,6 @@ export async function POST(request: NextRequest) {
                 <td style="padding: 8px 0; color: #FA9D00;">${formData.correo}</td>
               </tr>
               <tr>
-                <td style="padding: 8px 0; font-weight: bold; color: #374151;">WhatsApp:</td>
-                <td style="padding: 8px 0; color: #FA9D00;">${formData.whatsapp}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Fecha de Inscripción:</td>
@@ -868,8 +738,7 @@ export async function POST(request: NextRequest) {
             
             <div style="margin-top: 20px; padding: 15px; background: #fff7ed; border-left: 4px solid #FA9D00; border-radius: 5px;">
               <p style="margin: 0; color: #c2410c; font-size: 14px;">
-                <strong>📧 Email de confirmación enviado a:</strong> ${formData.correo}<br>
-                <strong>📱 WhatsApp enviado a:</strong> ${formData.whatsapp}
+                <strong>📧 Email de confirmación enviado a:</strong> ${formData.correo}
               </p>
             </div>
           </div>
@@ -884,63 +753,11 @@ export async function POST(request: NextRequest) {
     await transporter.sendMail(copyMailOptions);
     console.log('📧 Copia de inscripción a Sesión Informativa enviada a sistemas.desarrollo@winston93.edu.mx');
     
-    // Enviar WhatsApp
-    try {
-      const fechaEvento = 'Sábado 11 de enero de 2025';
-      const horaEvento = '9:00 AM - 1:00 PM';
-      
-      let whatsappMessage = '';
-      
-      if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-        whatsappMessage = createEducativoWhatsAppMessage(formData, fechaEvento, horaEvento);
-      } else {
-        whatsappMessage = createChurchillWhatsAppMessage(formData, fechaEvento, horaEvento);
-      }
-      
-      // Limpiar el número de WhatsApp del usuario (quitar espacios, guiones, etc.)
-      const cleanWhatsapp = formData.whatsapp.replace(/[\s\-\(\)]/g, '');
-      const formattedWhatsapp = cleanWhatsapp.startsWith('52') ? cleanWhatsapp : `52${cleanWhatsapp}`;
-      
-      // Enviar WhatsApp
-      console.log('WhatsApp message to send:', whatsappMessage);
-      console.log('To number:', formattedWhatsapp);
-      
-      // Enviar WhatsApp real
-      const whatsappResult = await sendWhatsAppMessage(formattedWhatsapp, formData);
-      
-      if (whatsappResult && whatsappResult.success) {
-        console.log('WhatsApp enviado exitosamente a:', formattedWhatsapp);
-        return NextResponse.json({ 
-          success: true, 
-          message: 'Inscripción guardada, email y WhatsApp enviados exitosamente',
-          inscripcionId: inscripcion?.[0]?.id,
-          whatsappStatus: 'sent'
-        });
-      } else {
-        console.log('Error al enviar WhatsApp a:', formattedWhatsapp);
-        console.log('WhatsApp error details:', whatsappResult);
-        const errorMessage = (whatsappResult && typeof whatsappResult === 'object' && 'error' in whatsappResult) 
-          ? whatsappResult.error 
-          : 'Error desconocido';
-        return NextResponse.json({ 
-          success: true, 
-          message: 'Inscripción guardada, email enviado exitosamente',
-          inscripcionId: inscripcion?.[0]?.id,
-          whatsappStatus: 'failed',
-          whatsappError: errorMessage
-        });
-      }
-      
-    } catch (whatsappError) {
-      console.error('Error al enviar WhatsApp:', whatsappError);
-      return NextResponse.json({ 
-        success: true, 
-        message: 'Inscripción guardada, email enviado exitosamente',
-        inscripcionId: inscripcion?.[0]?.id,
-        whatsappStatus: 'failed',
-        whatsappError: 'Error en el proceso de envío'
-      });
-    }
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Inscripción guardada y email enviado exitosamente',
+      inscripcionId: inscripcion?.[0]?.id
+    });
     
   } catch (error) {
     console.error('Error al enviar email:', error);
