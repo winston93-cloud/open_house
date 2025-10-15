@@ -118,7 +118,7 @@ export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 
     const whatsappNumber = WHATSAPP_NUMBERS[plantel];
     
     // Enviar WhatsApp automático usando el endpoint correcto
-    const whatsappUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/chats/whatsapp/messages`;
+    const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/messages`;
     
     // Create confirmation message based on plantel
     const message = plantel === 'educativo' 
@@ -161,7 +161,7 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
 ¡Nos vemos pronto! 🎓`;
 
-    const whatsappPayload = {
+    const messagesPayload = {
       entity_id: leadId,
       entity_type: 'lead',
       message: message,
@@ -172,13 +172,13 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
       }
     };
 
-    const response = await fetch(whatsappUrl, {
+    const response = await fetch(messagesUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(whatsappPayload),
+      body: JSON.stringify(messagesPayload),
     });
 
     if (!response.ok) {
