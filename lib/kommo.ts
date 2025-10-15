@@ -117,8 +117,8 @@ export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 
     // Determine WhatsApp number based on plantel
     const whatsappNumber = WHATSAPP_NUMBERS[plantel];
     
-    // Agregar una nota al lead con el mensaje de WhatsApp para enviar manualmente
-    const noteUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}/notes`;
+    // Actualizar el lead con el mensaje de WhatsApp como campo personalizado
+    const updateUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}`;
     
     // Create confirmation message based on plantel
     const message = plantel === 'educativo' 
@@ -161,40 +161,39 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
 ¡Nos vemos pronto! 🎓`;
 
-    const notePayload = {
-      note_type: ['common'],
-      params: [
+    const updatePayload = {
+      custom_fields_values: [
         {
-          note_type: 'common',
-          text: `📱 WHATSAPP PARA ENVIAR MANUALMENTE:
+          field_id: 'whatsapp_message',
+          values: [{ value: `📱 WHATSAPP PARA ENVIAR MANUALMENTE:
 
 ${message}
 
 📞 Teléfono: ${phone}
-🏫 Plantel: ${plantel === 'educativo' ? 'Instituto Educativo Winston' : 'Instituto Winston Churchill'}`
+🏫 Plantel: ${plantel === 'educativo' ? 'Instituto Educativo Winston' : 'Instituto Winston Churchill'}` }]
         }
       ]
     };
 
-    const response = await fetch(noteUrl, {
-      method: 'POST',
+    const response = await fetch(updateUrl, {
+      method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(notePayload),
+      body: JSON.stringify(updatePayload),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error adding note to lead:', errorText);
-      throw new Error(`Error adding note: ${response.status}`);
+      console.error('Error updating lead with WhatsApp message:', errorText);
+      throw new Error(`Error updating lead: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error adding note to Kommo lead:', error);
+    console.error('Error updating Kommo lead with WhatsApp message:', error);
     throw error;
   }
 }
