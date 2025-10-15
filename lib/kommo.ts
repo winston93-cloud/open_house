@@ -41,7 +41,7 @@ async function getKommoAccessToken(): Promise<string> {
     
     console.log('📤 Enviando request a Kommo:', {
       ...requestBody,
-      refresh_token: requestBody.refresh_token.substring(0, 50) + '...' // Solo mostrar primeros 50 caracteres
+      refresh_token: requestBody.refresh_token ? requestBody.refresh_token.substring(0, 50) + '...' : 'MISSING' // Solo mostrar primeros 50 caracteres
     });
     
     console.log('🔍 URL completa:', tokenUrl);
