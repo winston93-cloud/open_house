@@ -22,25 +22,44 @@ async function getKommoAccessToken(): Promise<string> {
   try {
     const tokenUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/oauth2/access_token`;
     
+    console.log('🔑 Configuración Kommo:', {
+      subdomain: KOMMO_CONFIG.subdomain,
+      clientId: KOMMO_CONFIG.clientId ? 'SET' : 'MISSING',
+      clientSecret: KOMMO_CONFIG.clientSecret ? 'SET' : 'MISSING',
+      redirectUri: KOMMO_CONFIG.redirectUri,
+      refreshToken: process.env.KOMMO_REFRESH_TOKEN ? 'SET' : 'MISSING',
+      tokenUrl: tokenUrl
+    });
+    
+    const requestBody = {
+      client_id: KOMMO_CONFIG.clientId,
+      client_secret: KOMMO_CONFIG.clientSecret,
+      grant_type: 'refresh_token',
+      refresh_token: process.env.KOMMO_REFRESH_TOKEN,
+      redirect_uri: KOMMO_CONFIG.redirectUri,
+    };
+    
+    console.log('📤 Enviando request a Kommo:', requestBody);
+    
     const response = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        client_id: KOMMO_CONFIG.clientId,
-        client_secret: KOMMO_CONFIG.clientSecret,
-        grant_type: 'refresh_token',
-        refresh_token: process.env.KOMMO_REFRESH_TOKEN,
-        redirect_uri: KOMMO_CONFIG.redirectUri,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
+    console.log('📥 Response status:', response.status);
+    console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
-      throw new Error(`Error getting access token: ${response.status}`);
+      const errorText = await response.text();
+      console.error('❌ Error response body:', errorText);
+      throw new Error(`Error getting access token: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    console.log('✅ Access token obtenido exitosamente');
     return data.access_token;
   } catch (error) {
     console.error('Error getting Kommo access token:', error);
