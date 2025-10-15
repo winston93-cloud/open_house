@@ -162,10 +162,14 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 ¡Nos vemos pronto! 🎓`;
 
     const notePayload = {
-      note_type: ['common'],
-      params: {
-        text: `WhatsApp automático para enviar:\n\n${message}\n\nTeléfono: ${phone}`
-      }
+      note_type: [
+        {
+          note_type: 'common',
+          params: {
+            text: `WhatsApp automático para enviar:\n\n${message}\n\nTeléfono: ${phone}`
+          }
+        }
+      ]
     };
 
     const response = await fetch(noteUrl, {
