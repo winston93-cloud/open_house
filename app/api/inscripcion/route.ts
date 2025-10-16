@@ -684,19 +684,36 @@ export async function POST(request: NextRequest) {
       
       // Paso 1: Crear contacto con email y teléfono
       console.log('👤 Paso 1: Creando contacto...');
+      
+      // Validar que los campos no estén vacíos
+      const emailValue = formData.correo || '';
+      const phoneValue = formData.telefono || '';
+      
+      console.log('📧 Email:', emailValue);
+      console.log('📱 Teléfono:', phoneValue);
+      
+      const contactFields = [];
+      
+      // Solo agregar email si no está vacío
+      if (emailValue.trim()) {
+        contactFields.push({
+          field_id: 557100, // Email
+          values: [{ value: emailValue, enum_code: "WORK" }]
+        });
+      }
+      
+      // Solo agregar teléfono si no está vacío
+      if (phoneValue.trim()) {
+        contactFields.push({
+          field_id: 557098, // Teléfono
+          values: [{ value: phoneValue, enum_code: "MOB" }]
+        });
+      }
+      
       const contactPayload = [
         {
           name: formData.nombreCompleto,
-          custom_fields_values: [
-            {
-              field_id: 557100, // Email
-              values: [{ value: formData.correo, enum_code: "WORK" }]
-            },
-            {
-              field_id: 557098, // Teléfono
-              values: [{ value: formData.telefono, enum_code: "MOB" }]
-            }
-          ]
+          custom_fields_values: contactFields
         }
       ];
       
