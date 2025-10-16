@@ -55,26 +55,15 @@ export async function createKommoLead(leadData: {
     
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
+    // Payload SIMPLIFICADO al máximo - solo lo esencial
     const leadPayload = {
-      name: [leadData.name], // Usar el nombre del papá como título del lead
+      name: [leadData.name],
       price: [0],
       pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
-      status_id: null, // Will use default stage
-      responsible_user_id: null,
       _embedded: {
         contacts: [
           {
-            name: leadData.name,
-            custom_fields_values: [
-              {
-                field_id: 'phone', // Campo de teléfono
-                values: [{ value: leadData.phone }]
-              },
-              {
-                field_id: 'email', // Campo de email
-                values: [{ value: leadData.email }]
-              }
-            ]
+            name: leadData.name
           }
         ]
       }
