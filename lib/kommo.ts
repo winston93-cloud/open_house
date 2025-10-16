@@ -90,6 +90,9 @@ export async function createKommoLead(leadData: {
       }
     };
 
+    // Log del payload completo
+    console.log('📤 Payload completo que se envía a Kommo:', JSON.stringify(leadPayload, null, 2));
+    
     const response = await fetch(leadUrl, {
       method: 'POST',
       headers: {
@@ -106,6 +109,16 @@ export async function createKommoLead(leadData: {
     }
 
     const data = await response.json();
+    console.log('📥 Respuesta completa de Kommo:', JSON.stringify(data, null, 2));
+    
+    // Verificar cuántos leads se crearon
+    if (data._embedded && data._embedded.leads) {
+      console.log(`📊 Total de leads creados: ${data._embedded.leads.length}`);
+      data._embedded.leads.forEach((lead: any, index: number) => {
+        console.log(`📋 Lead ${index + 1}: ID=${lead.id}, Name="${lead.name}"`);
+      });
+    }
+    
     return data._embedded.leads[0].id;
   } catch (error) {
     console.error('Error creating Kommo lead:', error);
