@@ -680,9 +680,9 @@ export async function POST(request: NextRequest) {
       const testLeadUrl = `https://winstonchurchill.kommo.com/api/v4/leads`;
       
       const testPayload = {
-        name: "TEST LEAD",
-        price: 0,
-        pipeline_id: 5030645
+        name: ["TEST LEAD"],
+        price: [0],
+        pipeline_id: [5030645]
       };
       
       console.log('📤 Payload de prueba:', JSON.stringify(testPayload, null, 2));
