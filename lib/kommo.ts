@@ -55,18 +55,11 @@ export async function createKommoLead(leadData: {
     
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
-    // Payload SIMPLIFICADO al máximo - solo lo esencial
+    // Payload EXTREMADAMENTE SIMPLIFICADO - sin contactos embebidos
     const leadPayload = {
       name: [leadData.name],
       price: [0],
       pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
-      _embedded: {
-        contacts: [
-          {
-            name: leadData.name
-          }
-        ]
-      }
     };
 
     // Log del payload completo
