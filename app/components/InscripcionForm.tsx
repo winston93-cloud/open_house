@@ -11,6 +11,7 @@ interface FormData {
   escuelaProcedencia: string
   nombreCompleto: string
   correo: string
+  telefono: string
   parentesco: string
   personasAsistiran: string
   medioEntero: string
@@ -30,6 +31,7 @@ export default function InscripcionForm() {
     escuelaProcedencia: '',
     nombreCompleto: '',
     correo: '',
+    telefono: '',
     parentesco: '',
     personasAsistiran: '',
     medioEntero: ''
@@ -87,7 +89,7 @@ export default function InscripcionForm() {
     const requiredFields = [
       'nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento',
       'genero', 'escuelaProcedencia', 'nombreCompleto', 'correo',
-      'parentesco', 'personasAsistiran', 'medioEntero'
+      'telefono', 'parentesco', 'personasAsistiran', 'medioEntero'
     ]
 
     requiredFields.forEach(field => {
@@ -119,6 +121,7 @@ export default function InscripcionForm() {
       escuelaProcedencia: 'Escuela de procedencia',
       nombreCompleto: 'Nombre completo',
       correo: 'Correo electrónico',
+      telefono: 'Teléfono WhatsApp',
       parentesco: 'Parentesco',
       personasAsistiran: 'Personas que asistirán al evento',
       medioEntero: 'Medio por el cual se enteró'
@@ -426,6 +429,22 @@ export default function InscripcionForm() {
                 </div>
               </div>
 
+              <div className="form-group">
+                <label htmlFor="telefono">
+                  Teléfono WhatsApp <span className="required">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="telefono"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleInputChange}
+                  placeholder="Número de WhatsApp"
+                />
+                {errors.telefono && (
+                  <div className="error-message">{errors.telefono}</div>
+                )}
+              </div>
 
               <div className="form-group">
                 <label htmlFor="parentesco">
