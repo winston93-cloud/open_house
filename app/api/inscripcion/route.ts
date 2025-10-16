@@ -740,7 +740,7 @@ export async function POST(request: NextRequest) {
       console.log('📋 Paso 2: Creando lead con contacto...');
       const testPayload = [
         {
-          name: formData.nombreCompleto,
+          name: `[Open House] ${formData.nombreCompleto}`,
           price: 0,
           pipeline_id: 10453492, // Pipeline "En espera de Datos"
           _embedded: {
