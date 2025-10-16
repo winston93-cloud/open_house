@@ -200,6 +200,7 @@ export default function InscripcionForm() {
           escuelaProcedencia: '',
           nombreCompleto: '',
           correo: '',
+          telefono: '',
           parentesco: '',
           personasAsistiran: '',
           medioEntero: ''
