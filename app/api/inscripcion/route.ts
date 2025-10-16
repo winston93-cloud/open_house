@@ -692,11 +692,12 @@ export async function POST(request: NextRequest) {
       
       console.log('✅ Lead creado en Kommo con ID:', kommoLeadId);
       
-      // Send WhatsApp confirmation
-      console.log('📱 Enviando WhatsApp de confirmación...');
-      await sendKommoWhatsApp(kommoLeadId, formData.telefono || '', plantel);
+      // Send WhatsApp confirmation - TEMPORARILY DISABLED
+      console.log('📱 WhatsApp automático deshabilitado temporalmente');
+      console.log('💡 Usar Salesbot de Kommo para envío automático');
+      // await sendKommoWhatsApp(kommoLeadId, formData.telefono || '', plantel);
       
-      console.log('✅ WhatsApp enviado exitosamente');
+      console.log('✅ Lead creado exitosamente en Kommo');
       
     } catch (kommoError) {
       console.error('❌ Error en integración Kommo:', kommoError);
