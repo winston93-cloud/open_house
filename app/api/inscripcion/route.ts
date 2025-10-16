@@ -623,6 +623,10 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.json();
     
+    // Log para detectar múltiples ejecuciones
+    console.log('🚀 INICIO - Procesando inscripción para:', formData.nombreCompleto);
+    console.log('🕐 Timestamp:', new Date().toISOString());
+    
     // Validar datos requeridos
     const requiredFields = ['nombreAspirante', 'nivelAcademico', 'gradoEscolar', 'fechaNacimiento', 'nombreCompleto', 'correo', 'medioEntero'];
     const missingFields = requiredFields.filter(field => !formData[field]);

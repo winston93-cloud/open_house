@@ -44,6 +44,10 @@ export async function createKommoLead(leadData: {
   nombreAspirante: string;
 }) {
   try {
+    // Log para detectar múltiples llamadas
+    console.log('🔍 createKommoLead llamado para:', leadData.name);
+    console.log('🕐 Timestamp createKommoLead:', new Date().toISOString());
+    
     const accessToken = await getKommoAccessToken();
     
     // Determine WhatsApp number based on plantel
@@ -52,7 +56,7 @@ export async function createKommoLead(leadData: {
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
     const leadPayload = {
-      name: [`Open House - ${leadData.nombreAspirante}`],
+      name: [leadData.name], // Usar el nombre del papá como título del lead
       price: [0],
       pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
       status_id: null, // Will use default stage
