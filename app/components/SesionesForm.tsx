@@ -208,6 +208,7 @@ export default function SesionesForm() {
           escuelaProcedencia: '',
           nombreCompleto: '',
           correo: '',
+          telefono: '',
           parentesco: '',
           personasAsistiran: '',
           medioEntero: ''
