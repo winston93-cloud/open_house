@@ -57,9 +57,9 @@ export async function createKommoLead(leadData: {
     
     // Payload EXTREMADAMENTE SIMPLIFICADO - sin contactos embebidos
     const leadPayload = {
-      name: [leadData.name],
-      price: [0],
-      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
+      name: leadData.name, // Cambiar de array a string
+      price: 0, // Cambiar de array a número
+      pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!), // Cambiar de array a número
     };
 
     // Log del payload completo
