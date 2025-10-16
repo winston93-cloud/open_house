@@ -672,38 +672,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ===== INTEGRACIÓN KOMMO =====
-    try {
-      console.log('🚀 Creando lead en Kommo...');
-      
-      // Determine plantel based on nivel académico
-      const plantel = determinePlantel(formData);
-      
-      // Create lead in Kommo
-      const kommoLeadId = await createKommoLead({
-        name: formData.nombreCompleto,
-        phone: formData.telefono || '',
-        email: formData.correo,
-        plantel: plantel,
-        nivelAcademico: formData.nivelAcademico,
-        gradoEscolar: formData.gradoEscolar,
-        nombreAspirante: formData.nombreAspirante,
-      });
-      
-      console.log('✅ Lead creado en Kommo con ID:', kommoLeadId);
-      
-      // Send WhatsApp confirmation - TEMPORARILY DISABLED
-      console.log('📱 WhatsApp automático deshabilitado temporalmente');
-      console.log('💡 Usar Salesbot de Kommo para envío automático');
-      // await sendKommoWhatsApp(kommoLeadId, formData.telefono || '', plantel);
-      
-      console.log('✅ Lead creado exitosamente en Kommo');
-      
-    } catch (kommoError) {
-      console.error('❌ Error en integración Kommo:', kommoError);
-      // No fallar la inscripción si Kommo falla
-      console.log('⚠️ Continuando sin integración Kommo...');
-    }
+    // ===== INTEGRACIÓN KOMMO ===== TEMPORARILY DISABLED
+    console.log('🚫 Integración Kommo deshabilitada temporalmente');
+    console.log('📧 Solo se enviará email de confirmación');
+    console.log('💡 Configurar Salesbot de Kommo manualmente para WhatsApp');
 
     // Crear el template del email
     const emailHtml = createEmailTemplate(formData);
