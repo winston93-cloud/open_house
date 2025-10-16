@@ -706,7 +706,7 @@ export async function POST(request: NextRequest) {
       if (phoneValue.trim()) {
         contactFields.push({
           field_id: 557098, // Teléfono
-          values: [{ value: phoneValue, enum_code: "WORK" }] // WORK = teléfono de oficina
+          values: [{ value: phoneValue, enum_code: "MOB" }] // MOB = móvil (funciona correctamente)
         });
       }
       
