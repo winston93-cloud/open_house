@@ -61,27 +61,17 @@ export async function createKommoLead(leadData: {
       pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
       status_id: null, // Will use default stage
       responsible_user_id: null,
-      custom_fields_values: [
-        {
-          field_id: 'phone', // Campo de teléfono
-          values: [{ value: leadData.phone }]
-        },
-        {
-          field_id: 'email', // Campo de email
-          values: [{ value: leadData.email }]
-        }
-      ],
       _embedded: {
         contacts: [
           {
             name: leadData.name,
             custom_fields_values: [
               {
-                field_id: 'phone',
+                field_id: 'phone', // Campo de teléfono
                 values: [{ value: leadData.phone }]
               },
               {
-                field_id: 'email',
+                field_id: 'email', // Campo de email
                 values: [{ value: leadData.email }]
               }
             ]
