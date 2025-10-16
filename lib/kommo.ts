@@ -33,7 +33,7 @@ async function getKommoAccessToken(): Promise<string> {
   }
 }
 
-// Create lead in Kommo
+// Create contact first, then lead
 export async function createKommoLead(leadData: {
   name: string;
   phone: string;
@@ -50,22 +50,63 @@ export async function createKommoLead(leadData: {
     
     const accessToken = await getKommoAccessToken();
     
-    // Determine WhatsApp number based on plantel
-    const whatsappNumber = WHATSAPP_NUMBERS[leadData.plantel];
+    // Step 1: Create contact first
+    console.log('👤 Paso 1: Creando contacto...');
+    const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
     
+    const contactPayload = {
+      name: leadData.name,
+      custom_fields_values: [
+        {
+          field_id: 'phone',
+          values: [{ value: leadData.phone }]
+        },
+        {
+          field_id: 'email',
+          values: [{ value: leadData.email }]
+        }
+      ]
+    };
+    
+    console.log('📤 Payload del contacto:', JSON.stringify(contactPayload, null, 2));
+    
+    const contactResponse = await fetch(contactUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(contactPayload),
+    });
+    
+    if (!contactResponse.ok) {
+      const errorText = await contactResponse.text();
+      console.error('Error creating contact:', errorText);
+      throw new Error(`Error creating contact: ${contactResponse.status}`);
+    }
+    
+    const contactData = await contactResponse.json();
+    console.log('📥 Respuesta del contacto:', JSON.stringify(contactData, null, 2));
+    
+    const contactId = contactData._embedded.contacts[0].id;
+    console.log('✅ Contacto creado con ID:', contactId);
+    
+    // Step 2: Create lead with contact
+    console.log('📋 Paso 2: Creando lead con contacto...');
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
-    // Payload CORRECTO - arrays pero sin contactos embebidos
     const leadPayload = {
-      name: [leadData.name], // Array como quiere Kommo
-      price: [0], // Array como quiere Kommo
-      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)], // Array como quiere Kommo
+      name: [leadData.name],
+      price: [0],
+      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
+      _embedded: {
+        contacts: [{ id: contactId }]
+      }
     };
 
-    // Log del payload completo
-    console.log('📤 Payload completo que se envía a Kommo:', JSON.stringify(leadPayload, null, 2));
+    console.log('📤 Payload del lead:', JSON.stringify(leadPayload, null, 2));
     
-    const response = await fetch(leadUrl, {
+    const leadResponse = await fetch(leadUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -74,24 +115,24 @@ export async function createKommoLead(leadData: {
       body: JSON.stringify(leadPayload),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error creating Kommo lead:', errorText);
-      throw new Error(`Error creating lead: ${response.status}`);
+    if (!leadResponse.ok) {
+      const errorText = await leadResponse.text();
+      console.error('Error creating lead:', errorText);
+      throw new Error(`Error creating lead: ${leadResponse.status}`);
     }
 
-    const data = await response.json();
-    console.log('📥 Respuesta completa de Kommo:', JSON.stringify(data, null, 2));
+    const leadData = await leadResponse.json();
+    console.log('📥 Respuesta del lead:', JSON.stringify(leadData, null, 2));
     
     // Verificar cuántos leads se crearon
-    if (data._embedded && data._embedded.leads) {
-      console.log(`📊 Total de leads creados: ${data._embedded.leads.length}`);
-      data._embedded.leads.forEach((lead: any, index: number) => {
+    if (leadData._embedded && leadData._embedded.leads) {
+      console.log(`📊 Total de leads creados: ${leadData._embedded.leads.length}`);
+      leadData._embedded.leads.forEach((lead: any, index: number) => {
         console.log(`📋 Lead ${index + 1}: ID=${lead.id}, Name="${lead.name}"`);
       });
     }
     
-    return data._embedded.leads[0].id;
+    return leadData._embedded.leads[0].id;
   } catch (error) {
     console.error('Error creating Kommo lead:', error);
     throw error;
