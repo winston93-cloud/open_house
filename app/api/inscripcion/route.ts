@@ -679,11 +679,11 @@ export async function POST(request: NextRequest) {
       // Usar el pipeline "En espera de Datos" (ID: 10453492)
       const testLeadUrl = `https://winstonchurchill.kommo.com/api/v4/leads`;
       
-      // Probar con payload EXACTAMENTE igual al de Facebook
+      // Probar con arrays como requiere Kommo
       const testPayload = {
-        name: formData.nombreCompleto, // Sin array, como Facebook
-        price: 0, // Sin array, como Facebook
-        pipeline_id: 10453492 // Sin array, como Facebook
+        name: [formData.nombreCompleto],
+        price: [0],
+        pipeline_id: [10453492]
       };
       
       console.log('📤 Payload de prueba:', JSON.stringify(testPayload, null, 2));
