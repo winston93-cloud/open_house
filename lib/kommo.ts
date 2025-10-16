@@ -7,7 +7,7 @@ const KOMMO_CONFIG = {
   clientId: '0c82cd53-e059-48b7-9478-e3fd71f51f1f',
   clientSecret: 'EZGNNwdY3UmmDw6ryQqArm0dLaq2kjDlkTbo0tQP3cxwiVZPEb9A4fWzjXNyoHqq',
   redirectUri: 'https://open-house-chi.vercel.app/api/auth/kommo/callback',
-  pipelineId: '5030645', // Pipeline ID que me diste antes
+  pipelineId: '10453492', // Pipeline "En espera de Datos"
   whatsappNumber: '8334378743',
 };
 
