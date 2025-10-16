@@ -679,7 +679,7 @@ export async function POST(request: NextRequest) {
       // Usar el pipeline "En espera de Datos" (ID: 10453492)
       const testLeadUrl = `https://winstonchurchill.kommo.com/api/v4/leads`;
       
-      // Usar formato que funciona: array con objeto (como ChatGPT sugirió)
+      // Usar formato que funciona: array con objeto (sin campos personalizados)
       const testPayload = [
         {
           name: formData.nombreCompleto,
