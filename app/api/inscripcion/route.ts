@@ -672,47 +672,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ===== INTEGRACIÓN KOMMO ===== PRUEBA SIMPLE
-    try {
-      console.log('🧪 PRUEBA: Creando lead súper simple...');
-      
-      // Prueba con el formato MÁS básico posible
-      const testLeadUrl = `https://winstonchurchill.kommo.com/api/v4/leads`;
-      
-      const testPayload = {
-        name: ["TEST LEAD"],
-        price: [0],
-        pipeline_id: [5030645]
-      };
-      
-      console.log('📤 Payload de prueba:', JSON.stringify(testPayload, null, 2));
-      
-      const testResponse = await fetch(testLeadUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE1YThkY2UyZmU2MTZhNDIxNWM5YzFlM2RiNWY2ZTUxN2JlM2VmODMwZjA1OTA2NDgyNTkxM2Q0ZjRmMDdmZjRkNWNmNWE0ODUyMjZmZWQyIn0.eyJhdWQiOiIwYzgyY2Q1My1lMDU5LTQ4YjctOTQ3OC1lM2ZkNzFmNTFmMWYiLCJqdGkiOiIxNWE4ZGNlMmZlNjE2YTQyMTVjOWMxZTNkYjVmNmU1MTdiZTNlZjgzMGYwNTkwNjQ4MjU5MTNkNGY0ZjA3ZmY0ZDVjZjVhNDg1MjI2ZmVkMiIsImlhdCI6MTc2MDU1Njc2MSwibmJmIjoxNzYwNTU2NzYxLCJleHAiOjE3NjE4Njg4MDAsInN1YiI6Ijc4ODIzMDEiLCJncmFudF90eXBlIjoiIiwiYWNjb3VudF9pZCI6Mjk5MzI2MDcsImJhc2VfZG9tYWluIjoia29tbW8uY29tIiwidmVyc2lvbiI6Miwic2NvcGVzIjpbImNybSIsImZpbGVzIiwiZmlsZXNfZGVsZXRlIiwibm90aWZpY2F0aW9ucyIsInB1c2hfbm90aWZpY2F0aW9ucyJdLCJ1c2VyX2ZsYWdzIjowLCJoYXNoX3V1aWQiOiIzZWE0ZTUyOS0yYWQ4LTQyMGUtYWQzYy05NmUzOTAwODJhMzAiLCJhcGlfZG9tYWluIjoiYXBpLWcua29tbW8uY29tIn0.bfiUhdxV_EaAHB7B5WYM49LjkXcNStSZr48Jx3wZFFq00GYYmRUPFab0Ae5SX71v0pdgMgnqiKVfHZhDKfW3ykXJbmSAxcCTi2snoD4sBlvBur8G1pDKZ6YGuqqKboCAER2HbCcZFA5aFrgVHf5L1hl6o_YKCO4VkIFR8MwLv753b3jtdgOvHGc_scXT3JRHCtu4WAXWVw8w7Obo2wBtiefxx_zL4ZGRRSWj8WoIr9LYRc_yfEVm1HgGAJkyrkvWiFKZggRvyZkx1VB6_cKxu_A5751MscI8UlnpJvyzAbJ7HRsrAuRxnFDBjKo2cVrHo8TQ2hwVwSYTQtviSF9aYA`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testPayload),
-      });
-      
-      console.log('📥 Status de respuesta:', testResponse.status);
-      
-      if (testResponse.ok) {
-        const testData = await testResponse.json();
-        console.log('📥 Respuesta de prueba:', JSON.stringify(testData, null, 2));
-        
-        if (testData._embedded && testData._embedded.leads) {
-          console.log(`🧪 RESULTADO: Se crearon ${testData._embedded.leads.length} leads de prueba`);
-        }
-      } else {
-        const errorText = await testResponse.text();
-        console.log('❌ Error en prueba:', errorText);
-      }
-      
-    } catch (testError) {
-      console.error('❌ Error en prueba simple:', testError);
-    }
+    // ===== INTEGRACIÓN KOMMO ===== DESHABILITADA
+    console.log('🚫 Integración Kommo deshabilitada - problema identificado');
+    console.log('📧 Solo se enviará email de confirmación');
+    console.log('💡 Configurar Salesbot de Kommo para detectar emails y crear leads');
 
     // Crear el template del email
     const emailHtml = createEmailTemplate(formData);
