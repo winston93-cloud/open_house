@@ -736,16 +736,13 @@ export async function POST(request: NextRequest) {
       const contactId = contactData._embedded.contacts[0].id;
       console.log('✅ Contacto creado con ID:', contactId);
       
-      // Paso 2: Crear lead vinculado al contacto
-      console.log('📋 Paso 2: Creando lead con contacto...');
+      // Paso 2: Crear lead simple (sin contacto vinculado)
+      console.log('📋 Paso 2: Creando lead simple...');
       const testPayload = [
         {
           name: `[Open House] ${formData.nombreCompleto}`,
           price: 0,
-          pipeline_id: 10453492, // Pipeline "En espera de Datos"
-          _embedded: {
-            contacts: [{ id: contactId }]
-          }
+          pipeline_id: 10453492 // Pipeline "En espera de Datos"
         }
       ];
       
