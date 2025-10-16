@@ -703,12 +703,13 @@ export async function POST(request: NextRequest) {
       }
       
       // Solo agregar teléfono si no está vacío
-      if (phoneValue.trim()) {
-        contactFields.push({
-          field_id: 557098, // Teléfono
-          values: [{ value: phoneValue, enum_code: "MOB" }]
-        });
-      }
+      // TEMPORALMENTE DESHABILITADO - causa múltiples leads
+      // if (phoneValue.trim()) {
+      //   contactFields.push({
+      //     field_id: 557098, // Teléfono
+      //     values: [{ value: phoneValue, enum_code: "MOB" }]
+      //   });
+      // }
       
       const contactPayload = [
         {
