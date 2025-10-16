@@ -121,18 +121,18 @@ export async function createKommoLead(leadData: {
       throw new Error(`Error creating lead: ${leadResponse.status}`);
     }
 
-    const leadData = await leadResponse.json();
-    console.log('📥 Respuesta del lead:', JSON.stringify(leadData, null, 2));
+    const leadResponseData = await leadResponse.json();
+    console.log('📥 Respuesta del lead:', JSON.stringify(leadResponseData, null, 2));
     
     // Verificar cuántos leads se crearon
-    if (leadData._embedded && leadData._embedded.leads) {
-      console.log(`📊 Total de leads creados: ${leadData._embedded.leads.length}`);
-      leadData._embedded.leads.forEach((lead: any, index: number) => {
+    if (leadResponseData._embedded && leadResponseData._embedded.leads) {
+      console.log(`📊 Total de leads creados: ${leadResponseData._embedded.leads.length}`);
+      leadResponseData._embedded.leads.forEach((lead: any, index: number) => {
         console.log(`📋 Lead ${index + 1}: ID=${lead.id}, Name="${lead.name}"`);
       });
     }
     
-    return leadData._embedded.leads[0].id;
+    return leadResponseData._embedded.leads[0].id;
   } catch (error) {
     console.error('Error creating Kommo lead:', error);
     throw error;
