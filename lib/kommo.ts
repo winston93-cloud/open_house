@@ -98,10 +98,7 @@ export async function createKommoLead(leadData: {
     const leadPayload = {
       name: [leadData.name],
       price: [0],
-      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)],
-      _embedded: {
-        contacts: [{ id: contactId }]
-      }
+      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)]
     };
 
     console.log('📤 Payload del lead:', JSON.stringify(leadPayload, null, 2));
