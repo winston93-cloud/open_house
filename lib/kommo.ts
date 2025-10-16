@@ -55,7 +55,7 @@ export async function createKommoLead(leadData: {
     const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
     
     const contactPayload = {
-      name: leadData.name,
+      name: [leadData.name], // Array como quiere Kommo
       custom_fields_values: [
         {
           field_id: 'phone',
