@@ -297,7 +297,7 @@ export default function SesionesForm() {
               <h3>Fecha de Sesión Informativa</h3>
               <div className="date-item">
                 <span className="date-label">Maternal y Kinder:</span>
-                <span className="date-value">1ro de Diciembre - 6:00 PM</span>
+                <span className="date-value">1 de Diciembre - 6:00 PM</span>
               </div>
               <div className="date-item">
                 <span className="date-label">Primaria:</span>
