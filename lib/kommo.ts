@@ -161,7 +161,7 @@ export async function sendKommoWhatsApp(leadId: number, contactId: number, phone
     const accessToken = await getKommoAccessToken();
     
     // Usar el endpoint correcto según la información del Copilot
-    const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}/contacts/${contactId}/messages`;
+    const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/messages`;
     
     console.log('🔍 URL que se está usando:', messagesUrl);
     
@@ -211,9 +211,11 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
     
     // Payload según especificaciones del Copilot
     const messagesPayload = {
+      to: formattedPhone,
       channel: "whatsapp",
       text: message,
-      phone: formattedPhone
+      entity_id: leadId,
+      entity_type: "leads"
     };
 
     console.log('📤 Payload del WhatsApp:', JSON.stringify(messagesPayload, null, 2));
