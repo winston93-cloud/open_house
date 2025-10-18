@@ -672,110 +672,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ===== INTEGRACIÓN KOMMO ===== CREAR CONTACTO Y LEAD VINCULADO
+    // ===== INTEGRACIÓN KOMMO ===== CREAR LEAD Y ENVIAR WHATSAPP
     try {
-      console.log('🚀 Creando lead en Kommo con contacto vinculado...');
+      console.log('🚀 Creando lead en Kommo y enviando WhatsApp...');
       
-      const accessToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE1YThkY2UyZmU2MTZhNDIxNWM5YzFlM2RiNWY2ZTUxN2JlM2VmODMwZjA1OTA2NDgyNTkxM2Q0ZjRmMDdmZjRkNWNmNWE0ODUyMjZmZWQyIn0.eyJhdWQiOiIwYzgyY2Q1My1lMDU5LTQ4YjctOTQ3OC1lM2ZkNzFmNTFmMWYiLCJqdGkiOiIxNWE4ZGNlMmZlNjE2YTQyMTVjOWMxZTNkYjVmNmU1MTdiZTNlZjgzMGYwNTkwNjQ4MjU5MTNkNGY0ZjA3ZmY0ZDVjZjVhNDg1MjI2ZmVkMiIsImlhdCI6MTc2MDU1Njc2MSwibmJmIjoxNzYwNTU2NzYxLCJleHAiOjE3NjE4Njg4MDAsInN1YiI6Ijc4ODIzMDEiLCJncmFudF90eXBlIjoiIiwiYWNjb3VudF9pZCI6Mjk5MzI2MDcsImJhc2VfZG9tYWluIjoia29tbW8uY29tIiwidmVyc2lvbiI6Miwic2NvcGVzIjpbImNybSIsImZpbGVzIiwiZmlsZXNfZGVsZXRlIiwibm90aWZpY2F0aW9ucyIsInB1c2hfbm90aWZpY2F0aW9ucyJdLCJ1c2VyX2ZsYWdzIjowLCJoYXNoX3V1aWQiOiIzZWE0ZTUyOS0yYWQ4LTQyMGUtYWQzYy05NmUzOTAwODJhMzAiLCJhcGlfZG9tYWluIjoiYXBpLWcua29tbW8uY29tIn0.bfiUhdxV_EaAHB7B5WYM49LjkXcNStSZr48Jx3wZFFq00GYYmRUPFab0Ae5SX71v0pdgMgnqiKVfHZhDKfW3ykXJbmSAxcCTi2snoD4sBlvBur8G1pDKZ6YGuqqKboCAER2HbCcZFA5aFrgVHf5L1hl6o_YKCO4VkIFR8MwLv753b3jtdgOvHGc_scXT3JRHCtu4WAXWVw8w7Obo2wBtiefxx_zL4ZGRRSWj8WoIr9LYRc_yfEVm1HgGAJkyrkvWiFKZggRvyZkx1VB6_cKxu_A5751MscI8UlnpJvyzAbJ7HRsrAuRxnFDBjKo2cVrHo8TQ2hwVwSYTQtviSF9aYA';
+      // Determinar el plantel basado en el nivel académico
+      const plantel = determinePlantel(formData);
       
-      // Paso 1: Crear contacto con email y teléfono
-      console.log('👤 Paso 1: Creando contacto...');
-      
-      // Validar que los campos no estén vacíos
-      const emailValue = formData.correo || '';
-      const phoneValue = formData.telefono || '';
-      
-      console.log('📧 Email:', emailValue);
-      console.log('📱 Teléfono:', phoneValue);
-      
-      const contactFields = [];
-      
-      // Solo agregar email si no está vacío
-      if (emailValue.trim()) {
-        contactFields.push({
-          field_id: 557100, // Email
-          values: [{ value: emailValue, enum_code: "WORK" }]
-        });
-      }
-      
-      // Solo agregar teléfono si no está vacío
-      if (phoneValue.trim()) {
-        contactFields.push({
-          field_id: 557098, // Teléfono
-          values: [{ value: phoneValue, enum_code: "MOB" }] // MOB = móvil (funciona correctamente)
-        });
-      }
-      
-      const contactPayload = [
-        {
-          name: formData.nombreCompleto,
-          custom_fields_values: contactFields
-        }
-      ];
-      
-      const contactResponse = await fetch('https://winstonchurchill.kommo.com/api/v4/contacts', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(contactPayload),
+      // Crear lead en Kommo (esto también envía el WhatsApp automáticamente)
+      const leadId = await createKommoLead({
+        name: formData.nombreCompleto,
+        phone: formData.telefono || '',
+        email: formData.correo,
+        plantel: plantel,
+        nivelAcademico: formData.nivelAcademico,
+        gradoEscolar: formData.gradoEscolar,
+        nombreAspirante: formData.nombreAspirante
       });
       
-      if (!contactResponse.ok) {
-        const errorText = await contactResponse.text();
-        console.log('❌ Error creando contacto:', errorText);
-        throw new Error(`Error creating contact: ${contactResponse.status}`);
-      }
-      
-      const contactData = await contactResponse.json();
-      const contactId = contactData._embedded.contacts[0].id;
-      console.log('✅ Contacto creado con ID:', contactId);
-      
-      // Paso 2: Crear lead vinculado al contacto
-      console.log('📋 Paso 2: Creando lead vinculado al contacto...');
-      const leadPayload = [
-        {
-          name: `[Open House] ${formData.nombreCompleto}`,
-          price: 0,
-          pipeline_id: 10453492, // Pipeline "En espera de Datos"
-          _embedded: {
-            contacts: [
-              {
-                id: contactId // Vincular usando solo el ID del contacto
-              }
-            ]
-          }
-        }
-      ];
-      
-      console.log('📤 Payload del lead:', JSON.stringify(leadPayload, null, 2));
-      
-      const leadResponse = await fetch('https://winstonchurchill.kommo.com/api/v4/leads', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(leadPayload),
-      });
-      
-      console.log('📥 Status de respuesta del lead:', leadResponse.status);
-      
-      if (leadResponse.ok) {
-        const leadData = await leadResponse.json();
-        console.log('📥 Respuesta del lead:', JSON.stringify(leadData, null, 2));
-        
-        if (leadData._embedded && leadData._embedded.leads) {
-          const leadId = leadData._embedded.leads[0].id;
-          console.log(`✅ Lead creado exitosamente con ID: ${leadId}`);
-          console.log(`🔗 Lead vinculado al contacto ID: ${contactId}`);
-          console.log('📧 Email y teléfono deberían aparecer en el lead');
-        }
-      } else {
-        const errorText = await leadResponse.text();
-        console.log('❌ Error creando lead:', errorText);
-      }
+      console.log(`✅ Lead creado exitosamente con ID: ${leadId}`);
+      console.log(`📱 WhatsApp de confirmación enviado automáticamente`);
       
     } catch (kommoError) {
       console.error('❌ Error en integración Kommo:', kommoError);

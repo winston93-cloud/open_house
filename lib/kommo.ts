@@ -54,19 +54,21 @@ export async function createKommoLead(leadData: {
     console.log('👤 Paso 1: Creando contacto...');
     const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
     
-    const contactPayload = {
-      name: [leadData.name], // Array como quiere Kommo
-      custom_fields_values: [
-        {
-          field_id: 'phone',
-          values: [{ value: leadData.phone }]
-        },
-        {
-          field_id: 'email',
-          values: [{ value: leadData.email }]
-        }
-      ]
-    };
+    const contactPayload = [
+      {
+        name: leadData.name,
+        custom_fields_values: [
+          {
+            field_id: 557100, // Email
+            values: [{ value: leadData.email, enum_code: "WORK" }]
+          },
+          {
+            field_id: 557098, // Teléfono
+            values: [{ value: leadData.phone, enum_code: "MOB" }]
+          }
+        ]
+      }
+    ];
     
     console.log('📤 Payload del contacto:', JSON.stringify(contactPayload, null, 2));
     
@@ -95,11 +97,16 @@ export async function createKommoLead(leadData: {
     console.log('📋 Paso 2: Creando lead con contacto...');
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
-    const leadPayload = {
-      name: [leadData.name],
-      price: [0],
-      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)]
-    };
+    const leadPayload = [
+      {
+        name: `[Open House] ${leadData.nombreAspirante}`,
+        price: 0,
+        pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
+        _embedded: {
+          contacts: [{ id: contactId }]
+        }
+      }
+    ];
 
     console.log('📤 Payload del lead:', JSON.stringify(leadPayload, null, 2));
     
@@ -129,23 +136,32 @@ export async function createKommoLead(leadData: {
       });
     }
     
-    return leadResponseData._embedded.leads[0].id;
+    const leadId = leadResponseData._embedded.leads[0].id;
+    
+    // Step 3: Send WhatsApp confirmation message
+    console.log('📱 Paso 3: Enviando mensaje de confirmación por WhatsApp...');
+    try {
+      await sendKommoWhatsApp(leadId, contactId, leadData.phone, leadData.plantel);
+      console.log('✅ WhatsApp enviado exitosamente');
+    } catch (whatsappError) {
+      console.error('⚠️ Error enviando WhatsApp (continuando sin error):', whatsappError);
+      // No lanzamos el error para que la creación del lead no falle
+    }
+    
+    return leadId;
   } catch (error) {
     console.error('Error creating Kommo lead:', error);
     throw error;
   }
 }
 
-// Send WhatsApp message via Kommo
-export async function sendKommoWhatsApp(leadId: number, phone: string, plantel: 'winston' | 'educativo') {
+// Send WhatsApp message via Kommo using correct endpoint
+export async function sendKommoWhatsApp(leadId: number, contactId: number, phone: string, plantel: 'winston' | 'educativo') {
   try {
     const accessToken = await getKommoAccessToken();
     
-    // Determine WhatsApp number based on plantel
-    const whatsappNumber = WHATSAPP_NUMBERS[plantel];
-    
-    // Enviar WhatsApp automático usando el endpoint correcto (v3 - FORCE DEPLOY)
-    const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/messages`;
+    // Usar el endpoint correcto según la información del Copilot
+    const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}/contacts/${contactId}/messages`;
     
     console.log('🔍 URL que se está usando:', messagesUrl);
     
@@ -190,16 +206,17 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
 ¡Nos vemos pronto! 🎓`;
 
+    // Formatear teléfono según especificaciones del Copilot (internacional sin signos ni espacios)
+    const formattedPhone = phone.replace(/\D/g, ''); // Remove all non-digits
+    
+    // Payload según especificaciones del Copilot
     const messagesPayload = {
-      entity_id: leadId,
-      entity_type: 'lead',
-      message: message,
-      phone: phone.replace(/\D/g, ''), // Remove non-digits
-      source: {
-        external_id: whatsappNumber,
-        type: 'whatsapp'
-      }
+      channel: "whatsapp",
+      text: message,
+      phone: formattedPhone
     };
+
+    console.log('📤 Payload del WhatsApp:', JSON.stringify(messagesPayload, null, 2));
 
     const response = await fetch(messagesUrl, {
       method: 'POST',
@@ -212,14 +229,15 @@ Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error sending WhatsApp message:', errorText);
+      console.error('❌ Error sending WhatsApp message:', errorText);
       throw new Error(`Error sending WhatsApp: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('✅ WhatsApp enviado exitosamente:', data);
     return data;
   } catch (error) {
-    console.error('Error sending Kommo WhatsApp:', error);
+    console.error('❌ Error sending Kommo WhatsApp:', error);
     throw error;
   }
 }
