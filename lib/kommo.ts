@@ -54,19 +54,21 @@ export async function createKommoLead(leadData: {
     console.log('👤 Paso 1: Creando contacto...');
     const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
     
-    const contactPayload = {
-      name: [leadData.name], // Kommo requiere que name sea un array
-      custom_fields_values: [
-        {
-          field_id: 557100, // Email
-          values: [{ value: leadData.email, enum_code: "WORK" }]
-        },
-        {
-          field_id: 557098, // Teléfono
-          values: [{ value: leadData.phone, enum_code: "MOB" }]
-        }
-      ]
-    };
+    const contactPayload = [
+      {
+        name: leadData.name,
+        custom_fields_values: [
+          {
+            field_id: 557100, // Email
+            values: [{ value: leadData.email, enum_code: "WORK" }]
+          },
+          {
+            field_id: 557098, // Teléfono
+            values: [{ value: leadData.phone, enum_code: "MOB" }]
+          }
+        ]
+      }
+    ];
     
     console.log('📤 Payload del contacto:', JSON.stringify(contactPayload, null, 2));
     
@@ -95,14 +97,16 @@ export async function createKommoLead(leadData: {
     console.log('📋 Paso 2: Creando lead con contacto...');
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
-    const leadPayload = {
-      name: [`[Open House] ${leadData.nombreAspirante}`], // Kommo requiere que name sea un array
-      price: [0], // Kommo requiere que price sea un array
-      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)], // Kommo requiere que pipeline_id sea un array
-      _embedded: {
-        contacts: [{ id: contactId }]
+    const leadPayload = [
+      {
+        name: `[Open House] ${leadData.nombreAspirante}`,
+        price: 0,
+        pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
+        _embedded: {
+          contacts: [{ id: contactId }]
+        }
       }
-    };
+    ];
 
     console.log('📤 Payload del lead:', JSON.stringify(leadPayload, null, 2));
     
@@ -134,15 +138,15 @@ export async function createKommoLead(leadData: {
     
     const leadId = leadResponseData._embedded.leads[0].id;
     
-    // Step 3: Send WhatsApp confirmation message
-    console.log('📱 Paso 3: Enviando mensaje de confirmación por WhatsApp...');
-    try {
-      await sendKommoWhatsApp(leadId, contactId, leadData.phone, leadData.plantel);
-      console.log('✅ WhatsApp enviado exitosamente');
-    } catch (whatsappError) {
-      console.error('⚠️ Error enviando WhatsApp (continuando sin error):', whatsappError);
-      // No lanzamos el error para que la creación del lead no falle
-    }
+    // Step 3: Send WhatsApp confirmation message (TEMPORALMENTE DESHABILITADO)
+    console.log('📱 Paso 3: WhatsApp temporalmente deshabilitado para arreglar múltiples leads');
+    // try {
+    //   await sendKommoWhatsApp(leadId, contactId, leadData.phone, leadData.plantel);
+    //   console.log('✅ WhatsApp enviado exitosamente');
+    // } catch (whatsappError) {
+    //   console.error('⚠️ Error enviando WhatsApp (continuando sin error):', whatsappError);
+    //   // No lanzamos el error para que la creación del lead no falle
+    // }
     
     return leadId;
   } catch (error) {
