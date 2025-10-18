@@ -55,7 +55,7 @@ export async function createKommoLead(leadData: {
     const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
     
     const contactPayload = {
-      name: leadData.name,
+      name: [leadData.name], // Kommo requiere que name sea un array
       custom_fields_values: [
         {
           field_id: 557100, // Email
@@ -96,9 +96,9 @@ export async function createKommoLead(leadData: {
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
     const leadPayload = {
-      name: `[Open House] ${leadData.nombreAspirante}`,
-      price: 0,
-      pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
+      name: [`[Open House] ${leadData.nombreAspirante}`], // Kommo requiere que name sea un array
+      price: [0], // Kommo requiere que price sea un array
+      pipeline_id: [parseInt(KOMMO_CONFIG.pipelineId!)], // Kommo requiere que pipeline_id sea un array
       _embedded: {
         contacts: [{ id: contactId }]
       }
