@@ -54,21 +54,19 @@ export async function createKommoLead(leadData: {
     console.log('👤 Paso 1: Creando contacto...');
     const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
     
-    const contactPayload = [
-      {
-        name: leadData.name,
-        custom_fields_values: [
-          {
-            field_id: 557100, // Email
-            values: [{ value: leadData.email, enum_code: "WORK" }]
-          },
-          {
-            field_id: 557098, // Teléfono
-            values: [{ value: leadData.phone, enum_code: "MOB" }]
-          }
-        ]
-      }
-    ];
+    const contactPayload = {
+      name: leadData.name,
+      custom_fields_values: [
+        {
+          field_id: 557100, // Email
+          values: [{ value: leadData.email, enum_code: "WORK" }]
+        },
+        {
+          field_id: 557098, // Teléfono
+          values: [{ value: leadData.phone, enum_code: "MOB" }]
+        }
+      ]
+    };
     
     console.log('📤 Payload del contacto:', JSON.stringify(contactPayload, null, 2));
     
@@ -97,16 +95,14 @@ export async function createKommoLead(leadData: {
     console.log('📋 Paso 2: Creando lead con contacto...');
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
-    const leadPayload = [
-      {
-        name: `[Open House] ${leadData.nombreAspirante}`,
-        price: 0,
-        pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
-        _embedded: {
-          contacts: [{ id: contactId }]
-        }
+    const leadPayload = {
+      name: `[Open House] ${leadData.nombreAspirante}`,
+      price: 0,
+      pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
+      _embedded: {
+        contacts: [{ id: contactId }]
       }
-    ];
+    };
 
     console.log('📤 Payload del lead:', JSON.stringify(leadPayload, null, 2));
     
