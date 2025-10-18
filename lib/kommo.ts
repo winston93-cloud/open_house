@@ -138,15 +138,9 @@ export async function createKommoLead(leadData: {
     
     const leadId = leadResponseData._embedded.leads[0].id;
     
-    // Step 3: Send WhatsApp confirmation message (TEMPORALMENTE DESHABILITADO)
-    console.log('📱 Paso 3: WhatsApp temporalmente deshabilitado para arreglar múltiples leads');
-    // try {
-    //   await sendKommoWhatsApp(leadId, contactId, leadData.phone, leadData.plantel);
-    //   console.log('✅ WhatsApp enviado exitosamente');
-    // } catch (whatsappError) {
-    //   console.error('⚠️ Error enviando WhatsApp (continuando sin error):', whatsappError);
-    //   // No lanzamos el error para que la creación del lead no falle
-    // }
+    // Step 3: WhatsApp será enviado automáticamente por Salesbot de Kommo
+    console.log('📱 Paso 3: WhatsApp será enviado automáticamente por Salesbot');
+    console.log('✅ Lead creado - Salesbot detectará el lead y enviará WhatsApp automáticamente');
     
     return leadId;
   } catch (error) {
