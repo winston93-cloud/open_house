@@ -7,7 +7,8 @@ const KOMMO_CONFIG = {
   clientId: '0c82cd53-e059-48b7-9478-e3fd71f51f1f',
   clientSecret: 'EZGNNwdY3UmmDw6ryQqArm0dLaq2kjDlkTbo0tQP3cxwiVZPEb9A4fWzjXNyoHqq',
   redirectUri: 'https://open-house-chi.vercel.app/api/auth/kommo/callback',
-  pipelineId: '10453492', // Pipeline "En espera de Datos"
+  pipelineId: '5030645', // Pipeline "Embudo de ventas"
+  statusId: '56296556', // Status "comentarios"
   whatsappNumber: '8334378743',
 };
 
@@ -106,9 +107,10 @@ export async function createKommoLead(leadData: {
     
     const leadPayload = [
       {
-        name: leadData.name, // Nombre del contacto (papá/mamá), NO del aspirante
+        name: leadData.name, // Nombre del contacto (papá/mamá)
         price: 0,
         pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
+        status_id: parseInt(KOMMO_CONFIG.statusId!), // Columna "comentarios"
         _embedded: {
           contacts: [{ id: contactId }]
         }
