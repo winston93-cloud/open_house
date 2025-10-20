@@ -67,23 +67,10 @@ export async function createKommoLead(leadData: {
             values: [{ value: leadData.email, enum_code: "WORK" }]
           },
           {
-            field_id: 557098, // Teléfono
-            values: [{ value: leadData.phone, enum_code: "MOB" }]
+            field_id: 557098, // Teléfono/WhatsApp
+            values: [{ value: leadData.phone, enum_code: "WHATSAPP" }]
           }
-        ],
-        // Add WhatsApp as primary channel
-        _embedded: {
-          customers: [
-            {
-              custom_fields_values: [
-                {
-                  field_id: 557098, // Phone field
-                  values: [{ value: leadData.phone, enum_code: "MOB" }]
-                }
-              ]
-            }
-          ]
-        }
+        ]
       }
     ];
     
@@ -155,15 +142,8 @@ export async function createKommoLead(leadData: {
     
     const leadId = leadResponseData._embedded.leads[0].id;
     
-    // Step 3: Send WhatsApp confirmation message
-    console.log('📱 Paso 3: Enviando mensaje de confirmación por WhatsApp...');
-    try {
-      await sendKommoWhatsApp(leadId, contactId, leadData.phone, leadData.plantel);
-      console.log('✅ WhatsApp enviado exitosamente');
-    } catch (whatsappError) {
-      console.error('⚠️ Error enviando WhatsApp (continuando sin error):', whatsappError);
-      // No lanzamos el error para que la creación del lead no falle
-    }
+    console.log('✅ Lead creado exitosamente con ID:', leadId);
+    console.log('📱 El Salesbot de Kommo se encargará del envío de WhatsApp automáticamente');
     
     return leadId;
   } catch (error) {
@@ -172,94 +152,8 @@ export async function createKommoLead(leadData: {
   }
 }
 
-// Send WhatsApp message via Kommo using correct endpoint
-export async function sendKommoWhatsApp(leadId: number, contactId: number, phone: string, plantel: 'winston' | 'educativo') {
-  try {
-    const accessToken = await getKommoAccessToken();
-    
-    // Usar el endpoint correcto según la información del Copilot
-    const messagesUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/messages`;
-    
-    console.log('🔍 URL que se está usando:', messagesUrl);
-    
-    // Create confirmation message based on plantel
-    const message = plantel === 'educativo' 
-      ? `¡Hola! 👋
-
-Gracias por tu interés en el Open House del Instituto Educativo Winston.
-
-✅ Tu registro ha sido confirmado exitosamente.
-
-📅 Fecha: [Fecha del evento]
-🕐 Hora: [Hora del evento]
-📍 Ubicación: Instituto Educativo Winston
-🏫 Dirección: [Dirección Educativo Winston]
-
-📞 Contacto:
-• Teléfono: 833 347 4507
-• WhatsApp: 833 347 4507
-• Email: [Email Educativo Winston]
-
-Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
-
-¡Nos vemos pronto! 🎓`
-      : `¡Hola! 👋
-
-Gracias por tu interés en el Open House del Instituto Winston Churchill.
-
-✅ Tu registro ha sido confirmado exitosamente.
-
-📅 Fecha: [Fecha del evento]
-🕐 Hora: [Hora del evento]
-📍 Ubicación: Instituto Winston Churchill
-🏫 Dirección: [Dirección Winston Churchill]
-
-📞 Contacto:
-• Teléfono: 833 437 8743
-• WhatsApp: 833 437 8743
-• Email: [Email Winston Churchill]
-
-Te esperamos para mostrarte todo lo que tenemos preparado para tu hijo/a.
-
-¡Nos vemos pronto! 🎓`;
-
-    // Formatear teléfono según especificaciones del Copilot (internacional sin signos ni espacios)
-    const formattedPhone = phone.replace(/\D/g, ''); // Remove all non-digits
-    
-    // Payload según especificaciones del Copilot
-    const messagesPayload = {
-      to: formattedPhone,
-      channel: "whatsapp",
-      text: message,
-      entity_id: leadId,
-      entity_type: "leads"
-    };
-
-    console.log('📤 Payload del WhatsApp:', JSON.stringify(messagesPayload, null, 2));
-
-    const response = await fetch(messagesUrl, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(messagesPayload),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Error sending WhatsApp message:', errorText);
-      throw new Error(`Error sending WhatsApp: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ WhatsApp enviado exitosamente:', data);
-    return data;
-  } catch (error) {
-    console.error('❌ Error sending Kommo WhatsApp:', error);
-    throw error;
-  }
-}
+// NOTE: WhatsApp sending is now handled by Kommo Salesbot automatically
+// No need to send WhatsApp from the application
 
 // Determine plantel based on form data or logic
 export function determinePlantel(formData: any): 'winston' | 'educativo' {
