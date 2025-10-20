@@ -50,9 +50,13 @@ export async function createKommoLead(leadData: {
     
     const accessToken = await getKommoAccessToken();
     
-    // Step 1: Create contact first
-    console.log('👤 Paso 1: Creando contacto...');
+    // Step 1: Create contact first with WhatsApp
+    console.log('👤 Paso 1: Creando contacto con WhatsApp...');
     const contactUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/contacts`;
+    
+    // Get WhatsApp number based on plantel
+    const whatsappNumber = leadData.plantel === 'winston' ? WHATSAPP_NUMBERS.winston : WHATSAPP_NUMBERS.educativo;
+    console.log(`📱 Usando número WhatsApp para ${leadData.plantel}: ${whatsappNumber}`);
     
     const contactPayload = [
       {
@@ -66,11 +70,24 @@ export async function createKommoLead(leadData: {
             field_id: 557098, // Teléfono
             values: [{ value: leadData.phone, enum_code: "MOB" }]
           }
-        ]
+        ],
+        // Add WhatsApp as primary channel
+        _embedded: {
+          customers: [
+            {
+              custom_fields_values: [
+                {
+                  field_id: 557098, // Phone field
+                  values: [{ value: leadData.phone, enum_code: "MOB" }]
+                }
+              ]
+            }
+          ]
+        }
       }
     ];
     
-    console.log('📤 Payload del contacto:', JSON.stringify(contactPayload, null, 2));
+    console.log('📤 Payload del contacto con WhatsApp:', JSON.stringify(contactPayload, null, 2));
     
     const contactResponse = await fetch(contactUrl, {
       method: 'POST',
