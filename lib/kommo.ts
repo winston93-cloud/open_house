@@ -67,8 +67,11 @@ export async function createKommoLead(leadData: {
             values: [{ value: leadData.email, enum_code: "WORK" }]
           },
           {
-            field_id: 557098, // Teléfono/WhatsApp
-            values: [{ value: leadData.phone, enum_code: "MOB" }]
+            field_id: 557098, // Teléfono
+            values: [
+              { value: leadData.phone, enum_id: 360072 }, // Celular del papá (MOB)
+              { value: whatsappNumber, enum_id: 360070 }  // WhatsApp institucional (WORKDD - Teléfono Oficina)
+            ]
           }
         ]
       }
