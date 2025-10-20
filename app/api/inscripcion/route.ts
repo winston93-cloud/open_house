@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
-import { createKommoLead, sendKommoWhatsApp, determinePlantel } from '../../../lib/kommo';
+import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 
 
 
