@@ -68,7 +68,7 @@ export async function createKommoLead(leadData: {
           },
           {
             field_id: 557098, // Teléfono/WhatsApp
-            values: [{ value: leadData.phone, enum_code: "WHATSAPP" }]
+            values: [{ value: leadData.phone, enum_code: "MOB" }]
           }
         ]
       }
