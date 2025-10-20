@@ -106,7 +106,7 @@ export async function createKommoLead(leadData: {
     
     const leadPayload = [
       {
-        name: `[Open House] ${leadData.nombreAspirante}`,
+        name: leadData.name, // Nombre del contacto (papá/mamá), NO del aspirante
         price: 0,
         pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
         _embedded: {
