@@ -9,6 +9,7 @@ const KOMMO_CONFIG = {
   redirectUri: 'https://open-house-chi.vercel.app/api/auth/kommo/callback',
   pipelineId: '5030645', // Pipeline "Embudo de ventas"
   statusId: '56296556', // Status "comentarios"
+  responsibleUserId: '7882301', // Karla Garza
   whatsappNumber: '8334378743',
 };
 
@@ -111,6 +112,7 @@ export async function createKommoLead(leadData: {
         price: 0,
         pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
         status_id: parseInt(KOMMO_CONFIG.statusId!), // Columna "comentarios"
+        responsible_user_id: parseInt(KOMMO_CONFIG.responsibleUserId!), // Karla Garza
         _embedded: {
           contacts: [{ id: contactId }]
         }
