@@ -149,6 +149,45 @@ export async function createKommoLead(leadData: {
     const leadId = leadResponseData._embedded.leads[0].id;
     
     console.log('✅ Lead creado exitosamente con ID:', leadId);
+    
+    // Step 3: Add tag based on plantel
+    console.log('🏷️ Paso 3: Agregando etiqueta según plantel...');
+    const tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
+    console.log(`📋 Etiqueta a agregar: ${tagName}`);
+    
+    try {
+      const tagUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads/${leadId}/tags`;
+      
+      const tagPayload = [
+        {
+          name: tagName
+        }
+      ];
+      
+      console.log('📤 Payload de etiqueta:', JSON.stringify(tagPayload, null, 2));
+      
+      const tagResponse = await fetch(tagUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tagPayload),
+      });
+      
+      if (!tagResponse.ok) {
+        const errorText = await tagResponse.text();
+        console.error('⚠️ Error agregando etiqueta:', errorText);
+        // No lanzar error, solo log
+      } else {
+        const tagData = await tagResponse.json();
+        console.log('✅ Etiqueta agregada exitosamente:', JSON.stringify(tagData, null, 2));
+      }
+    } catch (tagError) {
+      console.error('⚠️ Error en agregar etiqueta (no crítico):', tagError);
+      // No lanzar error, solo log
+    }
+    
     console.log('📱 El Salesbot de Kommo se encargará del envío de WhatsApp automáticamente');
     
     return leadId;
