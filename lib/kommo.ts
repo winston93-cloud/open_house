@@ -116,9 +116,10 @@ export async function createKommoLead(leadData: {
         pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
         status_id: parseInt(KOMMO_CONFIG.statusId!), // Columna "comentarios"
         responsible_user_id: parseInt(KOMMO_CONFIG.responsibleUserId!), // Karla Garza
-        tags: [{ name: tagName }], // Add tag as object for creation if not exists
         _embedded: {
-          contacts: [{ id: contactId }]
+          contacts: [{ id: contactId }],
+          // ✅ CAMBIO CLAVE: Las etiquetas deben ir dentro de _embedded
+          tags: [{ name: tagName }]
         }
       }
     ];
