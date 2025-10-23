@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS sesiones (
     fecha_inscripcion TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     reminder_sent BOOLEAN DEFAULT FALSE,
     reminder_scheduled_for TIMESTAMP WITH TIME ZONE,
+    reminder_sent_at TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
