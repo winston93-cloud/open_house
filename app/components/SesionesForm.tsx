@@ -230,7 +230,7 @@ export default function SesionesForm() {
   }
 
   return (
-    <>
+    <div className="sesiones-form-container">
       <style jsx global>{`
         .sesiones-form-container .form-intro h2 {
           color: #FA9D00;
@@ -276,15 +276,17 @@ export default function SesionesForm() {
 
       {/* Winston Banner */}
       <div className="winston-banner">
-        <div style={{ fontSize: '60px', textAlign: 'center', padding: '20px' }}>
-          🎓
-        </div>
+        <img 
+          src="/logos/banner sesiones.png" 
+          alt="Banner Sesiones Informativas" 
+          className="winston-banner-image"
+        />
       </div>
 
 
 
       {/* Form Container */}
-      <div className="form-container sesiones-form-container">
+      <div className="form-container">
         <div className="form-intro">
           <h2>Sesiones Informativas</h2>
           <p>Déjanos tus datos y confirma tu asistencia a nuestra Sesión Informativa.</p>
@@ -632,7 +634,7 @@ export default function SesionesForm() {
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
