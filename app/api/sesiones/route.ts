@@ -290,8 +290,8 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
             <p><strong>¡Esperamos verte pronto!</strong></p>
             <div class="contact-info">
                 <p><strong>${institucionNombre}</strong></p>
-                <p>📧 recepcioniew@winston93.edu.mx</p>
-                <p>🌐 www.winstonkinder.edu.mx</p>
+                <p>📧 ${institucionNombre === 'Instituto Educativo Winston' ? 'recepcioniew@winston93.edu.mx' : 'vinculacionw@winston93.edu.mx'}</p>
+                <p>🌐 ${institucionNombre === 'Instituto Educativo Winston' ? 'www.winstonkinder.edu.mx' : 'www.winston93.edu.mx'}</p>
             </div>
         </div>
     </div>
@@ -581,8 +581,8 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
             <p><strong>¡Esperamos verte pronto!</strong></p>
             <div class="contact-info">
                 <p><strong>${institucionNombre}</strong></p>
-                <p>📧 recepcioniew@winston93.edu.mx</p>
-                <p>🌐 www.winstonkinder.edu.mx</p>
+                <p>📧 ${institucionNombre === 'Instituto Educativo Winston' ? 'recepcioniew@winston93.edu.mx' : 'vinculacionw@winston93.edu.mx'}</p>
+                <p>🌐 ${institucionNombre === 'Instituto Educativo Winston' ? 'www.winstonkinder.edu.mx' : 'www.winston93.edu.mx'}</p>
             </div>
         </div>
     </div>

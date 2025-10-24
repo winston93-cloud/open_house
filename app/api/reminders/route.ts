@@ -507,12 +507,12 @@ const createReminderEmailTemplate = (formData: any) => {
                 <h4>${institucionNombre}</h4>
                 <div class="contact-info">
                     <p><strong>📧 Email:</strong> ${institucionNombre === 'Instituto Educativo Winston' ? 'recepcioniew@winston93.edu.mx' : 'vinculacionw@winston93.edu.mx'}</p>
-                    <p><strong>🌐 Sitio Web:</strong> www.winston93.edu.mx</p>
+                    <p><strong>🌐 Sitio Web:</strong> ${institucionNombre === 'Instituto Educativo Winston' ? 'www.winstonkinder.edu.mx' : 'www.winston93.edu.mx'}</p>
                     <p><strong>📞 Teléfono:</strong> ${institucionNombre === 'Instituto Educativo Winston' ? '833 347 4507' : '833 437 8743'}</p>
                 </div>
                 <div class="social-links">
                     <a href="mailto:${institucionNombre === 'Instituto Educativo Winston' ? 'recepcioniew@winston93.edu.mx' : 'vinculacionw@winston93.edu.mx'}">Contactar</a>
-                    <a href="https://www.winston93.edu.mx">Visitar Sitio</a>
+                    <a href="https://${institucionNombre === 'Instituto Educativo Winston' ? 'www.winstonkinder.edu.mx' : 'www.winston93.edu.mx'}">Visitar Sitio</a>
                 </div>
             </div>
         </div>
@@ -1006,12 +1006,12 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
                 <h4>${institucionNombre}</h4>
                 <div class="contact-info">
                     <p><strong>📧 Email:</strong> ${institucionNombre === 'Instituto Educativo Winston' ? 'recepcioniew@winston93.edu.mx' : 'vinculacionw@winston93.edu.mx'}</p>
-                    <p><strong>🌐 Sitio Web:</strong> www.winston93.edu.mx</p>
+                    <p><strong>🌐 Sitio Web:</strong> ${institucionNombre === 'Instituto Educativo Winston' ? 'www.winstonkinder.edu.mx' : 'www.winston93.edu.mx'}</p>
                     <p><strong>📞 Teléfono:</strong> ${institucionNombre === 'Instituto Educativo Winston' ? '833 347 4507' : '833 437 8743'}</p>
                 </div>
                 <div class="social-links">
                     <a href="mailto:${institucionNombre === 'Instituto Educativo Winston' ? 'recepcioniew@winston93.edu.mx' : 'vinculacionw@winston93.edu.mx'}">Contactar</a>
-                    <a href="https://www.winston93.edu.mx">Visitar Sitio</a>
+                    <a href="https://${institucionNombre === 'Instituto Educativo Winston' ? 'www.winstonkinder.edu.mx' : 'www.winston93.edu.mx'}">Visitar Sitio</a>
                 </div>
             </div>
         </div>
