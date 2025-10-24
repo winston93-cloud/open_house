@@ -638,9 +638,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcular fecha para el recordatorio (1 día después)
-    const reminderDate = new Date();
-    reminderDate.setDate(reminderDate.getDate() + 1);
+    // Calcular fecha para el recordatorio (1 día antes del evento según nivel)
+    let reminderDate = new Date();
+    
+    if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+      // Open House Maternal/Kinder: 29 nov, recordatorio 28 nov
+      reminderDate = new Date('2025-11-28');
+    } else if (formData.nivelAcademico === 'primaria' || formData.nivelAcademico === 'secundaria') {
+      // Open House Primaria/Secundaria: 6 dic, recordatorio 5 dic
+      reminderDate = new Date('2025-12-05');
+    }
 
     // Guardar en la base de datos
     const { data: inscripcion, error: dbError } = await supabase

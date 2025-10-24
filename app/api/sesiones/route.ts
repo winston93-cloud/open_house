@@ -633,9 +633,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcular fecha para el recordatorio (1 día después)
-    const reminderDate = new Date();
-    reminderDate.setDate(reminderDate.getDate() + 1);
+    // Calcular fecha para el recordatorio (1 día antes del evento según nivel)
+    let reminderDate = new Date();
+    
+    if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+      // Sesiones Maternal/Kinder: 15 nov, recordatorio 14 nov
+      reminderDate = new Date('2025-11-14');
+    } else if (formData.nivelAcademico === 'primaria' || formData.nivelAcademico === 'secundaria') {
+      // Sesiones Primaria/Secundaria: 22 nov, recordatorio 21 nov
+      reminderDate = new Date('2025-11-21');
+    }
 
     // Guardar en la base de datos (tabla 'sesiones' en lugar de 'inscripciones')
     const { data: inscripcion, error: dbError } = await supabase

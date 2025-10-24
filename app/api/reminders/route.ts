@@ -984,25 +984,25 @@ export async function POST(request: NextRequest) {
 
     console.log(`🔄 [${logId}] Iniciando procesamiento de recordatorios...`);
     
-    // Buscar inscripciones que necesitan recordatorio (de ayer)
+    // Buscar inscripciones que necesitan recordatorio (fecha programada = hoy)
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Inicio del día de hoy
     
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1); // Ayer
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1); // Mañana
     
     console.log(`📅 [${logId}] Calculando rangos de fecha:`);
     console.log(`📅 [${logId}] Fecha actual: ${new Date().toISOString()}`);
     console.log(`📅 [${logId}] Hoy (inicio): ${today.toISOString()}`);
-    console.log(`📅 [${logId}] Ayer (inicio): ${yesterday.toISOString()}`);
+    console.log(`📅 [${logId}] Mañana (inicio): ${tomorrow.toISOString()}`);
     
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase...`);
     const { data: inscripciones, error: dbError } = await supabase
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
-      .gte('created_at', yesterday.toISOString())
-      .lt('created_at', today.toISOString());
+      .gte('reminder_scheduled_for', today.toISOString())
+      .lt('reminder_scheduled_for', tomorrow.toISOString());
       
     console.log(`📊 [${logId}] Resultado de la consulta:`);
     console.log(`📊 [${logId}] Error: ${dbError ? 'SÍ' : 'NO'}`);
@@ -1105,8 +1105,8 @@ export async function POST(request: NextRequest) {
       .from('sesiones')
       .select('*')
       .eq('reminder_sent', false)
-      .gte('created_at', yesterday.toISOString())
-      .lt('created_at', today.toISOString());
+      .gte('reminder_scheduled_for', today.toISOString())
+      .lt('reminder_scheduled_for', tomorrow.toISOString());
       
     console.log(`📊 [${logId}] Resultado de la consulta de sesiones:`);
     console.log(`📊 [${logId}] Error: ${sesionesError ? 'SÍ' : 'NO'}`);
