@@ -2735,13 +2735,12 @@ body.sesiones-page {
     align-items: center;
     max-width: 100%;
     width: 100%;
-    height: 120px;
   }
   
   .sesiones-form-container .winston-banner-image {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
     object-position: center;
   }
   
