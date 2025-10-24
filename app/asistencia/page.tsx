@@ -14,6 +14,7 @@ interface Inscripcion {
 function ConfirmarAsistenciaContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
+  const confirmacion = searchParams.get('confirmacion');
   
   const [inscripcion, setInscripcion] = useState<Inscripcion | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,6 +30,13 @@ function ConfirmarAsistenciaContent() {
       setLoading(false);
     }
   }, [id]);
+
+  // Si viene con confirmacion=confirmado, automáticamente confirmar
+  useEffect(() => {
+    if (confirmacion === 'confirmado' && id && inscripcion) {
+      confirmarAsistencia();
+    }
+  }, [confirmacion, id, inscripcion]);
 
   const cargarInscripcion = async () => {
     try {
