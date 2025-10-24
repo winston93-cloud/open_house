@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
 // Configuración del transporter de email
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransporter({
   service: 'gmail',
   auth: {
     user: 'sistemas.desarrollo@winston93.edu.mx',
@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Template del email de recordatorio para Open House
+// Template del email de recordatorio para Open House - MEJORADO PARA MÓVILES
 const createReminderEmailTemplate = (formData: any) => {
   const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
   
@@ -22,17 +22,17 @@ const createReminderEmailTemplate = (formData: any) => {
     fechaEvento = '29 de noviembre de 2025';
     horaEvento = '9:00 AM';
     institucionNombre = 'Instituto Educativo Winston';
-    diasRestantes = 5; // En producción calcularías la diferencia real
+    diasRestantes = 1; // 1 día antes
   } else if (nivelAcademico === 'primaria') {
     fechaEvento = '6 de diciembre de 2025';
     horaEvento = '9:00 AM a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 12;
+    diasRestantes = 1;
   } else if (nivelAcademico === 'secundaria') {
     fechaEvento = '6 de diciembre de 2025';
     horaEvento = '11:30 AM a 2:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 12;
+    diasRestantes = 1;
   }
 
   return `
@@ -308,39 +308,129 @@ const createReminderEmailTemplate = (formData: any) => {
         .social-links a:hover {
             background: #1e40af;
         }
+        
+        /* MEJORAS PARA MÓVILES */
         @media (max-width: 600px) {
+            .email-wrapper {
+                padding: 10px;
+            }
             .email-container {
                 margin: 0;
                 border-radius: 0;
+                max-width: 100%;
             }
             .content {
-                padding: 30px 20px;
+                padding: 20px 15px;
             }
             .header {
-                padding: 30px 20px;
+                padding: 25px 15px;
             }
             .header h1 {
-                font-size: 24px;
+                font-size: 22px;
+                line-height: 1.2;
+            }
+            .header .subtitle {
+                font-size: 16px;
+            }
+            .reminder-badge {
+                font-size: 12px;
+                padding: 8px 16px;
+                margin-bottom: 20px;
+            }
+            .welcome h2 {
+                font-size: 22px;
+                line-height: 1.3;
+            }
+            .welcome p {
+                font-size: 16px;
+            }
+            .countdown-card {
+                padding: 25px 15px;
+                margin: 20px 0;
+            }
+            .countdown-number {
+                font-size: 32px;
+            }
+            .countdown-text {
+                font-size: 16px;
+            }
+            .info-card {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+            .info-card h3 {
+                font-size: 18px;
+                margin-bottom: 15px;
             }
             .info-row {
                 flex-direction: column;
-                gap: 8px;
-                text-align: center;
+                gap: 5px;
+                text-align: left;
+                margin: 12px 0;
+                padding: 10px 0;
+            }
+            .info-label {
+                font-size: 14px;
+                font-weight: 700;
             }
             .info-value {
-                text-align: center;
+                font-size: 14px;
+                text-align: left;
+            }
+            .event-details {
+                padding: 25px 15px;
+                margin: 20px 0;
+            }
+            .event-details h3 {
+                font-size: 20px;
+                margin-bottom: 15px;
             }
             .event-date {
                 font-size: 24px;
+                margin: 10px 0;
             }
-            .countdown-number {
-                font-size: 36px;
+            .event-time {
+                font-size: 18px;
+                margin: 8px 0;
             }
-            .event-details {
-                padding: 30px 20px;
+            .event-description {
+                font-size: 14px;
+                margin-top: 15px;
+            }
+            .cta-section {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+            .cta-section h3 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+            .cta-section p {
+                font-size: 14px;
+            }
+            .cta-section a {
+                padding: 12px 24px;
+                font-size: 14px;
             }
             .footer {
-                padding: 30px 20px;
+                padding: 25px 15px;
+            }
+            .footer h4 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            .contact-info {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            .contact-info p {
+                font-size: 13px;
+                margin: 6px 0;
+            }
+            .social-links a {
+                padding: 8px 12px;
+                font-size: 12px;
+                margin: 0 5px;
             }
         }
     </style>
@@ -365,7 +455,7 @@ const createReminderEmailTemplate = (formData: any) => {
                 
                 <div class="countdown-card">
                     <div class="countdown-number">${diasRestantes}</div>
-                    <div class="countdown-text">días restantes</div>
+                    <div class="countdown-text">día restante</div>
                 </div>
                 
                 <div class="info-card">
@@ -432,7 +522,7 @@ const createReminderEmailTemplate = (formData: any) => {
   `;
 };
 
-// Template del email de recordatorio para Sesiones Informativas
+// Template del email de recordatorio para Sesiones Informativas - MEJORADO PARA MÓVILES
 const createSesionesReminderEmailTemplate = (formData: any) => {
   const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
   
@@ -443,17 +533,17 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
     fechaEvento = '15 de noviembre de 2025';
     horaEvento = '9:00 AM';
     institucionNombre = 'Instituto Educativo Winston';
-    diasRestantes = 5;
+    diasRestantes = 1;
   } else if (nivelAcademico === 'primaria') {
     fechaEvento = '22 de noviembre de 2025';
     horaEvento = '9:00 AM a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 12;
+    diasRestantes = 1;
   } else if (nivelAcademico === 'secundaria') {
     fechaEvento = '22 de noviembre de 2025';
     horaEvento = '11:30 AM a 2:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 12;
+    diasRestantes = 1;
   }
 
   return `
@@ -717,39 +807,129 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
         .social-links a:hover {
             background: #1e40af;
         }
+        
+        /* MEJORAS PARA MÓVILES */
         @media (max-width: 600px) {
+            .email-wrapper {
+                padding: 10px;
+            }
             .email-container {
                 margin: 0;
                 border-radius: 0;
+                max-width: 100%;
             }
             .content {
-                padding: 30px 20px;
+                padding: 20px 15px;
             }
             .header {
-                padding: 30px 20px;
+                padding: 25px 15px;
             }
             .header h1 {
-                font-size: 24px;
+                font-size: 22px;
+                line-height: 1.2;
+            }
+            .header .subtitle {
+                font-size: 16px;
+            }
+            .reminder-badge {
+                font-size: 12px;
+                padding: 8px 16px;
+                margin-bottom: 20px;
+            }
+            .welcome h2 {
+                font-size: 22px;
+                line-height: 1.3;
+            }
+            .welcome p {
+                font-size: 16px;
+            }
+            .countdown-card {
+                padding: 25px 15px;
+                margin: 20px 0;
+            }
+            .countdown-number {
+                font-size: 32px;
+            }
+            .countdown-text {
+                font-size: 16px;
+            }
+            .info-card {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+            .info-card h3 {
+                font-size: 18px;
+                margin-bottom: 15px;
             }
             .info-row {
                 flex-direction: column;
-                gap: 8px;
-                text-align: center;
+                gap: 5px;
+                text-align: left;
+                margin: 12px 0;
+                padding: 10px 0;
+            }
+            .info-label {
+                font-size: 14px;
+                font-weight: 700;
             }
             .info-value {
-                text-align: center;
+                font-size: 14px;
+                text-align: left;
+            }
+            .event-details {
+                padding: 25px 15px;
+                margin: 20px 0;
+            }
+            .event-details h3 {
+                font-size: 20px;
+                margin-bottom: 15px;
             }
             .event-date {
                 font-size: 24px;
+                margin: 10px 0;
             }
-            .countdown-number {
-                font-size: 36px;
+            .event-time {
+                font-size: 18px;
+                margin: 8px 0;
             }
-            .event-details {
-                padding: 30px 20px;
+            .event-description {
+                font-size: 14px;
+                margin-top: 15px;
+            }
+            .cta-section {
+                padding: 20px 15px;
+                margin: 20px 0;
+            }
+            .cta-section h3 {
+                font-size: 20px;
+                margin-bottom: 10px;
+            }
+            .cta-section p {
+                font-size: 14px;
+            }
+            .cta-section a {
+                padding: 12px 24px;
+                font-size: 14px;
             }
             .footer {
-                padding: 30px 20px;
+                padding: 25px 15px;
+            }
+            .footer h4 {
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+            .contact-info {
+                padding: 15px;
+                margin: 15px 0;
+            }
+            .contact-info p {
+                font-size: 13px;
+                margin: 6px 0;
+            }
+            .social-links a {
+                padding: 8px 12px;
+                font-size: 12px;
+                margin: 0 5px;
             }
         }
     </style>
@@ -774,7 +954,7 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
                 
                 <div class="countdown-card">
                     <div class="countdown-number">${diasRestantes}</div>
-                    <div class="countdown-text">días restantes</div>
+                    <div class="countdown-text">día restante</div>
                 </div>
                 
                 <div class="info-card">
@@ -1019,7 +1199,7 @@ export async function POST(request: NextRequest) {
 
     if (!inscripciones || inscripciones.length === 0) {
       console.log(`✅ [${logId}] No hay recordatorios pendientes`);
-      console.log(`📋 [${logId}] Esto significa que no hay inscripciones de ayer que necesiten recordatorio`);
+      console.log(`📋 [${logId}] Esto significa que no hay inscripciones programadas para hoy`);
       return NextResponse.json({
         success: true,
         message: 'No hay recordatorios pendientes',
@@ -1036,7 +1216,7 @@ export async function POST(request: NextRequest) {
       console.log(`   - ID: ${inscripcion.id}`);
       console.log(`   - Nombre: ${inscripcion.nombre_aspirante}`);
       console.log(`   - Email: ${inscripcion.email}`);
-      console.log(`   - Fecha creación: ${new Date(inscripcion.created_at).toLocaleString('es-MX')}`);
+      console.log(`   - Fecha programada: ${new Date(inscripcion.reminder_scheduled_for).toLocaleString('es-MX')}`);
       console.log(`   - Recordatorio enviado: ${inscripcion.reminder_sent}`);
     });
     
@@ -1124,7 +1304,7 @@ export async function POST(request: NextRequest) {
         console.log(`   - ID: ${sesion.id}`);
         console.log(`   - Nombre: ${sesion.nombre_aspirante}`);
         console.log(`   - Email: ${sesion.email}`);
-        console.log(`   - Fecha creación: ${new Date(sesion.created_at).toLocaleString('es-MX')}`);
+        console.log(`   - Fecha programada: ${new Date(sesion.reminder_scheduled_for).toLocaleString('es-MX')}`);
         console.log(`   - Recordatorio enviado: ${sesion.reminder_sent}`);
       });
       
