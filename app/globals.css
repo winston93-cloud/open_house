@@ -2723,7 +2723,7 @@ body.sesiones-page {
     padding: 12px;
     min-height: 100vh;
     width: 100%;
-    max-width: 100%;
+    max-width: 900px;
     margin: 0 auto;
   }
   
@@ -2749,7 +2749,7 @@ body.sesiones-page {
   .sesiones-form-container .form-container {
     margin: 0 auto;
     width: 100%;
-    max-width: 100%;
+    max-width: 900px;
     display: flex;
     flex-direction: column;
     align-items: center;
