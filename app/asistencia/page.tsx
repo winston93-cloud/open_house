@@ -33,10 +33,33 @@ function ConfirmarAsistenciaContent() {
 
   // Si viene con confirmacion=confirmado, automáticamente confirmar
   useEffect(() => {
-    if (confirmacion === 'confirmado' && id && inscripcion) {
-      confirmarAsistencia();
+    if (confirmacion === 'confirmado' && id && inscripcion && !confirmado) {
+      console.log('Auto-confirmando asistencia...');
+      setConfirmando(true);
+      
+      fetch(`/api/confirmar-asistencia`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, confirmacion: 'confirmado' }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          setConfirmado(true);
+        } else {
+          console.error('Error auto-confirmando:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error auto-confirmando:', error);
+      })
+      .finally(() => {
+        setConfirmando(false);
+      });
     }
-  }, [confirmacion, id, inscripcion]);
+  }, [confirmacion, id, inscripcion, confirmado]);
 
   const cargarInscripcion = async () => {
     try {
