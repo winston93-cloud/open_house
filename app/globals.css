@@ -2538,3 +2538,174 @@ body.sesiones-page {
     font-size: 0.875rem;
   }
 }
+
+/* ===== CORRECCIONES ESPECÍFICAS PARA CENTRADO EN MÓVILES ===== */
+
+/* Correcciones para el contenedor principal en móviles */
+@media (max-width: 768px) {
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px;
+    min-height: 100vh;
+  }
+  
+  /* Centrado del banner */
+  .winston-banner {
+    margin: 0 auto 12px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .winston-banner-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+  }
+  
+  /* Centrado del contenedor del formulario */
+  .form-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Centrado de la información del formulario */
+  .form-intro {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .form-intro h2 {
+    text-align: center;
+  }
+  
+  .form-intro p {
+    text-align: center;
+  }
+  
+  /* Centrado de las fechas */
+  .dates-info {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto 16px auto;
+  }
+  
+  .dates-info h3 {
+    text-align: center;
+  }
+  
+  .date-item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .date-label,
+  .date-value {
+    text-align: center;
+  }
+  
+  /* Centrado de las secciones del formulario */
+  .form-section {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .form-section h3 {
+    text-align: center;
+  }
+  
+  /* Centrado de los campos del formulario */
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .form-group {
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    text-align: left;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+  }
+  
+  .error-message,
+  .hint-text {
+    text-align: left;
+  }
+  
+  /* Centrado del botón de envío */
+  .submit-button {
+    margin: 0 auto;
+  }
+  
+  /* Centrado de mensajes */
+  .success-message,
+  .error-message-global {
+    text-align: center;
+  }
+  
+  /* Centrado del header del formulario */
+  .form-header-section {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto 12px auto;
+  }
+  
+  .form-title {
+    text-align: center;
+  }
+  
+  .form-account-info,
+  .form-share-status {
+    text-align: center;
+  }
+  
+  .required-fields-legend {
+    text-align: center;
+  }
+}
+
+/* Correcciones adicionales para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .main-container {
+    padding: 8px;
+  }
+  
+  .form-container {
+    padding: 12px;
+  }
+  
+  .form-section {
+    padding: 12px;
+  }
+  
+  .form-group {
+    max-width: 100%;
+  }
+  
+  .winston-banner {
+    height: 100px;
+  }
+}
