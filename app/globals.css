@@ -2733,15 +2733,18 @@ body.sesiones-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%;
     width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
   }
   
   .sesiones-form-container .winston-banner-image {
     width: 100%;
     height: auto;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
+    display: block;
   }
   
   /* Contenedor del formulario para sesiones */
