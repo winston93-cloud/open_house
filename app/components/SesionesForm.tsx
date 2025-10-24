@@ -276,11 +276,9 @@ export default function SesionesForm() {
 
       {/* Winston Banner */}
       <div className="winston-banner">
-        <img 
-          src="/logos/banner sesiones.png" 
-          alt="Banner Sesiones Informativas" 
-          className="winston-banner-image"
-        />
+        <div style={{ fontSize: '60px', textAlign: 'center', padding: '20px' }}>
+          🎓
+        </div>
       </div>
 
 
