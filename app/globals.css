@@ -2715,17 +2715,20 @@ body.sesiones-page {
 /* Aplicar EXACTAMENTE las mismas correcciones que Open House para sesiones */
 @media (max-width: 768px) {
   /* Contenedor principal para sesiones */
-  body.sesiones-page .main-container {
+  .sesiones-form-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     padding: 12px;
     min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
   }
   
   /* Banner para sesiones */
-  body.sesiones-page .winston-banner {
+  .sesiones-form-container .winston-banner {
     margin: 0 auto 12px auto;
     display: flex;
     justify-content: center;
@@ -2735,7 +2738,7 @@ body.sesiones-page {
     height: 120px;
   }
   
-  body.sesiones-page .winston-banner-image {
+  .sesiones-form-container .winston-banner-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -2743,7 +2746,7 @@ body.sesiones-page {
   }
   
   /* Contenedor del formulario para sesiones */
-  body.sesiones-page .form-container {
+  .sesiones-form-container .form-container {
     margin: 0 auto;
     width: 100%;
     max-width: 100%;
@@ -2753,31 +2756,31 @@ body.sesiones-page {
   }
   
   /* Intro del formulario para sesiones */
-  body.sesiones-page .form-intro {
+  .sesiones-form-container .form-intro {
     text-align: center;
     width: 100%;
   }
   
-  body.sesiones-page .form-intro h2 {
+  .sesiones-form-container .form-intro h2 {
     text-align: center;
   }
   
-  body.sesiones-page .form-intro p {
+  .sesiones-form-container .form-intro p {
     text-align: center;
   }
   
   /* Fechas para sesiones */
-  body.sesiones-page .dates-info {
+  .sesiones-form-container .dates-info {
     text-align: center;
     width: 100%;
     margin: 0 auto 16px auto;
   }
   
-  body.sesiones-page .dates-info h3 {
+  .sesiones-form-container .dates-info h3 {
     text-align: center;
   }
   
-  body.sesiones-page .date-item {
+  .sesiones-form-container .date-item {
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -2785,23 +2788,23 @@ body.sesiones-page {
     gap: 4px;
   }
   
-  body.sesiones-page .date-label,
-  body.sesiones-page .date-value {
+  .sesiones-form-container .date-label,
+  .sesiones-form-container .date-value {
     text-align: center;
   }
   
   /* Secciones del formulario para sesiones */
-  body.sesiones-page .form-section {
+  .sesiones-form-container .form-section {
     width: 100%;
     text-align: center;
   }
   
-  body.sesiones-page .form-section h3 {
+  .sesiones-form-container .form-section h3 {
     text-align: center;
   }
   
   /* Grid del formulario para sesiones */
-  body.sesiones-page .form-grid {
+  .sesiones-form-container .form-grid {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2809,54 +2812,54 @@ body.sesiones-page {
   }
   
   /* Campos del formulario para sesiones */
-  body.sesiones-page .form-group {
+  .sesiones-form-container .form-group {
     width: 100%;
     max-width: 400px;
     text-align: left;
   }
   
-  body.sesiones-page .form-group label {
+  .sesiones-form-container .form-group label {
     text-align: left;
   }
   
-  body.sesiones-page .form-group input,
-  body.sesiones-page .form-group select {
+  .sesiones-form-container .form-group input,
+  .sesiones-form-container .form-group select {
     width: 100%;
   }
   
-  body.sesiones-page .error-message,
-  body.sesiones-page .hint-text {
+  .sesiones-form-container .error-message,
+  .sesiones-form-container .hint-text {
     text-align: left;
   }
   
   /* Botón de envío para sesiones */
-  body.sesiones-page .submit-button {
+  .sesiones-form-container .submit-button {
     margin: 0 auto;
   }
   
   /* Mensajes para sesiones */
-  body.sesiones-page .success-message,
-  body.sesiones-page .error-message-global {
+  .sesiones-form-container .success-message,
+  .sesiones-form-container .error-message-global {
     text-align: center;
   }
   
   /* Header del formulario para sesiones */
-  body.sesiones-page .form-header-section {
+  .sesiones-form-container .form-header-section {
     text-align: center;
     width: 100%;
     margin: 0 auto 12px auto;
   }
   
-  body.sesiones-page .form-title {
+  .sesiones-form-container .form-title {
     text-align: center;
   }
   
-  body.sesiones-page .form-account-info,
-  body.sesiones-page .form-share-status {
+  .sesiones-form-container .form-account-info,
+  .sesiones-form-container .form-share-status {
     text-align: center;
   }
   
-  body.sesiones-page .required-fields-legend {
+  .sesiones-form-container .required-fields-legend {
     text-align: center;
   }
 }
