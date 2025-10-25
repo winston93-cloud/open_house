@@ -292,8 +292,8 @@ export default function SesionesForm() {
           <p>Déjanos tus datos y confirma tu asistencia a nuestra Sesión Informativa.</p>
         </div>
 
-          {/* Dates Info */}
-            <div className="dates-info">
+          {/* Dates Info - HIDDEN */}
+            {/* <div className="dates-info">
               <h3>Fecha de Sesión Informativa</h3>
               <div className="date-item">
                 <span className="date-label">Maternal y Kinder:</span>
@@ -307,7 +307,7 @@ export default function SesionesForm() {
                 <span className="date-label">Secundaria:</span>
                 <span className="date-value">9 de Diciembre - 6:00 PM</span>
               </div>
-            </div>
+            </div> */}
 
         {/* Success/Error Messages */}
         {submitMessage && (

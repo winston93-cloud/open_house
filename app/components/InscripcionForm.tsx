@@ -241,8 +241,8 @@ export default function InscripcionForm() {
           <p>Déjanos tus datos y confirma tu asistencia a nuestro Open House.</p>
         </div>
 
-          {/* Dates Info */}
-            <div className="dates-info">
+          {/* Dates Info - HIDDEN */}
+            {/* <div className="dates-info">
               <h3>Fecha de Open House</h3>
               <div className="date-item">
                 <span className="date-label">Maternal y Kinder:</span>
@@ -256,7 +256,7 @@ export default function InscripcionForm() {
                 <span className="date-label">Secundaria:</span>
                 <span className="date-value">6 de diciembre - 11:30 AM a 2:00 PM</span>
               </div>
-            </div>
+            </div> */}
 
         {/* Success/Error Messages */}
         {submitMessage && (
