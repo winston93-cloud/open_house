@@ -84,7 +84,15 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(contactPayload)
     });
     
+    if (!contactResponse.ok) {
+      const errorText = await contactResponse.text();
+      console.error('Error creating contact:', errorText);
+      throw new Error(`Error creating contact: ${contactResponse.status}`);
+    }
+    
     const contactData = await contactResponse.json();
+    console.log('📥 Respuesta del contacto:', JSON.stringify(contactData, null, 2));
+    
     const contactId = contactData._embedded.contacts[0].id;
     console.log('✅ Contacto creado con ID:', contactId);
 
@@ -119,7 +127,15 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify(leadPayload)
     });
 
+    if (!leadResponse.ok) {
+      const errorText = await leadResponse.text();
+      console.error('Error creating lead:', errorText);
+      throw new Error(`Error creating lead: ${leadResponse.status}`);
+    }
+
     const leadData = await leadResponse.json();
+    console.log('📥 Respuesta del lead:', JSON.stringify(leadData, null, 2));
+    
     const leadId = leadData._embedded.leads[0].id;
     
     console.log('✅ Lead creado exitosamente en Kommo');
