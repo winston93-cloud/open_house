@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import axios from 'axios';
 
 // Configuración de Supabase
 const supabase = createClient(
@@ -76,14 +75,17 @@ export async function POST(request: NextRequest) {
       }
     ];
     
-    const contactResponse = await axios.post(contactUrl, contactPayload, {
+    const contactResponse = await fetch(contactUrl, {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${KOMMO_CONFIG.accessToken}`,
         'Content-Type': 'application/json',
-      }
+      },
+      body: JSON.stringify(contactPayload)
     });
     
-    const contactId = contactResponse.data._embedded.contacts[0].id;
+    const contactData = await contactResponse.json();
+    const contactId = contactData._embedded.contacts[0].id;
     console.log('✅ Contacto creado con ID:', contactId);
 
     // 4. Crear lead con contacto
@@ -108,14 +110,17 @@ export async function POST(request: NextRequest) {
       }
     ];
 
-    const leadResponse = await axios.post(leadUrl, leadPayload, {
+    const leadResponse = await fetch(leadUrl, {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${KOMMO_CONFIG.accessToken}`,
         'Content-Type': 'application/json',
-      }
+      },
+      body: JSON.stringify(leadPayload)
     });
 
-    const leadId = leadResponse.data._embedded.leads[0].id;
+    const leadData = await leadResponse.json();
+    const leadId = leadData._embedded.leads[0].id;
     
     console.log('✅ Lead creado exitosamente en Kommo');
     console.log('🆔 ID del nuevo lead:', leadId);
@@ -137,11 +142,11 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Error al restaurar lead:', error.response?.data || error.message);
+    console.error('❌ Error al restaurar lead:', error);
     return NextResponse.json(
       { 
         error: 'Error al restaurar lead', 
-        details: error.response?.data || error.message 
+        details: error instanceof Error ? error.message : 'Error desconocido'
       },
       { status: 500 }
     );
