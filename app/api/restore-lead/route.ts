@@ -46,9 +46,9 @@ export async function POST(request: NextRequest) {
     // 3. Crear lead usando la misma función del sistema actual
     console.log('📋 Creando lead en Kommo...');
     const leadId = await createKommoLead({
-      name: inscripcion.nombre_completo,
+      name: inscripcion.nombre_padre || inscripcion.nombre_madre || inscripcion.nombre_aspirante,
       phone: inscripcion.telefono || '',
-      email: inscripcion.correo,
+      email: inscripcion.email,
       plantel: plantel,
       nivelAcademico: inscripcion.nivel_academico,
       gradoEscolar: inscripcion.grado_escolar,
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         nombre: inscripcion.nombre_aspirante,
         nivel: inscripcion.nivel_academico,
         grado: inscripcion.grado_escolar,
-        email: inscripcion.correo,
+        email: inscripcion.email,
         telefono: inscripcion.telefono,
         plantel: plantel
       }
