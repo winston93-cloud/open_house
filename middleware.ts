@@ -12,9 +12,20 @@ export function middleware(request: NextRequest) {
     }
   }
   
-  // Si es el dominio de open-house y está en /sesiones, redirigir a /
+  // Si el dominio es taller-ia-winston.vercel.app
+  if (hostname.includes('taller-ia-winston')) {
+    // Si está en la raíz, redirigir a /taller-ia
+    if (request.nextUrl.pathname === '/') {
+      return NextResponse.redirect(new URL('/taller-ia', request.url));
+    }
+  }
+  
+  // Si es el dominio de open-house y está en /sesiones o /taller-ia, redirigir a /
   if (hostname.includes('open-house-chi')) {
     if (request.nextUrl.pathname === '/sesiones') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+    if (request.nextUrl.pathname === '/taller-ia') {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
