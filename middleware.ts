@@ -12,8 +12,8 @@ export function middleware(request: NextRequest) {
     }
   }
   
-  // Si el dominio es taller-ia-winston.vercel.app
-  if (hostname.includes('taller-ia-winston')) {
+  // Si el dominio es taller-ia-winston.vercel.app o taller-ia.winston93.edu.mx
+  if (hostname.includes('taller-ia-winston') || hostname.includes('taller-ia.winston93.edu.mx')) {
     // Si está en la raíz, redirigir a /taller-ia
     if (request.nextUrl.pathname === '/') {
       return NextResponse.redirect(new URL('/taller-ia', request.url));
@@ -25,6 +25,13 @@ export function middleware(request: NextRequest) {
     if (request.nextUrl.pathname === '/sesiones') {
       return NextResponse.redirect(new URL('/', request.url));
     }
+    if (request.nextUrl.pathname === '/taller-ia') {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+  
+  // Si es el dominio principal winston93.edu.mx y está en /taller-ia, redirigir a /
+  if (hostname.includes('winston93.edu.mx') && !hostname.includes('taller-ia')) {
     if (request.nextUrl.pathname === '/taller-ia') {
       return NextResponse.redirect(new URL('/', request.url));
     }
