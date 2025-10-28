@@ -54,7 +54,7 @@ export default function AdminIADashboard() {
     }
   }, [showQRModal]);
 
-  const generateQRCode = () => {
+  const generateQRCode = async () => {
     const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
     if (!canvas) return;
 
@@ -64,41 +64,55 @@ export default function AdminIADashboard() {
     // Limpiar canvas
     ctx.clearRect(0, 0, 256, 256);
     
-    // Configurar estilo
-    ctx.fillStyle = '#667eea';
-    ctx.strokeStyle = '#667eea';
-    ctx.lineWidth = 2;
+    // Configurar fondo blanco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, 256, 256);
 
-    // Generar patrón QR simple (simulado)
-    const size = 20;
-    const margin = 20;
-    const cellSize = (256 - margin * 2) / size;
-
-    // Patrón básico de QR
-    for (let row = 0; row < size; row++) {
-      for (let col = 0; col < size; col++) {
-        // Patrón simulado basado en la posición
-        const shouldFill = (row + col) % 3 === 0 || 
-                          (row === 0 || row === size - 1 || col === 0 || col === size - 1) ||
-                          (row >= 6 && row <= 13 && col >= 6 && col <= 13);
+    try {
+      // Usar API de Google Charts para generar QR real
+      const url = 'https://taller-ia-winston.vercel.app/';
+      const qrUrl = `https://chart.googleapis.com/chart?chs=256x256&chld=L|0&cht=qr&chl=${encodeURIComponent(url)}`;
+      
+      // Crear imagen desde la URL del QR
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        // Dibujar el QR real en el canvas
+        ctx.drawImage(img, 0, 0, 256, 256);
         
-        if (shouldFill) {
-          ctx.fillRect(
-            margin + col * cellSize,
-            margin + row * cellSize,
-            cellSize,
-            cellSize
-          );
-        }
-      }
+        // Agregar borde decorativo
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(2, 2, 252, 252);
+      };
+      
+      img.onerror = () => {
+        // Fallback: generar QR simple si falla la API
+        generateSimpleQR(ctx);
+      };
+      
+      img.src = qrUrl;
+      
+    } catch (error) {
+      console.error('Error generando QR:', error);
+      generateSimpleQR(ctx);
     }
+  };
 
-    // Agregar texto en el centro
+  const generateSimpleQR = (ctx: CanvasRenderingContext2D) => {
+    // QR simple como fallback
     ctx.fillStyle = '#667eea';
-    ctx.font = 'bold 12px Arial';
+    ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('TALLER IA', 128, 140);
-    ctx.fillText('WINSTON', 128, 155);
+    ctx.fillText('QR Code', 128, 120);
+    ctx.fillText('Taller IA', 128, 140);
+    ctx.fillText('Winston', 128, 160);
+    
+    // Dibujar borde
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(10, 10, 236, 236);
   };
 
   const fetchParticipantes = async () => {
