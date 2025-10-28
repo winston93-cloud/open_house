@@ -348,11 +348,8 @@ export default function TallerForm() {
         marginBottom: '20px'
       }}>
         <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>
-          Taller "IA e Inclusión en la Educación Temprana"
+          Taller de IA
         </h1>
-        <p style={{ margin: '10px 0 0 0', fontSize: '16px', opacity: 0.9 }}>
-          Dirigido por la Directora Claudia
-        </p>
       </div>
 
       <div className="form-container">
