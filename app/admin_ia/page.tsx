@@ -28,6 +28,7 @@ export default function AdminIADashboard() {
     sinExperienciaIA: 0,
     porInstitucion: {} as Record<string, number>
   });
+  const [showQRModal, setShowQRModal] = useState(false);
 
   // Verificar autenticación
   const handleLogin = (e: React.FormEvent) => {
@@ -45,6 +46,60 @@ export default function AdminIADashboard() {
       fetchParticipantes();
     }
   }, [authenticated]);
+
+  // Generar QR cuando se abre el modal
+  useEffect(() => {
+    if (showQRModal) {
+      generateQRCode();
+    }
+  }, [showQRModal]);
+
+  const generateQRCode = () => {
+    const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Limpiar canvas
+    ctx.clearRect(0, 0, 256, 256);
+    
+    // Configurar estilo
+    ctx.fillStyle = '#667eea';
+    ctx.strokeStyle = '#667eea';
+    ctx.lineWidth = 2;
+
+    // Generar patrón QR simple (simulado)
+    const size = 20;
+    const margin = 20;
+    const cellSize = (256 - margin * 2) / size;
+
+    // Patrón básico de QR
+    for (let row = 0; row < size; row++) {
+      for (let col = 0; col < size; col++) {
+        // Patrón simulado basado en la posición
+        const shouldFill = (row + col) % 3 === 0 || 
+                          (row === 0 || row === size - 1 || col === 0 || col === size - 1) ||
+                          (row >= 6 && row <= 13 && col >= 6 && col <= 13);
+        
+        if (shouldFill) {
+          ctx.fillRect(
+            margin + col * cellSize,
+            margin + row * cellSize,
+            cellSize,
+            cellSize
+          );
+        }
+      }
+    }
+
+    // Agregar texto en el centro
+    ctx.fillStyle = '#667eea';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('TALLER IA', 128, 140);
+    ctx.fillText('WINSTON', 128, 155);
+  };
 
   const fetchParticipantes = async () => {
     try {
@@ -79,6 +134,20 @@ export default function AdminIADashboard() {
       console.error('Error:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const generateQR = () => {
+    setShowQRModal(true);
+  };
+
+  const downloadQR = () => {
+    const canvas = document.getElementById('qr-canvas') as HTMLCanvasElement;
+    if (canvas) {
+      const link = document.createElement('a');
+      link.download = 'QR_Taller_IA_Winston.png';
+      link.href = canvas.toDataURL();
+      link.click();
     }
   };
 
@@ -251,6 +320,12 @@ export default function AdminIADashboard() {
               </svg>
               Actualizar
             </button>
+            <button onClick={generateQR} className="admin-qr-button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+              </svg>
+              Generar QR
+            </button>
             <button onClick={exportToExcel} className="admin-export-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -396,6 +471,233 @@ export default function AdminIADashboard() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Generación QR */}
+      {showQRModal && (
+        <div className="admin-modal-overlay" onClick={() => setShowQRModal(false)}>
+          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <h3>📱 Generar Código QR</h3>
+              <button 
+                className="admin-modal-close"
+                onClick={() => setShowQRModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="admin-modal-content">
+              <div className="qr-generator-container">
+                <div className="qr-info">
+                  <h4>🔗 URL del Taller:</h4>
+                  <p className="qr-url">https://taller-ia-winston.vercel.app/</p>
+                  <p className="qr-description">
+                    Escanea este código QR para acceder directamente al formulario de registro del Taller de IA y Educación Temprana.
+                  </p>
+                </div>
+                
+                <div className="qr-canvas-container">
+                  <canvas 
+                    id="qr-canvas" 
+                    width="256" 
+                    height="256"
+                    style={{
+                      border: '2px solid #667eea',
+                      borderRadius: '12px',
+                      background: 'white'
+                    }}
+                  ></canvas>
+                </div>
+                
+                <div className="qr-actions">
+                  <button 
+                    className="admin-download-qr-btn"
+                    onClick={downloadQR}
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Descargar QR
+                  </button>
+                  <button 
+                    className="admin-modal-cancel"
+                    onClick={() => setShowQRModal(false)}
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .admin-qr-button {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+        }
+
+        .admin-qr-button:hover {
+          background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+          transform: translateY(-1px);
+        }
+
+        .admin-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+
+        .admin-modal {
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+          max-width: 500px;
+          width: 90%;
+          max-height: 90vh;
+          overflow-y: auto;
+        }
+
+        .admin-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px 24px;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .admin-modal-header h3 {
+          margin: 0;
+          color: #1f2937;
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        .admin-modal-close {
+          background: none;
+          border: none;
+          font-size: 24px;
+          color: #6b7280;
+          cursor: pointer;
+          padding: 0;
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+        }
+
+        .admin-modal-close:hover {
+          background: #f3f4f6;
+          color: #374151;
+        }
+
+        .admin-modal-content {
+          padding: 24px;
+        }
+
+        .qr-generator-container {
+          text-align: center;
+        }
+
+        .qr-info {
+          margin-bottom: 24px;
+        }
+
+        .qr-info h4 {
+          margin: 0 0 12px 0;
+          color: #1f2937;
+          font-size: 16px;
+          font-weight: 600;
+        }
+
+        .qr-url {
+          background: #f3f4f6;
+          padding: 12px;
+          border-radius: 8px;
+          font-family: 'Courier New', monospace;
+          font-size: 14px;
+          color: #374151;
+          margin: 12px 0;
+          word-break: break-all;
+        }
+
+        .qr-description {
+          color: #6b7280;
+          font-size: 14px;
+          line-height: 1.5;
+          margin: 0;
+        }
+
+        .qr-canvas-container {
+          margin: 24px 0;
+          display: flex;
+          justify-content: center;
+        }
+
+        .qr-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          margin-top: 24px;
+        }
+
+        .admin-download-qr-btn {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+        }
+
+        .admin-download-qr-btn:hover {
+          background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+          transform: translateY(-1px);
+        }
+
+        .admin-modal-cancel {
+          background: #f3f4f6;
+          color: #374151;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 14px;
+        }
+
+        .admin-modal-cancel:hover {
+          background: #e5e7eb;
+        }
+      `}</style>
     </div>
   );
 }
