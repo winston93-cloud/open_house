@@ -359,11 +359,11 @@ export async function POST(request: NextRequest) {
     // Configurar el email de confirmación al participante
     const mailOptions = {
       from: {
-        name: 'Taller IA e Inclusión - Directora Claudia Benitez',
+        name: 'Taller de IA y Educación Temprana - Directora Claudia Benitez',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: formData.email,
-      subject: 'Confirmación de Registro - Taller "IA e Inclusión en la Educación Temprana"',
+      subject: 'Confirmación de Registro - Taller de IA y Educación Temprana',
       html: emailHtml
     };
 
@@ -373,16 +373,16 @@ export async function POST(request: NextRequest) {
     // Enviar notificación a dirección académica
     const notificationMailOptions = {
       from: {
-        name: 'Sistema de Registro - Taller IA - Directora Claudia Benitez',
+        name: 'Sistema de Registro - Taller de IA y Educación Temprana - Directora Claudia Benitez',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: 'direccion.academica@winston93.edu.mx',
-      subject: `📋 Nuevo Registro al Taller IA - ${formData.nombre} ${formData.apellido}`,
+      subject: `📋 Nuevo Registro al Taller de IA y Educación Temprana - ${formData.nombre} ${formData.apellido}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
-            <h2 style="margin: 0;">📋 Nuevo Registro al Taller IA</h2>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">IA e Inclusión en la Educación Temprana</p>
+            <h2 style="margin: 0;">📋 Nuevo Registro al Taller de IA y Educación Temprana</h2>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Dirigido por la Directora Claudia Benitez</p>
           </div>
           
           <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
