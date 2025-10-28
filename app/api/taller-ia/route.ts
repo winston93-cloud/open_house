@@ -15,6 +15,12 @@ const transporter = nodemailer.createTransport({
 const createTallerEmailTemplate = (formData: any) => {
   const { nombre, apellido, puesto, gradoClase, institucionProcedencia, email, whatsapp, experienciaIA } = formData;
   
+  // Formatear grado escolar con guión medio
+  const gradoFormateado = gradoClase
+    .replace(/([a-zA-Z]+)(\d+)/, '$1-$2')  // primaria5 -> primaria-5
+    .replace(/(\d+)([a-zA-Z]+)/, '$1-$2')  // 1primaria -> 1-primaria
+    .replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2'); // maternalA -> maternal-A
+  
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -259,7 +265,7 @@ const createTallerEmailTemplate = (formData: any) => {
                 </div>
                 <div class="info-row">
                     <span class="info-label">Grado que Imparte:</span>
-                    <span class="info-value">${gradoClase}</span>
+                    <span class="info-value">${gradoFormateado}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Institución:</span>
@@ -392,7 +398,7 @@ export async function POST(request: NextRequest) {
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Grado que Imparte:</td>
-                <td style="padding: 8px 0; color: #667eea;">${formData.gradoClase}</td>
+                <td style="padding: 8px 0; color: #667eea;">${formData.gradoClase.replace(/([a-zA-Z]+)(\d+)/, '$1-$2').replace(/(\d+)([a-zA-Z]+)/, '$1-$2').replace(/([a-zA-Z]+)([A-Z])$/, '$1-$2')}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Institución:</td>
