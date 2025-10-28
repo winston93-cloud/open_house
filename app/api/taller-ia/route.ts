@@ -359,7 +359,7 @@ export async function POST(request: NextRequest) {
     // Configurar el email de confirmación al participante
     const mailOptions = {
       from: {
-        name: 'Taller IA e Inclusión - Directora Claudia',
+        name: 'Taller IA e Inclusión - Directora Claudia Benitez',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: formData.email,
@@ -373,7 +373,7 @@ export async function POST(request: NextRequest) {
     // Enviar notificación a dirección académica
     const notificationMailOptions = {
       from: {
-        name: 'Sistema de Registro - Taller IA',
+        name: 'Sistema de Registro - Taller IA - Directora Claudia Benitez',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: 'direccion.academica@winston93.edu.mx',
