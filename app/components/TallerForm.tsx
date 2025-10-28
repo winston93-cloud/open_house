@@ -348,7 +348,7 @@ export default function TallerForm() {
         marginBottom: '20px'
       }}>
         <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700' }}>
-          Taller de IA
+          Taller de IA y Educación Temprana
         </h1>
       </div>
 
