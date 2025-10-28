@@ -281,10 +281,10 @@ const createTallerEmailTemplate = (formData: any) => {
             
             <div class="event-details">
                 <h3>🎯 Detalles del Taller</h3>
-                <div class="event-date">Fecha por Confirmar</div>
-                <div class="event-time">⏰ Horario por Confirmar</div>
+                <div class="event-date">Sábado 8 de Noviembre</div>
+                <div class="event-time">⏰ 09:30 AM</div>
                 <div class="event-description">
-                    Te contactaremos próximamente con la fecha y horario definitivos del taller
+                    Te esperamos en nuestras instalaciones para participar en este importante taller
                 </div>
             </div>
         </div>
