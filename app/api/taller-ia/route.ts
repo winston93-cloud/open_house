@@ -292,8 +292,8 @@ const createTallerEmailTemplate = (formData: any) => {
         <div class="footer">
             <p><strong>¡Esperamos verte en el taller!</strong></p>
             <div class="contact-info">
-                <p><strong>Directora Claudia</strong></p>
-                <p>📧 sistemas.desarrollo@winston93.edu.mx</p>
+                <p><strong>Dirección Académica</strong></p>
+                <p>📧 direccion.academica@winston93.edu.mx</p>
                 <p>🌐 www.winston93.edu.mx</p>
             </div>
         </div>
@@ -364,13 +364,13 @@ export async function POST(request: NextRequest) {
     // Enviar el email de confirmación
     await transporter.sendMail(mailOptions);
     
-    // Enviar notificación a la directora Claudia
+    // Enviar notificación a dirección académica
     const notificationMailOptions = {
       from: {
         name: 'Sistema de Registro - Taller IA',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
-      to: 'sistemas.desarrollo@winston93.edu.mx', // Cambiar por el email de Claudia cuando se proporcione
+      to: 'direccion.academica@winston93.edu.mx',
       subject: `📋 Nuevo Registro al Taller IA - ${formData.nombre} ${formData.apellido}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc;">
@@ -435,7 +435,7 @@ export async function POST(request: NextRequest) {
     };
     
     await transporter.sendMail(notificationMailOptions);
-    console.log('📧 Notificación enviada a la directora Claudia');
+    console.log('📧 Notificación enviada a dirección académica');
     
     return NextResponse.json({ 
       success: true, 
