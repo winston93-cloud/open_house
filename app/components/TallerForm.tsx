@@ -80,6 +80,87 @@ export default function TallerForm() {
           font-family: 'Arial', sans-serif;
         }
         
+        /* ===== CORRECCIONES ESPECÍFICAS PARA CENTRADO EN MÓVILES ===== */
+        @media (max-width: 768px) {
+          .taller-form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 12px;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+          }
+          
+          .taller-banner {
+            margin: 0 auto 12px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 8px;
+          }
+          
+          .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+          }
+          
+          .form-title {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 100%;
+          }
+          
+          .form-subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+          }
+          
+          .form-section {
+            width: 100%;
+            margin-bottom: 25px;
+          }
+          
+          .form-section h3 {
+            text-align: center;
+            width: 100%;
+          }
+          
+          .form-group {
+            width: 100%;
+            margin-bottom: 20px;
+          }
+          
+          .form-group input,
+          .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+          }
+          
+          .checkbox-group {
+            width: 100%;
+            box-sizing: border-box;
+          }
+          
+          .submit-button {
+            width: 100%;
+            box-sizing: border-box;
+          }
+        }
+        
         .taller-banner {
           width: 100%;
           max-width: 100%;
