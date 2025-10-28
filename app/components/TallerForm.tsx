@@ -45,6 +45,13 @@ export default function TallerForm() {
 
       if (result.success) {
         setSubmitStatus('success');
+        // Scroll to success message
+        setTimeout(() => {
+          const successElement = document.querySelector('.status-success');
+          if (successElement) {
+            successElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
         // Reset form
         setFormData({
           nombre: '',
@@ -59,10 +66,24 @@ export default function TallerForm() {
       } else {
         setSubmitStatus('error');
         setErrorMessage(result.error || 'Error al procesar el registro');
+        // Scroll to error message
+        setTimeout(() => {
+          const errorElement = document.querySelector('.status-error');
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
       }
     } catch (error) {
       setSubmitStatus('error');
       setErrorMessage('Error de conexión. Por favor, intenta nuevamente.');
+      // Scroll to error message
+      setTimeout(() => {
+        const errorElement = document.querySelector('.status-error');
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
     } finally {
       setIsSubmitting(false);
     }
