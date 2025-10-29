@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Actualizar la confirmación en la base de datos
-    const { data, error } = await supabase
+    // Primero intentar buscar en inscripciones (Open House)
+    let { data, error } = await supabase
       .from('inscripciones')
       .update({
         confirmacion_asistencia: confirmacion,
@@ -29,22 +29,41 @@ export async function POST(request: NextRequest) {
       .eq('id', id)
       .select();
 
-    if (error) {
-      console.error('Error al confirmar asistencia:', error);
-      return NextResponse.json(
-        { error: 'Error al actualizar la confirmación' },
-        { status: 500 }
-      );
+    let tabla = 'inscripciones';
+
+    // Si no se encuentra en inscripciones, buscar en sesiones (Sesiones Informativas)
+    if (error || !data || data.length === 0) {
+      console.log('No encontrado en inscripciones, buscando en sesiones...');
+      
+      const { data: sesionData, error: sesionError } = await supabase
+        .from('sesiones')
+        .update({
+          confirmacion_asistencia: confirmacion,
+          fecha_confirmacion: new Date().toISOString()
+        })
+        .eq('id', id)
+        .select();
+
+      if (sesionError) {
+        console.error('Error al confirmar asistencia en sesiones:', sesionError);
+        return NextResponse.json(
+          { error: 'Error al actualizar la confirmación' },
+          { status: 500 }
+        );
+      }
+
+      if (!sesionData || sesionData.length === 0) {
+        return NextResponse.json(
+          { error: 'Inscripción no encontrada' },
+          { status: 404 }
+        );
+      }
+
+      data = sesionData;
+      tabla = 'sesiones';
     }
 
-    if (data.length === 0) {
-      return NextResponse.json(
-        { error: 'Inscripción no encontrada' },
-        { status: 404 }
-      );
-    }
-
-    const inscripcion = data[0];
+    const registro = data[0];
     const mensaje = confirmacion === 'confirmado' 
       ? '¡Gracias por confirmar tu asistencia! Te esperamos en el evento.'
       : 'Hemos registrado que no podrás asistir. Gracias por informarnos.';
@@ -53,12 +72,13 @@ export async function POST(request: NextRequest) {
       success: true,
       mensaje,
       inscripcion: {
-        id: inscripcion.id,
-        nombre_aspirante: inscripcion.nombre_aspirante,
-        nivel_academico: inscripcion.nivel_academico,
-        confirmacion_asistencia: inscripcion.confirmacion_asistencia,
-        fecha_confirmacion: inscripcion.fecha_confirmacion
-      }
+        id: registro.id,
+        nombre_aspirante: registro.nombre_aspirante,
+        nivel_academico: registro.nivel_academico,
+        confirmacion_asistencia: registro.confirmacion_asistencia,
+        fecha_confirmacion: registro.fecha_confirmacion
+      },
+      tabla: tabla // Para debugging
     });
 
   } catch (error) {
@@ -82,26 +102,39 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Obtener información de la inscripción
-    const { data, error } = await supabase
+    // Primero intentar buscar en inscripciones (Open House)
+    let { data, error } = await supabase
       .from('inscripciones')
       .select('id, nombre_aspirante, nivel_academico, confirmacion_asistencia, fecha_confirmacion')
       .eq('id', id)
       .single();
 
-    if (error) {
-      console.error('Error al obtener inscripción:', error);
-      return NextResponse.json(
-        { error: 'Error al obtener la inscripción' },
-        { status: 500 }
-      );
-    }
+    // Si no se encuentra en inscripciones, buscar en sesiones (Sesiones Informativas)
+    if (error || !data) {
+      console.log('No encontrado en inscripciones, buscando en sesiones...');
+      
+      const { data: sesionData, error: sesionError } = await supabase
+        .from('sesiones')
+        .select('id, nombre_aspirante, nivel_academico, confirmacion_asistencia, fecha_confirmacion')
+        .eq('id', id)
+        .single();
 
-    if (!data) {
-      return NextResponse.json(
-        { error: 'Inscripción no encontrada' },
-        { status: 404 }
-      );
+      if (sesionError) {
+        console.error('Error al obtener inscripción de sesiones:', sesionError);
+        return NextResponse.json(
+          { error: 'Error al obtener la inscripción' },
+          { status: 500 }
+        );
+      }
+
+      if (!sesionData) {
+        return NextResponse.json(
+          { error: 'Inscripción no encontrada' },
+          { status: 404 }
+        );
+      }
+
+      data = sesionData;
     }
 
     return NextResponse.json({
