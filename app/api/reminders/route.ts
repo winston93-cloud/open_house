@@ -530,18 +530,18 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
   let fechaEvento, horaEvento, institucionNombre, diasRestantes;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = '15 de noviembre de 2025';
-    horaEvento = '9:00 AM';
+    fechaEvento = '1 de Diciembre';
+    horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Educativo Winston';
     diasRestantes = 1;
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = '22 de noviembre de 2025';
-    horaEvento = '9:00 AM a 11:30 AM';
+    fechaEvento = '8 de Diciembre';
+    horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     diasRestantes = 1;
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = '22 de noviembre de 2025';
-    horaEvento = '11:30 AM a 2:00 PM';
+    fechaEvento = '9 de Diciembre';
+    horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     diasRestantes = 1;
   }
@@ -1042,20 +1042,20 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
 const getEventInfo = (nivelAcademico: string) => {
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
     return {
-      fechaEvento: '29 de noviembre de 2025',
-      horaEvento: '9:00 AM',
+      fechaEvento: '1 de Diciembre',
+      horaEvento: '6:00 PM',
       institucionNombre: 'Instituto Educativo Winston'
     };
   } else if (nivelAcademico === 'primaria') {
     return {
-      fechaEvento: '6 de diciembre de 2025',
-      horaEvento: '9:00 AM a 11:30 AM',
+      fechaEvento: '8 de Diciembre',
+      horaEvento: '6:00 PM',
       institucionNombre: 'Instituto Winston Churchill'
     };
   } else if (nivelAcademico === 'secundaria') {
     return {
-      fechaEvento: '6 de diciembre de 2025',
-      horaEvento: '11:30 AM a 2:00 PM',
+      fechaEvento: '9 de Diciembre',
+      horaEvento: '6:00 PM',
       institucionNombre: 'Instituto Winston Churchill'
     };
   }

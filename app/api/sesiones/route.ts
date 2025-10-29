@@ -599,18 +599,18 @@ const createEmailTemplate = (formData: any) => {
   let fechaEvento, horaEvento, institucionNombre;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = '29 de noviembre de 2025';
-    horaEvento = '9:00 AM';
+    fechaEvento = '1 de Diciembre';
+    horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Educativo Winston';
     return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = '6 de diciembre de 2025';
-    horaEvento = '9:00 AM a 11:30 AM';
+    fechaEvento = '8 de Diciembre';
+    horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = '6 de diciembre de 2025';
-    horaEvento = '11:30 AM a 2:00 PM';
+    fechaEvento = '9 de Diciembre';
+    horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   }
@@ -637,11 +637,14 @@ export async function POST(request: NextRequest) {
     let reminderDate = new Date();
     
     if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-      // Sesiones Maternal/Kinder: 15 nov, recordatorio 14 nov
-      reminderDate = new Date('2025-11-14');
-    } else if (formData.nivelAcademico === 'primaria' || formData.nivelAcademico === 'secundaria') {
-      // Sesiones Primaria/Secundaria: 22 nov, recordatorio 21 nov
-      reminderDate = new Date('2025-11-21');
+      // Sesiones Maternal/Kinder: 1 Dic, recordatorio 30 Nov
+      reminderDate = new Date('2025-11-30');
+    } else if (formData.nivelAcademico === 'primaria') {
+      // Sesión Primaria: 8 Dic, recordatorio 7 Dic
+      reminderDate = new Date('2025-12-07');
+    } else if (formData.nivelAcademico === 'secundaria') {
+      // Sesión Secundaria: 9 Dic, recordatorio 8 Dic
+      reminderDate = new Date('2025-12-08');
     }
 
     // Guardar en la base de datos (tabla 'sesiones' en lugar de 'inscripciones')
