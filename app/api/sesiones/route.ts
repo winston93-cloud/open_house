@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
+import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 
 
 
@@ -675,6 +676,33 @@ export async function POST(request: NextRequest) {
         { error: 'Error al guardar la inscripción' },
         { status: 500 }
       );
+    }
+
+    // ===== INTEGRACIÓN KOMMO ===== CREAR LEAD Y ENVIAR WHATSAPP
+    try {
+      console.log('🚀 Creando lead en Kommo para Sesiones Informativas y enviando WhatsApp...');
+      
+      // Determinar el plantel basado en el nivel académico
+      const plantel = determinePlantel(formData);
+      
+      // Crear lead en Kommo (esto también envía el WhatsApp automáticamente)
+      const leadId = await createKommoLead({
+        name: formData.nombreCompleto,
+        phone: formData.telefono || '',
+        email: formData.correo,
+        plantel: plantel,
+        nivelAcademico: formData.nivelAcademico,
+        gradoEscolar: formData.gradoEscolar,
+        nombreAspirante: formData.nombreAspirante,
+        tipoEvento: 'sesiones' // Especificar que es Sesiones Informativas
+      });
+      
+      console.log(`✅ Lead creado exitosamente con ID: ${leadId}`);
+      console.log(`📱 WhatsApp de confirmación enviado automáticamente`);
+      
+    } catch (kommoError) {
+      console.error('❌ Error en integración Kommo:', kommoError);
+      // No retornamos error para que el email se envíe aunque falle Kommo
     }
 
     // Crear el template del email

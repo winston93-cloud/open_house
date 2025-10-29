@@ -44,6 +44,7 @@ export async function createKommoLead(leadData: {
   nivelAcademico: string;
   gradoEscolar: string;
   nombreAspirante: string;
+  tipoEvento?: 'open-house' | 'sesiones'; // Tipo de evento para determinar etiqueta
 }) {
   try {
     // Log para detectar múltiples llamadas
@@ -105,9 +106,17 @@ export async function createKommoLead(leadData: {
     console.log('📋 Paso 2: Creando lead con contacto...');
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
-    // Determine tag name based on plantel
-    const tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
-    console.log(`🏷️ Etiqueta a incluir: ${tagName}`);
+    // Determine tag name based on plantel and tipoEvento
+    const tipoEvento = leadData.tipoEvento || 'open-house'; // Por defecto Open House
+    let tagName: string;
+    
+    if (tipoEvento === 'sesiones') {
+      tagName = leadData.plantel === 'winston' ? 'Sesiones Informativas Winston' : 'Sesiones Informativas Educativo';
+    } else {
+      tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
+    }
+    
+    console.log(`🏷️ Etiqueta a incluir: ${tagName} (Evento: ${tipoEvento}, Plantel: ${leadData.plantel})`);
 
     const leadPayload = [
       {
