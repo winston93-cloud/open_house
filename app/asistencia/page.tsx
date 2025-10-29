@@ -235,7 +235,7 @@ function ConfirmarAsistenciaContent() {
               marginBottom: '15px',
               fontSize: '16px'
             }}>
-              Tu asistencia al Open House ha sido confirmada correctamente.
+              Tu asistencia ha sido confirmada correctamente.
             </p>
             <p style={{ 
               color: '#666', 
@@ -287,7 +287,7 @@ function ConfirmarAsistenciaContent() {
               color: '#333', 
               marginBottom: '15px' 
             }}>
-              ¿Podrás asistir al Open House?
+              ¿Podrás asistir al evento?
             </h2>
             <p style={{ 
               color: '#666', 
@@ -301,7 +301,7 @@ function ConfirmarAsistenciaContent() {
               marginBottom: '25px',
               fontSize: '16px'
             }}>
-              Por favor confirma tu asistencia al Open House.
+              Por favor confirma tu asistencia al evento.
             </p>
             <button
               onClick={confirmarAsistencia}
