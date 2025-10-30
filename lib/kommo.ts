@@ -126,9 +126,8 @@ export async function createKommoLead(leadData: {
     let tagName: string | null = null;
     if (tipoEvento === 'sesiones') {
       // Sesiones Informativas:
-      // - Winston (niveles 3,4): sin etiqueta
-      // - Educativo (niveles 1,2): mantener etiqueta de Sesiones
-      tagName = leadData.plantel === 'winston' ? null : 'Sesiones Informativas Educativo';
+      // Winston -> SesionesW, Educativo -> SesionesE
+      tagName = leadData.plantel === 'winston' ? 'SesionesW' : 'SesionesE';
     } else {
       // Open House se mantiene igual
       tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
