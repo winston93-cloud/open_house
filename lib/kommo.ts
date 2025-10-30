@@ -107,32 +107,32 @@ export async function createKommoLead(leadData: {
     const leadUrl = `https://${KOMMO_CONFIG.subdomain}.kommo.com/api/v4/leads`;
     
     // Determine tag name based on plantel and tipoEvento
-    const tipoEvento = leadData.tipoEvento || 'open-house'; // Por defecto Open House
-    let tagName: string;
-    
+    const tipoEvento = leadData.tipoEvento || 'open-house';
+    let tagName: string | null = null;
     if (tipoEvento === 'sesiones') {
-      // Para Sesiones Informativas, etiqueta solicitada para Winston: "SesionesW"
-      tagName = leadData.plantel === 'winston'
-        ? 'SesionesW'
-        : 'Sesiones Informativas Educativo';
+      // Solicitud: no enviar etiquetas para Sesiones Informativas
+      tagName = null; // sin etiquetas
     } else {
       tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
     }
-    
-    console.log(`🏷️ Etiqueta a incluir: ${tagName} (Evento: ${tipoEvento}, Plantel: ${leadData.plantel})`);
+    if (tagName) {
+      console.log(`🏷️ Etiqueta a incluir: ${tagName} (Evento: ${tipoEvento}, Plantel: ${leadData.plantel})`);
+    } else {
+      console.log(`🏷️ Sin etiquetas para este lead (Evento: ${tipoEvento})`);
+    }
 
+    const embedded: any = { contacts: [{ id: contactId }] };
+    if (tagName) {
+      embedded.tags = [{ name: tagName }];
+    }
     const leadPayload = [
       {
-        name: leadData.name, // Nombre del contacto (papá/mamá)
+        name: leadData.name,
         price: 0,
         pipeline_id: parseInt(KOMMO_CONFIG.pipelineId!),
-        status_id: parseInt(KOMMO_CONFIG.statusId!), // Columna "comentarios"
-        responsible_user_id: parseInt(KOMMO_CONFIG.responsibleUserId!), // Karla Garza
-        _embedded: {
-          contacts: [{ id: contactId }],
-          // ✅ CAMBIO CLAVE: Las etiquetas deben ir dentro de _embedded
-          tags: [{ name: tagName }]
-        }
+        status_id: parseInt(KOMMO_CONFIG.statusId!),
+        responsible_user_id: parseInt(KOMMO_CONFIG.responsibleUserId!),
+        _embedded: embedded
       }
     ];
 
@@ -168,8 +168,9 @@ export async function createKommoLead(leadData: {
     
     console.log('✅ Lead creado exitosamente con ID:', leadId);
     
-    // Tags are now included directly in the lead payload
-    console.log('🏷️ Etiqueta incluida en el payload del lead');
+    if (tagName) {
+      console.log('🏷️ Etiqueta incluida en el payload del lead');
+    }
     
     console.log('📱 El Salesbot de Kommo se encargará del envío de WhatsApp automáticamente');
     
