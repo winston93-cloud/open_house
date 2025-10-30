@@ -111,7 +111,11 @@ export async function createKommoLead(leadData: {
     let tagName: string;
     
     if (tipoEvento === 'sesiones') {
-      tagName = leadData.plantel === 'winston' ? 'Sesiones Informativas Winston' : 'Sesiones Informativas Educativo';
+      // Para validar el disparo del Salesbot, usamos la misma etiqueta que Open House
+      // específicamente para el plantel Winston. Educativo mantiene su etiqueta de Sesiones.
+      tagName = leadData.plantel === 'winston'
+        ? 'Open House Winston'
+        : 'Sesiones Informativas Educativo';
     } else {
       tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
     }
