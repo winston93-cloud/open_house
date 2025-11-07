@@ -21,6 +21,27 @@ interface FormErrors {
   [key: string]: string
 }
 
+const SESIONES_EVENT_INFO: Record<string, { title: string; subtitle: string }> = {
+  maternal: {
+    title: 'Sesión Informativa Maternal y Kinder',
+    subtitle: 'Domingo 1 de diciembre · 6:00 p.m.'
+  },
+  kinder: {
+    title: 'Sesión Informativa Maternal y Kinder',
+    subtitle: 'Domingo 1 de diciembre · 6:00 p.m.'
+  },
+  primaria: {
+    title: 'Sesión Informativa Primaria',
+    subtitle: 'Domingo 8 de diciembre · 6:00 p.m.'
+  },
+  secundaria: {
+    title: 'Sesión Informativa Secundaria',
+    subtitle: 'Lunes 9 de diciembre · 6:00 p.m.'
+  }
+}
+
+const getSesionesEventInfo = (nivel: string) => SESIONES_EVENT_INFO[nivel] ?? null
+
 export default function SesionesForm() {
   const [formData, setFormData] = useState<FormData>({
     nombreAspirante: '',
@@ -41,6 +62,7 @@ export default function SesionesForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const selectedEventInfo = getSesionesEventInfo(formData.nivelAcademico)
 
   // Agregar clase al body para aplicar estilos naranjas
   useEffect(() => {
@@ -355,6 +377,12 @@ export default function SesionesForm() {
                 {errors.nivelAcademico && (
                   <div className="error-message">{errors.nivelAcademico}</div>
                 )}
+              {selectedEventInfo && (
+                <div className="event-info-block">
+                  <strong>{selectedEventInfo.title}</strong>
+                  <span>{selectedEventInfo.subtitle}</span>
+                </div>
+              )}
               </div>
 
               <div className="form-group">
@@ -634,6 +662,30 @@ export default function SesionesForm() {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .event-info-block {
+          margin-top: 0.75rem;
+          padding: 0.75rem 1rem;
+          border-left: 4px solid #2F6FE4;
+          background: #ECF3FF;
+          border-radius: 10px;
+          color: #1346A3;
+          font-weight: 600;
+          display: inline-block;
+        }
+
+        .event-info-block strong {
+          display: block;
+          font-size: 0.95rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .event-info-block span {
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+      `}</style>
     </div>
   )
 }

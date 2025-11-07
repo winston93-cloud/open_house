@@ -21,6 +21,27 @@ interface FormErrors {
   [key: string]: string
 }
 
+const OPEN_HOUSE_EVENT_INFO: Record<string, { title: string; subtitle: string }> = {
+  maternal: {
+    title: 'Open House Maternal y Kinder',
+    subtitle: 'Viernes 29 de noviembre · 9:00 a.m.'
+  },
+  kinder: {
+    title: 'Open House Maternal y Kinder',
+    subtitle: 'Viernes 29 de noviembre · 9:00 a.m.'
+  },
+  primaria: {
+    title: 'Open House Primaria',
+    subtitle: 'Viernes 6 de diciembre · 9:00 a 11:30 a.m.'
+  },
+  secundaria: {
+    title: 'Open House Secundaria',
+    subtitle: 'Viernes 6 de diciembre · 11:30 a.m. a 2:00 p.m.'
+  }
+}
+
+const getOpenHouseEventInfo = (nivel: string) => OPEN_HOUSE_EVENT_INFO[nivel] ?? null
+
 export default function InscripcionForm() {
   const [formData, setFormData] = useState<FormData>({
     nombreAspirante: '',
@@ -41,6 +62,7 @@ export default function InscripcionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const selectedEventInfo = getOpenHouseEventInfo(formData.nivelAcademico)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -304,6 +326,12 @@ export default function InscripcionForm() {
                 {errors.nivelAcademico && (
                   <div className="error-message">{errors.nivelAcademico}</div>
                 )}
+              {selectedEventInfo && (
+                <div className="event-info-block">
+                  <strong>{selectedEventInfo.title}</strong>
+                  <span>{selectedEventInfo.subtitle}</span>
+                </div>
+              )}
               </div>
 
               <div className="form-group">
@@ -583,6 +611,30 @@ export default function InscripcionForm() {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        .event-info-block {
+          margin-top: 0.75rem;
+          padding: 0.75rem 1rem;
+          border-left: 4px solid #2F6FE4;
+          background: #ECF3FF;
+          border-radius: 10px;
+          color: #1346A3;
+          font-weight: 600;
+          display: inline-block;
+        }
+
+        .event-info-block strong {
+          display: block;
+          font-size: 0.95rem;
+          margin-bottom: 0.25rem;
+        }
+
+        .event-info-block span {
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+      `}</style>
     </>
   )
 }
