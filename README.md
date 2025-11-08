@@ -137,10 +137,19 @@ Verifica el estado del servidor.
 - **Estilos**: CSS Global con diseño responsivo
 - **Validación**: JavaScript nativo en frontend y backend
 
-## Próximos Pasos
+## Módulo de envío de SMS
 
-- [ ] Integración con base de datos
-- [ ] Envío de emails de confirmación
-- [ ] Panel de administración
-- [ ] Exportación de datos
-- [ ] Tests unitarios y de integración
+El sistema puede enviar SMS usando un teléfono Android configurado con la app **SMS Mobile API**.
+
+1. Instala la app en el teléfono y activa el modo gateway.
+2. Obtén tu API Key desde la sección *Help Center*.
+3. Usa la URL `https://api.smsmobileapi.com/sendsms/`.
+4. Configura las variables en `.env.local`:
+
+```
+SMS_GATEWAY_URL=https://api.smsmobileapi.com/sendsms/
+SMS_GATEWAY_TOKEN=tu_api_key
+NEXT_PUBLIC_SMS_MODULE_PASSWORD=winston2025
+```
+
+El módulo se encuentra en `/sms` (restringido por contraseña). Desde ahí se pueden enviar SMS manuales a cualquier número mediante la API interna `/api/sms/send`.
