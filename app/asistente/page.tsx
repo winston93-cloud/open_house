@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -170,26 +169,77 @@ export default function AsistenteIA() {
   // Pantalla de login
   if (!authenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
-          <div className="text-center mb-6">
-            <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-4xl">🤖</span>
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+      }}>
+        <div style={{
+          background: 'white',
+          borderRadius: '20px',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+          padding: '3rem',
+          maxWidth: '420px',
+          width: '100%'
+        }}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem',
+              fontSize: '2.5rem'
+            }}>
+              🤖
             </div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Asistente Virtual</h1>
-            <p className="text-gray-600">Instituto Tampico</p>
+            <h1 style={{
+              fontSize: '1.875rem',
+              fontWeight: 'bold',
+              color: '#1a202c',
+              marginBottom: '0.5rem'
+            }}>
+              Asistente Virtual
+            </h1>
+            <p style={{ color: '#718096', fontSize: '1rem' }}>
+              Instituto Tampico
+            </p>
           </div>
           
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+          <form onSubmit={handleLogin}>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{
+                display: 'block',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                color: '#4a5568',
+                marginBottom: '0.5rem'
+              }}>
                 Contraseña de acceso
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  border: '2px solid #e2e8f0',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                  outline: 'none',
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#667eea'}
+                onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                 placeholder="Ingresa la contraseña"
                 required
               />
@@ -197,13 +247,32 @@ export default function AsistenteIA() {
             
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                padding: '0.875rem',
+                borderRadius: '10px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'transform 0.2s',
+                boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
             >
               Ingresar
             </button>
           </form>
 
-          <p className="text-sm text-gray-500 text-center mt-6">
+          <p style={{
+            fontSize: '0.875rem',
+            color: '#a0aec0',
+            textAlign: 'center',
+            marginTop: '1.5rem'
+          }}>
             Solo personal autorizado puede acceder
           </p>
         </div>
@@ -213,52 +282,138 @@ export default function AsistenteIA() {
 
   // Pantalla principal del chat
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+    }}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🤖</span>
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.98)',
+        borderBottom: '1px solid rgba(0,0,0,0.1)',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+      }}>
+        <div style={{
+          maxWidth: '1000px',
+          margin: '0 auto',
+          padding: '1rem 1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1.5rem'
+            }}>
+              🤖
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">Asistente Virtual</h1>
-              <p className="text-sm text-gray-500">Instituto Tampico</p>
+              <h1 style={{
+                fontSize: '1.25rem',
+                fontWeight: 'bold',
+                color: '#1a202c',
+                margin: 0
+              }}>
+                Asistente Virtual
+              </h1>
+              <p style={{
+                fontSize: '0.875rem',
+                color: '#718096',
+                margin: 0
+              }}>
+                Instituto Tampico
+              </p>
             </div>
           </div>
           
           <a
             href="/"
-            className="text-gray-600 hover:text-gray-800 transition-colors"
+            style={{
+              color: '#718096',
+              textDecoration: 'none',
+              fontSize: '1.5rem',
+              padding: '0.5rem',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#f7fafc';
+              e.currentTarget.style.color = '#1a202c';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#718096';
+            }}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            ✕
           </a>
         </div>
       </div>
 
       {/* Chat Container */}
-      <div className="max-w-4xl mx-auto px-4 py-6 flex flex-col" style={{ height: 'calc(100vh - 80px)' }}>
+      <div style={{
+        maxWidth: '1000px',
+        margin: '0 auto',
+        padding: '1.5rem',
+        height: 'calc(100vh - 88px)',
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4">
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          marginBottom: '1rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1rem'
+        }}>
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              style={{
+                display: 'flex',
+                justifyContent: message.role === 'user' ? 'flex-end' : 'flex-start'
+              }}
             >
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                  message.role === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-800 shadow-md border border-gray-100'
-                }`}
-              >
-                <p className="whitespace-pre-wrap break-words">{message.content}</p>
-                <p className={`text-xs mt-2 ${
-                  message.role === 'user' ? 'text-blue-100' : 'text-gray-400'
-                }`}>
+              <div style={{
+                maxWidth: '75%',
+                borderRadius: '18px',
+                padding: '0.875rem 1.125rem',
+                background: message.role === 'user' 
+                  ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                  : 'rgba(255, 255, 255, 0.98)',
+                color: message.role === 'user' ? 'white' : '#1a202c',
+                boxShadow: message.role === 'user'
+                  ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                  : '0 2px 8px rgba(0,0,0,0.1)',
+                border: message.role === 'user' ? 'none' : '1px solid rgba(0,0,0,0.05)'
+              }}>
+                <p style={{
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  margin: 0,
+                  lineHeight: '1.5'
+                }}>
+                  {message.content}
+                </p>
+                <p style={{
+                  fontSize: '0.75rem',
+                  marginTop: '0.5rem',
+                  marginBottom: 0,
+                  opacity: 0.7
+                }}>
                   {message.timestamp.toLocaleTimeString('es-MX', { 
                     hour: '2-digit', 
                     minute: '2-digit' 
@@ -269,12 +424,36 @@ export default function AsistenteIA() {
           ))}
           
           {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-white text-gray-800 rounded-2xl px-4 py-3 shadow-md border border-gray-100">
-                <div className="flex space-x-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.98)',
+                borderRadius: '18px',
+                padding: '0.875rem 1.125rem',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                border: '1px solid rgba(0,0,0,0.05)'
+              }}>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    background: '#a0aec0',
+                    borderRadius: '50%',
+                    animation: 'bounce 1.4s infinite ease-in-out'
+                  }}></div>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    background: '#a0aec0',
+                    borderRadius: '50%',
+                    animation: 'bounce 1.4s infinite ease-in-out 0.2s'
+                  }}></div>
+                  <div style={{
+                    width: '8px',
+                    height: '8px',
+                    background: '#a0aec0',
+                    borderRadius: '50%',
+                    animation: 'bounce 1.4s infinite ease-in-out 0.4s'
+                  }}></div>
                 </div>
               </div>
             </div>
@@ -284,47 +463,105 @@ export default function AsistenteIA() {
         </div>
 
         {/* Input Area */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
-          <form onSubmit={handleSubmit} className="flex items-end space-x-3">
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.98)',
+          borderRadius: '20px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+          border: '1px solid rgba(0,0,0,0.05)',
+          padding: '1rem'
+        }}>
+          <form onSubmit={handleSubmit} style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            gap: '0.75rem'
+          }}>
             <textarea
               ref={textareaRef}
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Escribe tu pregunta aquí..."
-              className="flex-1 resize-none max-h-32 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows={1}
               disabled={isLoading}
+              style={{
+                flex: 1,
+                resize: 'none',
+                maxHeight: '120px',
+                padding: '0.75rem 1rem',
+                border: '2px solid #e2e8f0',
+                borderRadius: '12px',
+                fontSize: '1rem',
+                outline: 'none',
+                transition: 'all 0.2s',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#667eea'}
+              onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
+              rows={1}
             />
             
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading}
-              className={`px-6 py-3 rounded-xl font-semibold transition-all ${
-                !inputMessage.trim() || isLoading
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg'
-              }`}
+              style={{
+                padding: '0.75rem 1.5rem',
+                borderRadius: '12px',
+                fontWeight: '600',
+                border: 'none',
+                cursor: inputMessage.trim() && !isLoading ? 'pointer' : 'not-allowed',
+                background: inputMessage.trim() && !isLoading
+                  ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                  : '#e2e8f0',
+                color: inputMessage.trim() && !isLoading ? 'white' : '#a0aec0',
+                boxShadow: inputMessage.trim() && !isLoading
+                  ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                  : 'none',
+                transition: 'all 0.2s',
+                fontSize: '1.25rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                if (inputMessage.trim() && !isLoading) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(102, 126, 234, 0.5)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = inputMessage.trim() && !isLoading
+                  ? '0 4px 12px rgba(102, 126, 234, 0.4)'
+                  : 'none';
+              }}
             >
-              {isLoading ? (
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              )}
+              {isLoading ? '⏳' : '🚀'}
             </button>
           </form>
           
-          <p className="text-xs text-gray-400 mt-2 text-center">
+          <p style={{
+            fontSize: '0.75rem',
+            color: '#a0aec0',
+            textAlign: 'center',
+            marginTop: '0.75rem',
+            marginBottom: 0
+          }}>
             Presiona Enter para enviar • Shift + Enter para nueva línea
           </p>
         </div>
 
       </div>
+
+      <style jsx>{`
+        @keyframes bounce {
+          0%, 80%, 100% {
+            transform: scale(0);
+          }
+          40% {
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
