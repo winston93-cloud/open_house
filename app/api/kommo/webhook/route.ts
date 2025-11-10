@@ -3,10 +3,13 @@ import { supabase } from '../../../../lib/supabase';
 
 // Endpoint para recibir webhooks de Kommo
 // Kommo enviará notificaciones cuando:
-// - Se crea un lead nuevo
+// - Se crea un lead nuevo (CUALQUIER FUENTE: formulario, Facebook, Instagram, WhatsApp, etc.)
 // - Se actualiza un lead
 // - Se añade una nota
 // - Se envía/recibe un mensaje
+//
+// 🎯 IMPORTANTE: Este webhook captura leads de TODAS las fuentes, no solo de nuestra app.
+// Si un lead viene de Facebook/Instagram/WhatsApp y no está en tracking, se registra automáticamente.
 
 export async function POST(request: NextRequest) {
   try {
@@ -109,21 +112,54 @@ async function handleLeadUpdated(leadsData: any[]) {
       
       console.log(`📝 Lead actualizado: ID=${leadId}`);
       
-      // Actualizar last_contact_time ya que hubo actividad
-      const { error } = await supabase
+      // Verificar si el lead existe en tracking
+      const { data: existingLead } = await supabase
         .from('kommo_lead_tracking')
-        .update({
-          last_contact_time: new Date().toISOString(),
-          pipeline_id: leadData.pipeline_id,
-          status_id: leadData.status_id,
-          updated_at: new Date().toISOString()
-        })
-        .eq('kommo_lead_id', leadId);
-
-      if (error) {
-        console.error(`❌ Error actualizando lead ${leadId}:`, error);
+        .select('kommo_lead_id')
+        .eq('kommo_lead_id', leadId)
+        .single();
+      
+      if (!existingLead) {
+        // Lead no existe en tracking (viene de otra fuente: Facebook, Instagram, etc.)
+        console.log(`⚠️ Lead ${leadId} no está en tracking, registrándolo ahora...`);
+        
+        // Obtener detalles completos del lead
+        const leadDetails = await getLeadDetails(leadId);
+        
+        if (leadDetails) {
+          await upsertLeadTracking({
+            kommo_lead_id: leadId,
+            kommo_contact_id: leadData.main_contact?.id || null,
+            nombre: leadDetails.name,
+            telefono: leadDetails.phone || '',
+            email: leadDetails.email || '',
+            plantel: determinePlantelFromTags(leadDetails.tags),
+            last_contact_time: new Date().toISOString(),
+            pipeline_id: leadData.pipeline_id,
+            status_id: leadData.status_id,
+            responsible_user_id: leadData.responsible_user_id,
+            lead_status: 'active',
+            last_webhook_payload: leadData
+          });
+          console.log(`✅ Lead ${leadId} registrado en tracking desde update`);
+        }
       } else {
-        console.log(`✅ Lead ${leadId} actualizado - last_contact_time renovado`);
+        // Lead existe, solo actualizar last_contact_time
+        const { error } = await supabase
+          .from('kommo_lead_tracking')
+          .update({
+            last_contact_time: new Date().toISOString(),
+            pipeline_id: leadData.pipeline_id,
+            status_id: leadData.status_id,
+            updated_at: new Date().toISOString()
+          })
+          .eq('kommo_lead_id', leadId);
+
+        if (error) {
+          console.error(`❌ Error actualizando lead ${leadId}:`, error);
+        } else {
+          console.log(`✅ Lead ${leadId} actualizado - last_contact_time renovado`);
+        }
       }
     } catch (error) {
       console.error(`❌ Error procesando actualización de lead:`, error);
@@ -143,26 +179,58 @@ async function handleLeadStatusChanged(leadsData: any[]) {
       
       console.log(`📊 Status cambió: Lead ${leadId}, Status ${statusId}`);
       
-      // Determinar si el lead está cerrado
-      let leadStatus = 'active';
-      // Aquí puedes añadir lógica para detectar status cerrados
-      // Por ejemplo: if (statusId === CLOSED_WON_STATUS_ID) leadStatus = 'closed_won';
-      
-      const { error } = await supabase
+      // Verificar si el lead existe en tracking
+      const { data: existingLead } = await supabase
         .from('kommo_lead_tracking')
-        .update({
-          last_contact_time: new Date().toISOString(),
-          status_id: statusId,
-          pipeline_id: pipelineId,
-          lead_status: leadStatus,
-          updated_at: new Date().toISOString()
-        })
-        .eq('kommo_lead_id', leadId);
-
-      if (error) {
-        console.error(`❌ Error actualizando status del lead ${leadId}:`, error);
+        .select('kommo_lead_id')
+        .eq('kommo_lead_id', leadId)
+        .single();
+      
+      if (!existingLead) {
+        // Lead no existe en tracking (viene de otra fuente)
+        console.log(`⚠️ Lead ${leadId} no está en tracking, registrándolo ahora...`);
+        
+        const leadDetails = await getLeadDetails(leadId);
+        
+        if (leadDetails) {
+          await upsertLeadTracking({
+            kommo_lead_id: leadId,
+            kommo_contact_id: leadData.main_contact?.id || null,
+            nombre: leadDetails.name,
+            telefono: leadDetails.phone || '',
+            email: leadDetails.email || '',
+            plantel: determinePlantelFromTags(leadDetails.tags),
+            last_contact_time: new Date().toISOString(),
+            pipeline_id: pipelineId,
+            status_id: statusId,
+            responsible_user_id: leadData.responsible_user_id,
+            lead_status: 'active',
+            last_webhook_payload: leadData
+          });
+          console.log(`✅ Lead ${leadId} registrado en tracking desde status change`);
+        }
       } else {
-        console.log(`✅ Status del lead ${leadId} actualizado`);
+        // Determinar si el lead está cerrado
+        let leadStatus = 'active';
+        // Aquí puedes añadir lógica para detectar status cerrados
+        // Por ejemplo: if (statusId === CLOSED_WON_STATUS_ID) leadStatus = 'closed_won';
+        
+        const { error } = await supabase
+          .from('kommo_lead_tracking')
+          .update({
+            last_contact_time: new Date().toISOString(),
+            status_id: statusId,
+            pipeline_id: pipelineId,
+            lead_status: leadStatus,
+            updated_at: new Date().toISOString()
+          })
+          .eq('kommo_lead_id', leadId);
+
+        if (error) {
+          console.error(`❌ Error actualizando status del lead ${leadId}:`, error);
+        } else {
+          console.log(`✅ Status del lead ${leadId} actualizado`);
+        }
       }
     } catch (error) {
       console.error(`❌ Error procesando cambio de status:`, error);
@@ -218,10 +286,20 @@ async function getLeadDetails(leadId: number) {
 function determinePlantelFromTags(tags: string[]): 'winston' | 'educativo' {
   const tagString = tags.join(' ').toLowerCase();
   
-  if (tagString.includes('educativo') || tagString.includes('maternal') || tagString.includes('kinder')) {
+  // Buscar tags específicos de Educativo Winston (Maternal/Kinder)
+  if (
+    tagString.includes('educativo') || 
+    tagString.includes('maternal') || 
+    tagString.includes('kinder') ||
+    tagString.includes('preescolar') ||
+    tagString.includes('sesiones informativas educativo') ||
+    tagString.includes('open house educativo')
+  ) {
     return 'educativo';
   }
   
+  // Por defecto: Winston Churchill (Primaria/Secundaria)
+  // Esto cubre leads de Facebook, Instagram, WhatsApp que no tienen tags específicos
   return 'winston';
 }
 

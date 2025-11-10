@@ -158,9 +158,17 @@ El módulo se encuentra en `/sms` (restringido por contraseña). Desde ahí se p
 
 El sistema monitorea automáticamente los leads de Kommo y envía SMS cuando se detecta que han pasado más de 24 horas sin comunicación.
 
+**⚡ Funciona con leads de CUALQUIER fuente:**
+- Formularios web (Open House/Sesiones)
+- Facebook Messenger
+- Instagram DM
+- WhatsApp Business
+- Formularios externos
+- Creación manual en Kommo
+
 **Cómo funciona:**
 
-1. Cada lead creado se registra en la tabla `kommo_lead_tracking` con un timestamp `last_contact_time`.
+1. Cada lead (de cualquier fuente) se registra automáticamente en `kommo_lead_tracking` con timestamp `last_contact_time`.
 2. Kommo envía webhooks cuando hay actividad en leads (actualizaciones, notas, mensajes).
 3. Cada webhook recibido dispara una revisión automática de TODOS los leads.
 4. Si un lead tiene >24h sin comunicación y no se le ha enviado SMS, se envía automáticamente.

@@ -11,9 +11,15 @@ Este sistema envía automáticamente SMS a leads de Kommo que han pasado más de
 │                    FLUJO AUTOMÁTICO                              │
 └─────────────────────────────────────────────────────────────────┘
 
-1. Usuario llena formulario Open House/Sesiones
+1. Lead llega a Kommo (DESDE CUALQUIER FUENTE):
+   ✅ Formulario web (Open House/Sesiones)
+   ✅ Facebook Messenger
+   ✅ Instagram DM
+   ✅ WhatsApp Business
+   ✅ Formularios externos
+   ✅ Creación manual en Kommo
    ↓
-2. Se crea lead en Kommo + registro en kommo_lead_tracking
+2. Kommo envía webhook → Lead registrado en kommo_lead_tracking
    ↓
 3. Kommo envía webhooks cuando hay actividad (update, nota, mensaje)
    ↓
@@ -27,6 +33,16 @@ Este sistema envía automáticamente SMS a leads de Kommo que han pasado más de
    ↓
 8. Añadir tag "SMS-24h-Enviado" en Kommo
 ```
+
+### 🌐 Soporte Multi-Fuente
+
+El sistema detecta y trackea automáticamente leads de **cualquier fuente**:
+
+- **Formularios web**: Se registran directamente al crear el lead
+- **Facebook/Instagram/WhatsApp**: Se capturan en el primer webhook que recibimos
+- **Leads existentes**: Si un lead viejo se actualiza, se registra automáticamente
+
+**No importa de dónde venga el lead**, el sistema lo captura y monitorea.
 
 ## 🚀 Pasos de Configuración
 
