@@ -13,7 +13,30 @@ import { supabase } from '../../../../lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Kommo puede enviar datos como JSON o como form-urlencoded
+    const contentType = request.headers.get('content-type') || '';
+    let body: any;
+
+    if (contentType.includes('application/json')) {
+      // Formato JSON
+      body = await request.json();
+    } else {
+      // Formato form-urlencoded (más común en Kommo)
+      const text = await request.text();
+      const params = new URLSearchParams(text);
+      
+      // Convertir URLSearchParams a objeto JSON
+      body = {};
+      for (const [key, value] of params.entries()) {
+        // Kommo envía arrays como "leads[add][0][id]"
+        // Intentar parsear cada valor como JSON por si es un objeto/array
+        try {
+          body[key] = JSON.parse(value);
+        } catch {
+          body[key] = value;
+        }
+      }
+    }
     
     console.log('🔔 Webhook recibido de Kommo:', JSON.stringify(body, null, 2));
 
