@@ -1,82 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../../../../lib/supabase';
 
-// Endpoint para recibir webhooks de Kommo
-// Kommo enviará notificaciones cuando:
-// - Se crea un lead nuevo (CUALQUIER FUENTE: formulario, Facebook, Instagram, WhatsApp, etc.)
-// - Se actualiza un lead
-// - Se añade una nota
-// - Se envía/recibe un mensaje
+// =============================================================================
+// WEBHOOK DE KOMMO - SISTEMA SMS 24H
+// =============================================================================
 //
-// 🎯 IMPORTANTE: Este webhook captura leads de TODAS las fuentes, no solo de nuestra app.
-// Si un lead viene de Facebook/Instagram/WhatsApp y no está en tracking, se registra automáticamente.
+// Este endpoint recibe webhooks de Kommo cuando hay cualquier actividad.
+// Cada vez que se recibe un evento, revisamos TODOS los leads con >24h 
+// sin comunicación y les enviamos SMS automáticamente.
+//
+// Es un sistema simple y efectivo: cualquier actividad en Kommo dispara
+// la revisión de leads pendientes.
+//
+// =============================================================================
 
 export async function POST(request: NextRequest) {
   try {
-    // Kommo puede enviar datos como JSON o como form-urlencoded
-    const contentType = request.headers.get('content-type') || '';
-    let body: any;
+    console.log('🔔 Webhook recibido de Kommo');
 
-    if (contentType.includes('application/json')) {
-      // Formato JSON
-      body = await request.json();
-    } else {
-      // Formato form-urlencoded (más común en Kommo)
-      const text = await request.text();
-      const params = new URLSearchParams(text);
-      
-      // Convertir URLSearchParams a objeto JSON
-      body = {};
-      params.forEach((value, key) => {
-        // Kommo envía arrays como "leads[add][0][id]"
-        // Intentar parsear cada valor como JSON por si es un objeto/array
-        try {
-          body[key] = JSON.parse(value);
-        } catch {
-          body[key] = value;
-        }
-      });
-    }
-    
-    console.log('🔔 Webhook recibido de Kommo:', JSON.stringify(body, null, 2));
-
-    // 🎯 IMPORTANTE: Revisar leads >24h ANTES de procesar eventos
-    // Así evitamos que el procesamiento de eventos actualice timestamps
-    // y resetee el contador de 24h antes de enviar SMS
-    console.log('🔍 Revisando leads con >24h sin comunicación (ANTES de procesar eventos)...');
+    // Ejecutar revisión de leads con >24h sin comunicación
+    console.log('🔍 Revisando leads con >24h sin comunicación...');
     await checkAndSendSMS24h();
 
-    // Kommo envía diferentes tipos de eventos
-    // Extraer información relevante
-    const { leads, contacts } = body;
-
-    // Si el webhook contiene información de leads
-    if (leads && leads.add) {
-      // Lead nuevo creado
-      await handleLeadAdded(leads.add);
-    }
-
-    if (leads && leads.update) {
-      // Lead actualizado
-      await handleLeadUpdated(leads.update);
-    }
-
-    if (leads && leads.status) {
-      // Status del lead cambió
-      await handleLeadStatusChanged(leads.status);
-    }
-
-    // Responder OK a Kommo para confirmar recepción
+    // Responder OK a Kommo
     return NextResponse.json({ 
       success: true, 
-      message: 'Webhook procesado correctamente' 
+      message: 'Webhook procesado - revisión 24h ejecutada' 
     });
 
   } catch (error) {
     console.error('❌ Error procesando webhook de Kommo:', error);
     
-    // Aunque haya error, responder 200 para evitar que Kommo reintente
-    // (los errores se loguean pero no detienen el servicio)
+    // Responder 200 para evitar que Kommo reintente
     return NextResponse.json({ 
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 
@@ -84,278 +39,10 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Procesar lead nuevo
-async function handleLeadAdded(leadsData: any[]) {
-  console.log('➕ Procesando leads nuevos:', leadsData.length);
-  
-  for (const leadData of leadsData) {
-    try {
-      const leadId = leadData.id;
-      const contactId = leadData.main_contact?.id || null;
-      
-      console.log(`📋 Lead nuevo: ID=${leadId}, Contact=${contactId}`);
-      
-      // Obtener detalles completos del lead desde Kommo API
-      const leadDetails = await getLeadDetails(leadId);
-      
-      if (!leadDetails) {
-        console.log(`⚠️ No se pudieron obtener detalles del lead ${leadId}`);
-        continue;
-      }
+// =============================================================================
+// FUNCIÓN PRINCIPAL: Revisar y enviar SMS a leads con >24h sin comunicación
+// =============================================================================
 
-      // Insertar en nuestra base de datos
-      await upsertLeadTracking({
-        kommo_lead_id: leadId,
-        kommo_contact_id: contactId,
-        nombre: leadDetails.name,
-        telefono: leadDetails.phone || '',
-        email: leadDetails.email || '',
-        plantel: determinePlantelFromTags(leadDetails.tags),
-        last_contact_time: new Date().toISOString(),
-        pipeline_id: leadData.pipeline_id,
-        status_id: leadData.status_id,
-        responsible_user_id: leadData.responsible_user_id,
-        lead_status: 'active',
-        last_webhook_payload: leadData
-      });
-
-      console.log(`✅ Lead ${leadId} registrado en tracking`);
-    } catch (error) {
-      console.error(`❌ Error procesando lead nuevo:`, error);
-    }
-  }
-}
-
-// Procesar actualización de lead
-async function handleLeadUpdated(leadsData: any[]) {
-  console.log('🔄 Procesando leads actualizados:', leadsData.length);
-  
-  for (const leadData of leadsData) {
-    try {
-      const leadId = leadData.id;
-      
-      console.log(`📝 Lead actualizado: ID=${leadId}`);
-      
-      // Verificar si el lead existe en tracking
-      const { data: existingLead } = await supabase
-        .from('kommo_lead_tracking')
-        .select('kommo_lead_id')
-        .eq('kommo_lead_id', leadId)
-        .single();
-      
-      if (!existingLead) {
-        // Lead no existe en tracking (viene de otra fuente: Facebook, Instagram, etc.)
-        console.log(`⚠️ Lead ${leadId} no está en tracking, registrándolo ahora...`);
-        
-        // Obtener detalles completos del lead
-        const leadDetails = await getLeadDetails(leadId);
-        
-        if (leadDetails) {
-          await upsertLeadTracking({
-            kommo_lead_id: leadId,
-            kommo_contact_id: leadData.main_contact?.id || null,
-            nombre: leadDetails.name,
-            telefono: leadDetails.phone || '',
-            email: leadDetails.email || '',
-            plantel: determinePlantelFromTags(leadDetails.tags),
-            last_contact_time: new Date().toISOString(),
-            pipeline_id: leadData.pipeline_id,
-            status_id: leadData.status_id,
-            responsible_user_id: leadData.responsible_user_id,
-            lead_status: 'active',
-            last_webhook_payload: leadData
-          });
-          console.log(`✅ Lead ${leadId} registrado en tracking desde update`);
-        }
-      } else {
-        // Lead existe, solo actualizar last_contact_time
-        const { error } = await supabase
-          .from('kommo_lead_tracking')
-          .update({
-            last_contact_time: new Date().toISOString(),
-            pipeline_id: leadData.pipeline_id,
-            status_id: leadData.status_id,
-            updated_at: new Date().toISOString()
-          })
-          .eq('kommo_lead_id', leadId);
-
-        if (error) {
-          console.error(`❌ Error actualizando lead ${leadId}:`, error);
-        } else {
-          console.log(`✅ Lead ${leadId} actualizado - last_contact_time renovado`);
-        }
-      }
-    } catch (error) {
-      console.error(`❌ Error procesando actualización de lead:`, error);
-    }
-  }
-}
-
-// Procesar cambio de status
-async function handleLeadStatusChanged(leadsData: any[]) {
-  console.log('🔄 Procesando cambios de status:', leadsData.length);
-  
-  for (const leadData of leadsData) {
-    try {
-      const leadId = leadData.id;
-      const statusId = leadData.status_id;
-      const pipelineId = leadData.pipeline_id;
-      
-      console.log(`📊 Status cambió: Lead ${leadId}, Status ${statusId}`);
-      
-      // Verificar si el lead existe en tracking
-      const { data: existingLead } = await supabase
-        .from('kommo_lead_tracking')
-        .select('kommo_lead_id')
-        .eq('kommo_lead_id', leadId)
-        .single();
-      
-      if (!existingLead) {
-        // Lead no existe en tracking (viene de otra fuente)
-        console.log(`⚠️ Lead ${leadId} no está en tracking, registrándolo ahora...`);
-        
-        const leadDetails = await getLeadDetails(leadId);
-        
-        if (leadDetails) {
-          await upsertLeadTracking({
-            kommo_lead_id: leadId,
-            kommo_contact_id: leadData.main_contact?.id || null,
-            nombre: leadDetails.name,
-            telefono: leadDetails.phone || '',
-            email: leadDetails.email || '',
-            plantel: determinePlantelFromTags(leadDetails.tags),
-            last_contact_time: new Date().toISOString(),
-            pipeline_id: pipelineId,
-            status_id: statusId,
-            responsible_user_id: leadData.responsible_user_id,
-            lead_status: 'active',
-            last_webhook_payload: leadData
-          });
-          console.log(`✅ Lead ${leadId} registrado en tracking desde status change`);
-        }
-      } else {
-        // Determinar si el lead está cerrado
-        let leadStatus = 'active';
-        // Aquí puedes añadir lógica para detectar status cerrados
-        // Por ejemplo: if (statusId === CLOSED_WON_STATUS_ID) leadStatus = 'closed_won';
-        
-        const { error } = await supabase
-          .from('kommo_lead_tracking')
-          .update({
-            last_contact_time: new Date().toISOString(),
-            status_id: statusId,
-            pipeline_id: pipelineId,
-            lead_status: leadStatus,
-            updated_at: new Date().toISOString()
-          })
-          .eq('kommo_lead_id', leadId);
-
-        if (error) {
-          console.error(`❌ Error actualizando status del lead ${leadId}:`, error);
-        } else {
-          console.log(`✅ Status del lead ${leadId} actualizado`);
-        }
-      }
-    } catch (error) {
-      console.error(`❌ Error procesando cambio de status:`, error);
-    }
-  }
-}
-
-// Helper: Obtener detalles completos del lead desde Kommo
-async function getLeadDetails(leadId: number) {
-  try {
-    // Importar función para obtener token
-    const { getKommoAccessToken } = await import('../../../../lib/kommo');
-    const accessToken = await getKommoAccessToken('open-house');
-    
-    const response = await fetch(
-      `https://winstonchurchill.kommo.com/api/v4/leads/${leadId}?with=contacts`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        }
-      }
-    );
-
-    if (!response.ok) {
-      console.error(`❌ Error obteniendo lead ${leadId}:`, response.status);
-      return null;
-    }
-
-    const data = await response.json();
-    const lead = data;
-    
-    // Extraer contacto
-    const contact = lead._embedded?.contacts?.[0];
-    const phone = contact?.custom_fields_values?.find((f: any) => f.field_id === 557098)?.values?.[0]?.value || '';
-    const email = contact?.custom_fields_values?.find((f: any) => f.field_id === 557100)?.values?.[0]?.value || '';
-    
-    // Extraer tags
-    const tags = lead._embedded?.tags?.map((t: any) => t.name) || [];
-
-    return {
-      name: lead.name,
-      phone,
-      email,
-      tags
-    };
-  } catch (error) {
-    console.error(`❌ Error en getLeadDetails:`, error);
-    return null;
-  }
-}
-
-// Helper: Determinar plantel desde tags
-function determinePlantelFromTags(tags: string[]): 'winston' | 'educativo' {
-  const tagString = tags.join(' ').toLowerCase();
-  
-  // Buscar tags específicos de Educativo Winston (Maternal/Kinder)
-  if (
-    tagString.includes('educativo') || 
-    tagString.includes('maternal') || 
-    tagString.includes('kinder') ||
-    tagString.includes('preescolar') ||
-    tagString.includes('sesiones informativas educativo') ||
-    tagString.includes('open house educativo')
-  ) {
-    return 'educativo';
-  }
-  
-  // Por defecto: Winston Churchill (Primaria/Secundaria)
-  // Esto cubre leads de Facebook, Instagram, WhatsApp que no tienen tags específicos
-  return 'winston';
-}
-
-// Helper: Insertar o actualizar lead en tracking
-async function upsertLeadTracking(data: any) {
-  const { error } = await supabase
-    .from('kommo_lead_tracking')
-    .upsert({
-      kommo_lead_id: data.kommo_lead_id,
-      kommo_contact_id: data.kommo_contact_id,
-      nombre: data.nombre,
-      telefono: data.telefono,
-      email: data.email,
-      plantel: data.plantel,
-      last_contact_time: data.last_contact_time,
-      pipeline_id: data.pipeline_id,
-      status_id: data.status_id,
-      responsible_user_id: data.responsible_user_id,
-      lead_status: data.lead_status,
-      last_webhook_payload: data.last_webhook_payload,
-      updated_at: new Date().toISOString()
-    }, {
-      onConflict: 'kommo_lead_id'
-    });
-
-  if (error) {
-    console.error('❌ Error en upsert:', error);
-    throw error;
-  }
-}
-
-// 🎯 FUNCIÓN PRINCIPAL: Revisar leads con >24h y enviar SMS automáticamente
 async function checkAndSendSMS24h() {
   try {
     console.log('⏰ Iniciando revisión de leads con >24h sin comunicación...');
@@ -449,7 +136,11 @@ async function checkAndSendSMS24h() {
   }
 }
 
-// Helper: Enviar SMS de notificación 24h
+// =============================================================================
+// HELPERS
+// =============================================================================
+
+// Enviar SMS de notificación 24h
 async function sendSMS24hNotification(lead: any): Promise<{ success: boolean; error?: any }> {
   try {
     const mensaje = `Hola! Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mandanos un mensaje por WhatsApp y con gusto te ayudamos.`;
@@ -489,7 +180,7 @@ async function sendSMS24hNotification(lead: any): Promise<{ success: boolean; er
   }
 }
 
-// Helper: Añadir tag a lead en Kommo
+// Añadir tag a lead en Kommo
 async function addTagToKommoLead(leadId: number, tagName: string) {
   try {
     const { getKommoAccessToken } = await import('../../../../lib/kommo');
@@ -522,7 +213,3 @@ async function addTagToKommoLead(leadId: number, tagName: string) {
     return false;
   }
 }
-
-// Nota: getKommoAccessToken se importa dinámicamente donde se necesita
-// No es necesario exportarlo desde este archivo de ruta de API
-
