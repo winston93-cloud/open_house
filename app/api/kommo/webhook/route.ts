@@ -17,6 +17,12 @@ export async function POST(request: NextRequest) {
     
     console.log('🔔 Webhook recibido de Kommo:', JSON.stringify(body, null, 2));
 
+    // 🎯 IMPORTANTE: Revisar leads >24h ANTES de procesar eventos
+    // Así evitamos que el procesamiento de eventos actualice timestamps
+    // y resetee el contador de 24h antes de enviar SMS
+    console.log('🔍 Revisando leads con >24h sin comunicación (ANTES de procesar eventos)...');
+    await checkAndSendSMS24h();
+
     // Kommo envía diferentes tipos de eventos
     // Extraer información relevante
     const { leads, contacts } = body;
@@ -36,11 +42,6 @@ export async function POST(request: NextRequest) {
       // Status del lead cambió
       await handleLeadStatusChanged(leads.status);
     }
-
-    // 🎯 ESTRATEGIA: Aprovechar cada webhook para revisar leads >24h
-    // Cada vez que Kommo nos notifica, revisamos TODOS los leads pendientes de SMS
-    console.log('🔍 Revisando leads con >24h sin comunicación...');
-    await checkAndSendSMS24h();
 
     // Responder OK a Kommo para confirmar recepción
     return NextResponse.json({ 
