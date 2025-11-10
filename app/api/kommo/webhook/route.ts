@@ -26,12 +26,15 @@ export async function POST(request: NextRequest) {
       if (leadId) {
         console.log(`📝 Actividad detectada en lead ${leadId}`);
         
+        // Obtener hora actual en México (UTC-6)
+        const ahoraMexico = new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
+        
         // Actualizar last_contact_time para este lead
         const { error } = await supabase
           .from('kommo_lead_tracking')
           .update({
-            last_contact_time: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+            last_contact_time: ahoraMexico.toISOString(),
+            updated_at: ahoraMexico.toISOString()
           })
           .eq('kommo_lead_id', leadId);
         
