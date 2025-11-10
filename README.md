@@ -153,3 +153,48 @@ NEXT_PUBLIC_SMS_MODULE_PASSWORD=winston2025
 ```
 
 El módulo se encuentra en `/sms` (restringido por contraseña). Desde ahí se pueden enviar SMS manuales a cualquier número mediante la API interna `/api/sms/send`.
+
+### SMS Automáticos por Ventana de 24h (Kommo Integration)
+
+El sistema monitorea automáticamente los leads de Kommo y envía SMS cuando se detecta que han pasado más de 24 horas sin comunicación.
+
+**Cómo funciona:**
+
+1. Cada lead creado se registra en la tabla `kommo_lead_tracking` con un timestamp `last_contact_time`.
+2. Kommo envía webhooks cuando hay actividad en leads (actualizaciones, notas, mensajes).
+3. Cada webhook recibido dispara una revisión automática de TODOS los leads.
+4. Si un lead tiene >24h sin comunicación y no se le ha enviado SMS, se envía automáticamente.
+5. Se marca el lead con un tag "SMS-24h-Enviado" en Kommo para identificación visual.
+
+**Configuración del Webhook en Kommo:**
+
+1. Ve a **Kommo → Settings → API → Webhooks**
+2. Añade un nuevo webhook:
+   - URL: `https://open-house-chi.vercel.app/api/kommo/webhook`
+   - Eventos a suscribir:
+     - ✅ Lead added
+     - ✅ Lead updated
+     - ✅ Lead status changed
+     - ✅ Note added (opcional pero recomendado)
+3. Guarda y verifica que el webhook esté activo.
+
+**Base de datos:**
+
+Ejecuta el schema en Supabase: `database/schema-kommo-tracking.sql`
+
+```sql
+-- Crear la tabla de tracking
+CREATE TABLE kommo_lead_tracking (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  kommo_lead_id BIGINT NOT NULL UNIQUE,
+  nombre VARCHAR(255) NOT NULL,
+  telefono VARCHAR(20) NOT NULL,
+  plantel VARCHAR(20) NOT NULL,
+  last_contact_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  sms_24h_sent BOOLEAN DEFAULT FALSE,
+  lead_status VARCHAR(50) DEFAULT 'active',
+  -- ... más campos (ver schema completo)
+);
+```
+
+El sistema es completamente automático: no requiere intervención humana ni cron jobs adicionales.
