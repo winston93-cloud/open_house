@@ -431,7 +431,15 @@ async function sendSMS24hNotification(lead: any): Promise<{ success: boolean; er
   try {
     const mensaje = `Hola! Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mandanos un mensaje por WhatsApp y con gusto te ayudamos.`;
     
-    console.log(`   📤 Enviando SMS a ${lead.telefono}...`);
+    // Asegurar que el teléfono tenga el código de país +52
+    let telefono = lead.telefono.toString().trim();
+    if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
+      telefono = '+52' + telefono;
+    } else if (telefono.startsWith('52') && !telefono.startsWith('+')) {
+      telefono = '+' + telefono;
+    }
+    
+    console.log(`   📤 Enviando SMS a ${telefono} (original: ${lead.telefono})...`);
     
     // Llamar al endpoint de envío de SMS
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
@@ -440,7 +448,7 @@ async function sendSMS24hNotification(lead: any): Promise<{ success: boolean; er
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        phone: lead.telefono,
+        phone: telefono,
         message: mensaje
       })
     });
