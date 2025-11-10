@@ -428,11 +428,7 @@ async function checkAndSendSMS24h() {
 // Helper: Enviar SMS de notificación 24h
 async function sendSMS24hNotification(lead: any): Promise<{ success: boolean; error?: any }> {
   try {
-    const mensaje = `Hola ${lead.nombre}, notamos que aún no hemos podido conectar contigo. 
-    
-¿Tienes alguna duda sobre el proceso de inscripción en ${lead.plantel === 'winston' ? 'Winston Churchill' : 'Instituto Educativo Winston'}? 
-
-Estamos aquí para ayudarte. Responde este mensaje o llámanos.`;
+    const mensaje = `¡Hola! 😊 Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mándanos un mensaje por WhatsApp y con gusto te ayudamos.`;
     
     console.log(`   📤 Enviando SMS a ${lead.telefono}...`);
     
