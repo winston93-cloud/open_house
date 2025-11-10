@@ -4,6 +4,13 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
+  devIndicators: {
+    buildActivity: false,
+    buildActivityPosition: 'bottom-right',
+  },
+  experimental: {
+    webVitalsAttribution: ['CLS', 'LCP']
+  },
   headers: async () => {
     return [
       {
