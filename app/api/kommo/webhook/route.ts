@@ -429,7 +429,7 @@ async function checkAndSendSMS24h() {
 // Helper: Enviar SMS de notificación 24h
 async function sendSMS24hNotification(lead: any): Promise<{ success: boolean; error?: any }> {
   try {
-    const mensaje = `¡Hola! 😊 Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mándanos un mensaje por WhatsApp y con gusto te ayudamos.`;
+    const mensaje = `Hola! Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mandanos un mensaje por WhatsApp y con gusto te ayudamos.`;
     
     console.log(`   📤 Enviando SMS a ${lead.telefono}...`);
     
