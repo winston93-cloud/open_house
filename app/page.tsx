@@ -12,7 +12,8 @@ export default function Home() {
       {/* Botón flotante del asistente IA */}
       <Link
         href="/asistente"
-        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group z-50"
+        className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+        style={{ zIndex: 9999 }}
         title="Asistente Virtual"
       >
         <span className="text-3xl">🤖</span>
