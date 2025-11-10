@@ -12,7 +12,7 @@ export default function AsistenteIA() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: '¡Hola! 👋 Soy el asistente virtual del Instituto Tampico. Estoy aquí para ayudarte con cualquier duda sobre nuestros Open House, Sesiones Informativas, o el proceso de inscripción. ¿En qué puedo ayudarte hoy?',
+      content: '¡Hola! 👋 Soy el asistente virtual del Instituto Winston Churchill. Estoy aquí para ayudarte con cualquier duda sobre nuestros Open House, Sesiones Informativas, o el proceso de inscripción. ¿En qué puedo ayudarte hoy?',
       timestamp: new Date()
     }
   ]);
@@ -209,7 +209,7 @@ export default function AsistenteIA() {
               Asistente Virtual
             </h1>
             <p style={{ color: '#718096', fontSize: '1rem' }}>
-              Instituto Tampico
+              Instituto Winston Churchill
             </p>
           </div>
           
@@ -328,7 +328,7 @@ export default function AsistenteIA() {
                 color: '#718096',
                 margin: 0
               }}>
-                Instituto Tampico
+                Instituto Winston Churchill
               </p>
             </div>
           </div>
