@@ -206,3 +206,34 @@ CREATE TABLE kommo_lead_tracking (
 ```
 
 El sistema es completamente automático: no requiere intervención humana ni cron jobs adicionales.
+
+## 🤖 Asistente Virtual con IA
+
+El proyecto incluye un asistente virtual powered by Claude AI (Anthropic) que ayuda a los padres de familia a resolver dudas sobre el proceso de inscripción, Open House, y Sesiones Informativas.
+
+**Características:**
+- Chat en tiempo real con streaming de respuestas
+- Entrenado con información específica del proyecto
+- Responde preguntas sobre fechas, horarios, documentos, procesos
+- Interfaz moderna y responsiva
+- Protegido con contraseña (winston2025)
+
+**Configuración:**
+
+1. Obtén una API Key de Anthropic en: https://console.anthropic.com/
+2. Agrega la variable de entorno en Vercel:
+   ```
+   ANTHROPIC_API_KEY=tu_api_key
+   ```
+3. Accede al asistente en: `/asistente`
+
+**El asistente puede ayudar con:**
+- Explicar qué es un Open House y Sesiones Informativas
+- Proporcionar fechas y horarios de eventos
+- Indicar documentos necesarios para inscripción
+- Explicar el proceso de admisión
+- Responder preguntas frecuentes
+- Direccionar a contacto humano cuando sea necesario
+
+**Personalización:**
+La información que el asistente conoce está en `lib/assistant-context.ts`. Puedes editarlo para actualizar FAQ, horarios, o agregar nueva información.
