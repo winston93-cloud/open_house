@@ -495,6 +495,6 @@ async function addTagToKommoLead(leadId: number, tagName: string) {
   }
 }
 
-// Exportar función para que pueda ser importada en kommo.ts
-export { getKommoAccessToken } from '../../../../lib/kommo';
+// Nota: getKommoAccessToken se importa dinámicamente donde se necesita
+// No es necesario exportarlo desde este archivo de ruta de API
 
