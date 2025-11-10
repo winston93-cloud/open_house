@@ -261,13 +261,19 @@ function extractLeadIdFromWebhook(webhookBody: string): number | null {
     ];
     
     for (const pattern of patterns) {
-      for (const [key, value] of params.entries()) {
-        if (pattern.test(key)) {
+      let foundLeadId: number | null = null;
+      
+      params.forEach((value, key) => {
+        if (foundLeadId === null && pattern.test(key)) {
           const leadId = parseInt(value);
           if (!isNaN(leadId)) {
-            return leadId;
+            foundLeadId = leadId;
           }
         }
+      });
+      
+      if (foundLeadId !== null) {
+        return foundLeadId;
       }
     }
     
