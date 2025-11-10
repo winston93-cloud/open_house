@@ -2,6 +2,150 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
+// =============================================================================
+// FUNCIÓN: Revisar y enviar SMS a leads con >24h sin comunicación
+// =============================================================================
+async function checkAndSendSMS24h(logId?: string) {
+  const log = logId ? `[${logId}]` : '';
+  
+  try {
+    console.log(`⏰ ${log} Iniciando revisión de leads con >24h sin comunicación...`);
+    
+    // Calcular timestamp de hace 24 horas (en hora de México)
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+    
+    console.log(`📅 ${log} Buscando leads con last_contact_time < ${twentyFourHoursAgo.toISOString()}`);
+    
+    // Buscar leads pendientes
+    const { data: pendingLeads, error } = await supabase
+      .from('kommo_lead_tracking')
+      .select('*')
+      .lt('last_contact_time', twentyFourHoursAgo.toISOString())
+      .eq('sms_24h_sent', false)
+      .eq('lead_status', 'active');
+    
+    if (error) {
+      console.error(`❌ ${log} Error consultando leads pendientes:`, error);
+      return;
+    }
+    
+    if (!pendingLeads || pendingLeads.length === 0) {
+      console.log(`✅ ${log} No hay leads pendientes de SMS (todos están al día)`);
+      return;
+    }
+    
+    console.log(`📱 ${log} Encontrados ${pendingLeads.length} leads pendientes de SMS`);
+    
+    // Procesar cada lead
+    for (const lead of pendingLeads) {
+      try {
+        console.log(`\n📋 ${log} Procesando lead: ${lead.nombre} (ID: ${lead.kommo_lead_id})`);
+        console.log(`   📞 Teléfono: ${lead.telefono}`);
+        console.log(`   ⏱️ Último contacto: ${lead.last_contact_time}`);
+        
+        if (!lead.telefono || lead.telefono.trim() === '') {
+          console.log(`   ⚠️ Lead sin teléfono, omitiendo...`);
+          continue;
+        }
+        
+        // Enviar SMS
+        const smsResult = await sendSMS24hNotification(lead, log);
+        
+        if (smsResult.success) {
+          console.log(`   ✅ SMS enviado exitosamente`);
+          
+          // Marcar como enviado
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_24h_sent: true,
+              sms_24h_sent_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          // Añadir tag en Kommo
+          await addTagToKommoLead(lead.kommo_lead_id, 'SMS-24h-Enviado', log);
+          
+          // Marcar tag como añadido
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_24h_tag_added: true
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          console.log(`   🏷️ Tag "SMS-24h-Enviado" añadido en Kommo`);
+        } else {
+          console.error(`   ❌ Error enviando SMS:`, smsResult.error);
+        }
+      } catch (error) {
+        console.error(`   ❌ Error procesando lead ${lead.kommo_lead_id}:`, error);
+      }
+    }
+    
+    console.log(`\n✅ ${log} Revisión completada. Procesados ${pendingLeads.length} leads.`);
+  } catch (error) {
+    console.error(`❌ ${log} Error en checkAndSendSMS24h:`, error);
+  }
+}
+
+// Helper: Enviar SMS
+async function sendSMS24hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
+  try {
+    const mensaje = `Hola! Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mandanos un mensaje por WhatsApp y con gusto te ayudamos.`;
+    
+    let telefono = lead.telefono.toString().trim();
+    if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
+      telefono = '+52' + telefono;
+    } else if (telefono.startsWith('52') && !telefono.startsWith('+')) {
+      telefono = '+' + telefono;
+    }
+    
+    console.log(`   📤 ${log} Enviando SMS a ${telefono}...`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: telefono, message: mensaje })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      return { success: false, error: errorText };
+    }
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+
+// Helper: Añadir tag en Kommo
+async function addTagToKommoLead(leadId: number, tagName: string, log: string) {
+  try {
+    const { getKommoAccessToken } = await import('../../../lib/kommo');
+    const accessToken = await getKommoAccessToken('open-house');
+    
+    const response = await fetch(`https://winstonchurchill.kommo.com/api/v4/leads/${leadId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        _embedded: { tags: [{ name: tagName }] }
+      })
+    });
+    
+    return response.ok;
+  } catch (error) {
+    console.error(`❌ ${log} Error en addTagToKommoLead:`, error);
+    return false;
+  }
+}
+
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -1362,6 +1506,17 @@ export async function POST(request: NextRequest) {
       }
     } else {
       console.log(`✅ [${logId}] No hay recordatorios de sesiones pendientes`);
+    }
+
+    // ===== REVISAR LEADS CON >24H SIN COMUNICACIÓN =====
+    console.log(`\n📱 [${logId}] ===== REVISANDO LEADS CON >24H SIN COMUNICACIÓN =====`);
+    
+    try {
+      await checkAndSendSMS24h(logId);
+      console.log(`✅ [${logId}] Revisión de leads 24h completada`);
+    } catch (smsError) {
+      console.error(`❌ [${logId}] Error en revisión de leads 24h:`, smsError);
+      // No detener el proceso si falla el SMS, solo loguearlo
     }
 
     const endTime = new Date();
