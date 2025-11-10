@@ -18,14 +18,42 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🔔 Webhook recibido de Kommo');
 
-    // Ejecutar revisión de leads con >24h sin comunicación
+    // Paso 1: Intentar extraer lead_id del webhook para actualizar timestamp
+    try {
+      const text = await request.text();
+      const leadId = extractLeadIdFromWebhook(text);
+      
+      if (leadId) {
+        console.log(`📝 Actividad detectada en lead ${leadId}`);
+        
+        // Actualizar last_contact_time para este lead
+        const { error } = await supabase
+          .from('kommo_lead_tracking')
+          .update({
+            last_contact_time: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('kommo_lead_id', leadId);
+        
+        if (error) {
+          console.error(`⚠️ Error actualizando timestamp para lead ${leadId}:`, error);
+        } else {
+          console.log(`✅ Timestamp actualizado para lead ${leadId} - contador de 24h reseteado`);
+        }
+      }
+    } catch (parseError) {
+      // Si falla el parsing, continuar de todos modos
+      console.log('⚠️ No se pudo parsear lead_id del webhook (continuando...)');
+    }
+
+    // Paso 2: Ejecutar revisión de leads con >24h sin comunicación
     console.log('🔍 Revisando leads con >24h sin comunicación...');
     await checkAndSendSMS24h();
 
     // Responder OK a Kommo
     return NextResponse.json({ 
       success: true, 
-      message: 'Webhook procesado - revisión 24h ejecutada' 
+      message: 'Webhook procesado - timestamp actualizado y revisión 24h ejecutada' 
     });
 
   } catch (error) {
@@ -211,5 +239,41 @@ async function addTagToKommoLead(leadId: number, tagName: string) {
   } catch (error) {
     console.error(`❌ Error en addTagToKommoLead:`, error);
     return false;
+  }
+}
+
+// Extraer lead_id del webhook de Kommo
+function extractLeadIdFromWebhook(webhookBody: string): number | null {
+  try {
+    // Kommo envía webhooks en formato form-urlencoded con parámetros como:
+    // leads[add][0][id]=123456
+    // leads[update][0][id]=123456
+    // leads[status][0][id]=123456
+    
+    const params = new URLSearchParams(webhookBody);
+    
+    // Buscar patrones comunes de lead_id en webhooks de Kommo
+    const patterns = [
+      /leads\[add\]\[0\]\[id\]/,
+      /leads\[update\]\[0\]\[id\]/,
+      /leads\[status\]\[0\]\[id\]/,
+      /leads\[delete\]\[0\]\[id\]/
+    ];
+    
+    for (const pattern of patterns) {
+      for (const [key, value] of params.entries()) {
+        if (pattern.test(key)) {
+          const leadId = parseInt(value);
+          if (!isNaN(leadId)) {
+            return leadId;
+          }
+        }
+      }
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error parseando webhook:', error);
+    return null;
   }
 }
