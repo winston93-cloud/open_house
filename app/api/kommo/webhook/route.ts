@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       
       // Convertir URLSearchParams a objeto JSON
       body = {};
-      for (const [key, value] of params.entries()) {
+      params.forEach((value, key) => {
         // Kommo envía arrays como "leads[add][0][id]"
         // Intentar parsear cada valor como JSON por si es un objeto/array
         try {
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         } catch {
           body[key] = value;
         }
-      }
+      });
     }
     
     console.log('🔔 Webhook recibido de Kommo:', JSON.stringify(body, null, 2));
