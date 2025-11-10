@@ -183,19 +183,19 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
 const getEventInfo = (nivelAcademico: string) => {
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
     return {
-      fechaEvento: '1 de Diciembre',
+      fechaEvento: 'Lunes 1 de Diciembre',
       horaEvento: '6:00 PM',
       institucionNombre: 'Instituto Educativo Winston'
     };
   } else if (nivelAcademico === 'primaria') {
     return {
-      fechaEvento: '8 de Diciembre',
+      fechaEvento: 'Lunes 8 de Diciembre',
       horaEvento: '6:00 PM',
       institucionNombre: 'Instituto Winston Churchill'
     };
   } else if (nivelAcademico === 'secundaria') {
     return {
-      fechaEvento: '9 de Diciembre',
+      fechaEvento: 'Martes 9 de Diciembre',
       horaEvento: '6:00 PM',
       institucionNombre: 'Instituto Winston Churchill'
     };

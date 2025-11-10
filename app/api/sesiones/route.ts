@@ -600,17 +600,17 @@ const createEmailTemplate = (formData: any) => {
   let fechaEvento, horaEvento, institucionNombre;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = '1 de Diciembre';
+    fechaEvento = 'Lunes 1 de Diciembre';
     horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Educativo Winston';
     return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = '8 de Diciembre';
+    fechaEvento = 'Lunes 8 de Diciembre';
     horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = '9 de Diciembre';
+    fechaEvento = 'Martes 9 de Diciembre';
     horaEvento = '6:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);

@@ -509,19 +509,19 @@ const createReminderEmailTemplate = (formData: any) => {
 const getEventInfo = (nivelAcademico: string) => {
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
     return {
-      fechaEvento: '29 de noviembre de 2025',
+      fechaEvento: 'Sábado 29 de noviembre de 2025',
       horaEvento: '9:00 AM',
       institucionNombre: 'Instituto Educativo Winston'
     };
   } else if (nivelAcademico === 'primaria') {
     return {
-      fechaEvento: '6 de diciembre de 2025',
+      fechaEvento: 'Sábado 6 de diciembre de 2025',
       horaEvento: '9:00 AM a 11:30 AM',
       institucionNombre: 'Instituto Winston Churchill'
     };
   } else if (nivelAcademico === 'secundaria') {
     return {
-      fechaEvento: '6 de diciembre de 2025',
+      fechaEvento: 'Sábado 6 de diciembre de 2025',
       horaEvento: '11:30 AM a 2:00 PM',
       institucionNombre: 'Instituto Winston Churchill'
     };

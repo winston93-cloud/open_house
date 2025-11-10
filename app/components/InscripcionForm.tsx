@@ -24,19 +24,19 @@ interface FormErrors {
 const OPEN_HOUSE_EVENT_INFO: Record<string, { title: string; subtitle: string }> = {
   maternal: {
     title: 'Open House Maternal y Kinder',
-    subtitle: 'Viernes 29 de noviembre · 9:00 a.m.'
+    subtitle: 'Sábado 29 de noviembre · 9:00 a.m.'
   },
   kinder: {
     title: 'Open House Maternal y Kinder',
-    subtitle: 'Viernes 29 de noviembre · 9:00 a.m.'
+    subtitle: 'Sábado 29 de noviembre · 9:00 a.m.'
   },
   primaria: {
     title: 'Open House Primaria',
-    subtitle: 'Viernes 6 de diciembre · 9:00 a 11:30 a.m.'
+    subtitle: 'Sábado 6 de diciembre · 9:00 a 11:30 a.m.'
   },
   secundaria: {
     title: 'Open House Secundaria',
-    subtitle: 'Viernes 6 de diciembre · 11:30 a.m. a 2:00 p.m.'
+    subtitle: 'Sábado 6 de diciembre · 11:30 a.m. a 2:00 p.m.'
   }
 }
 

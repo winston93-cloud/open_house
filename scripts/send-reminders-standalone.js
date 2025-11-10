@@ -30,7 +30,7 @@ const createReminderEmailTemplate = (formData) => {
   let fechaEvento, horaEvento, institucionNombre, diasRestantes, telefono, emailContacto, sitioWeb, direccion;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = '29 de noviembre de 2025';
+    fechaEvento = 'Sábado 29 de noviembre de 2025';
     horaEvento = '9:00 AM';
     institucionNombre = 'Instituto Educativo Winston';
     telefono = '833 347 4507';
@@ -39,7 +39,7 @@ const createReminderEmailTemplate = (formData) => {
     direccion = 'C. 2 209, Jardín 20 de Noviembre, 89440 Cd Madero, Tamps.';
     diasRestantes = 49;
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = '6 de diciembre de 2025';
+    fechaEvento = 'Sábado 6 de diciembre de 2025';
     horaEvento = '9:00 a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
     telefono = '833 437 8743';
@@ -48,7 +48,7 @@ const createReminderEmailTemplate = (formData) => {
     direccion = 'Calle 3 #309 Col. Jardin 20 de Noviembre Cd. Madero Tamaulipas';
     diasRestantes = 56;
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = '6 de diciembre de 2025';
+    fechaEvento = 'Sábado 6 de diciembre de 2025';
     horaEvento = '11:30 AM a 2:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     telefono = '833 437 8743';
@@ -476,7 +476,7 @@ const calculateDaysUntilEvent = (nivelAcademico) => {
 const getEventInfo = (nivelAcademico) => {
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
     return {
-      fechaEvento: '29 de noviembre de 2025',
+      fechaEvento: 'Sábado 29 de noviembre de 2025',
       horaEvento: '9:00 AM',
       institucionNombre: 'Instituto Educativo Winston',
       telefono: '833 347 4507',
@@ -486,7 +486,7 @@ const getEventInfo = (nivelAcademico) => {
     };
   } else if (nivelAcademico === 'primaria') {
     return {
-      fechaEvento: '6 de diciembre de 2025',
+      fechaEvento: 'Sábado 6 de diciembre de 2025',
       horaEvento: '9:00 a 11:30 AM',
       institucionNombre: 'Instituto Winston Churchill',
       telefono: '833 437 8743',
@@ -496,7 +496,7 @@ const getEventInfo = (nivelAcademico) => {
     };
   } else if (nivelAcademico === 'secundaria') {
     return {
-      fechaEvento: '6 de diciembre de 2025',
+      fechaEvento: 'Sábado 6 de diciembre de 2025',
       horaEvento: '11:30 AM a 2:00 PM',
       institucionNombre: 'Instituto Winston Churchill',
       telefono: '833 437 8743',
