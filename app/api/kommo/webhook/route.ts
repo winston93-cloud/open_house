@@ -21,6 +21,16 @@ export async function POST(request: NextRequest) {
     // Paso 1: Intentar extraer lead_id del webhook para actualizar timestamp
     try {
       const text = await request.text();
+      
+      // 🛡️ PROTECCIÓN: Ignorar webhooks de tag SMS-24h-Enviado para evitar duplicados
+      if (text.includes('SMS-24h-Enviado')) {
+        console.log('⏭️ Webhook por tag "SMS-24h-Enviado" detectado, ignorando para evitar loop...');
+        return NextResponse.json({ 
+          success: true, 
+          message: 'Webhook de tag SMS ignorado (prevención de duplicados)' 
+        });
+      }
+      
       const leadId = extractLeadIdFromWebhook(text);
       
       if (leadId) {
