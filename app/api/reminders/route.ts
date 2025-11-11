@@ -157,27 +157,10 @@ const transporter = nodemailer.createTransport({
 
 // Template del email de recordatorio para Open House - MEJORADO PARA MÓVILES
 const createReminderEmailTemplate = (formData: any) => {
-  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, diasRestantes, fechaEvento, horaEvento, institucionNombre } = formData;
   
-  // Determinar fecha y hora del evento según el nivel
-  let fechaEvento, horaEvento, institucionNombre, diasRestantes;
-  
-  if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Sábado 29 de noviembre de 2025';
-    horaEvento = '9:00 AM';
-    institucionNombre = 'Instituto Educativo Winston';
-    diasRestantes = 1; // 1 día antes
-  } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Sábado 6 de diciembre de 2025';
-    horaEvento = '9:00 AM a 11:30 AM';
-    institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 1;
-  } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Sábado 6 de diciembre de 2025';
-    horaEvento = '11:30 AM a 2:00 PM';
-    institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 1;
-  }
+  // NOTA: Los valores de diasRestantes, fechaEvento, horaEvento e institucionNombre
+  // deben pasarse desde sendReminderEmail() para que sean dinámicos y precisos
 
   return `
 <!DOCTYPE html>
@@ -668,27 +651,10 @@ const createReminderEmailTemplate = (formData: any) => {
 
 // Template del email de recordatorio para Sesiones Informativas - MEJORADO PARA MÓVILES
 const createSesionesReminderEmailTemplate = (formData: any) => {
-  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, diasRestantes, fechaEvento, horaEvento, institucionNombre } = formData;
   
-  // Determinar fecha y hora del evento según el nivel
-  let fechaEvento, horaEvento, institucionNombre, diasRestantes;
-  
-  if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Lunes 1 de Diciembre';
-    horaEvento = '6:00 PM';
-    institucionNombre = 'Instituto Educativo Winston';
-    diasRestantes = 1;
-  } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Lunes 8 de Diciembre';
-    horaEvento = '6:00 PM';
-    institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 1;
-  } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Martes 9 de Diciembre';
-    horaEvento = '6:00 PM';
-    institucionNombre = 'Instituto Winston Churchill';
-    diasRestantes = 1;
-  }
+  // NOTA: Los valores de diasRestantes, fechaEvento, horaEvento e institucionNombre
+  // deben pasarse desde sendSesionesReminderEmail() para que sean dinámicos y precisos
 
   return `
 <!DOCTYPE html>
@@ -1309,18 +1275,19 @@ export async function POST(request: NextRequest) {
     console.log(`🔄 [${logId}] Iniciando procesamiento de recordatorios...`);
     
     // Buscar inscripciones que necesitan recordatorio (fecha programada = hoy)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Inicio del día de hoy
-    
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Inicio del día de hoy (00:00:00)
     const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1); // Mañana
+    tomorrow.setDate(tomorrow.getDate() + 1); // Inicio de mañana (00:00:00)
     
     console.log(`📅 [${logId}] Calculando rangos de fecha:`);
-    console.log(`📅 [${logId}] Fecha actual: ${new Date().toISOString()}`);
-    console.log(`📅 [${logId}] Hoy (inicio): ${today.toISOString()}`);
-    console.log(`📅 [${logId}] Mañana (inicio): ${tomorrow.toISOString()}`);
+    console.log(`📅 [${logId}] Fecha actual: ${now.toISOString()}`);
+    console.log(`📅 [${logId}] Hoy (inicio 00:00): ${today.toISOString()}`);
+    console.log(`📅 [${logId}] Mañana (inicio 00:00): ${tomorrow.toISOString()}`);
     
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase...`);
+    console.log(`🔍 [${logId}] Buscando reminder_scheduled_for >= ${today.toISOString().split('T')[0]} AND < ${tomorrow.toISOString().split('T')[0]}`);
+    
     const { data: inscripciones, error: dbError } = await supabase
       .from('inscripciones')
       .select('*')
@@ -1425,6 +1392,8 @@ export async function POST(request: NextRequest) {
     console.log(`\n📋 [${logId}] ===== PROCESANDO SESIONES INFORMATIVAS =====`);
     
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase para sesiones...`);
+    console.log(`🔍 [${logId}] Buscando reminder_scheduled_for >= ${today.toISOString().split('T')[0]} AND < ${tomorrow.toISOString().split('T')[0]}`);
+    
     const { data: sesiones, error: sesionesError } = await supabase
       .from('sesiones')
       .select('*')
