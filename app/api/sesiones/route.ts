@@ -635,7 +635,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calcular fecha para el recordatorio (1 día antes del evento según nivel)
-    let reminderDate = new Date();
+    let reminderDate: Date;
     
     if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
       // Sesiones Maternal/Kinder: 1 Dic, recordatorio 30 Nov
@@ -646,6 +646,13 @@ export async function POST(request: NextRequest) {
     } else if (formData.nivelAcademico === 'secundaria') {
       // Sesión Secundaria: 9 Dic, recordatorio 8 Dic
       reminderDate = new Date('2025-12-08');
+    } else {
+      // Seguridad: rechazar niveles académicos no válidos
+      console.error('❌ Nivel académico no válido:', formData.nivelAcademico);
+      return NextResponse.json(
+        { error: `Nivel académico no válido: ${formData.nivelAcademico}. Debe ser: maternal, kinder, primaria o secundaria` },
+        { status: 400 }
+      );
     }
 
     // Guardar en la base de datos (tabla 'sesiones' en lugar de 'inscripciones')
