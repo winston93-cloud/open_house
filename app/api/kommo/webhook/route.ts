@@ -31,15 +31,64 @@ export async function POST(request: NextRequest) {
         });
       }
       
-      const leadId = extractLeadIdFromWebhook(text);
+      const webhookData = parseWebhookData(text);
       
-      if (leadId) {
-        console.log(`📝 Actividad detectada en lead ${leadId}`);
+      if (webhookData.leadId) {
+        console.log(`📝 Actividad detectada en lead ${webhookData.leadId}`);
+        console.log(`🔖 Tipo de evento: ${webhookData.eventType}`);
         
         // Obtener hora actual en México (UTC-6)
         const ahoraMexico = new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
         
-        // Actualizar last_contact_time y resetear todos los flags de SMS
+        // Si es un lead NUEVO (evento 'add'), intentar crearlo en tracking
+        if (webhookData.eventType === 'add') {
+          console.log(`🆕 Lead nuevo detectado, verificando si existe en tracking...`);
+          
+          // Verificar si ya existe en tracking
+          const { data: existingLead } = await supabase
+            .from('kommo_lead_tracking')
+            .select('kommo_lead_id')
+            .eq('kommo_lead_id', webhookData.leadId)
+            .single();
+          
+          if (!existingLead) {
+            console.log(`➕ Lead no existe en tracking, creando registro...`);
+            
+            // Obtener datos del lead desde Kommo API
+            const leadData = await fetchLeadDataFromKommo(webhookData.leadId);
+            
+            if (leadData) {
+              // Insertar en tracking
+              const { error: insertError } = await supabase
+                .from('kommo_lead_tracking')
+                .insert({
+                  kommo_lead_id: leadData.leadId,
+                  kommo_contact_id: leadData.contactId,
+                  nombre: leadData.nombre,
+                  telefono: leadData.telefono,
+                  email: leadData.email,
+                  plantel: 'winston', // Por defecto, se puede ajustar según la lógica
+                  last_contact_time: ahoraMexico.toISOString(),
+                  pipeline_id: leadData.pipelineId,
+                  status_id: leadData.statusId,
+                  responsible_user_id: leadData.responsibleUserId,
+                  lead_status: 'active'
+                });
+              
+              if (insertError) {
+                console.error(`❌ Error creando lead en tracking:`, insertError);
+              } else {
+                console.log(`✅ Lead ${webhookData.leadId} registrado en tracking - recibirá los 3 SMS automáticamente`);
+              }
+            } else {
+              console.log(`⚠️ No se pudieron obtener datos del lead desde Kommo`);
+            }
+          } else {
+            console.log(`ℹ️ Lead ya existe en tracking`);
+          }
+        }
+        
+        // Actualizar last_contact_time y resetear todos los flags de SMS (para leads existentes)
         const { error } = await supabase
           .from('kommo_lead_tracking')
           .update({
@@ -53,12 +102,12 @@ export async function POST(request: NextRequest) {
             sms_72h_sent: false,
             sms_72h_sent_at: null
           })
-          .eq('kommo_lead_id', leadId);
+          .eq('kommo_lead_id', webhookData.leadId);
         
         if (error) {
-          console.error(`⚠️ Error actualizando timestamp para lead ${leadId}:`, error);
+          console.error(`⚠️ Error actualizando timestamp para lead ${webhookData.leadId}:`, error);
         } else {
-          console.log(`✅ Timestamp actualizado para lead ${leadId} - contadores de SMS reseteados (24h, 48h, 72h)`);
+          console.log(`✅ Timestamp actualizado para lead ${webhookData.leadId} - contadores de SMS reseteados (24h, 48h, 72h)`);
         }
       }
     } catch (parseError) {
@@ -262,25 +311,20 @@ async function addTagToKommoLead(leadId: number, tagName: string) {
   }
 }
 
-// Extraer lead_id del webhook de Kommo
-function extractLeadIdFromWebhook(webhookBody: string): number | null {
+// Parsear webhook y detectar tipo de evento
+function parseWebhookData(webhookBody: string): { leadId: number | null; eventType: string | null } {
   try {
-    // Kommo envía webhooks en formato form-urlencoded con parámetros como:
-    // leads[add][0][id]=123456
-    // leads[update][0][id]=123456
-    // leads[status][0][id]=123456
-    
     const params = new URLSearchParams(webhookBody);
     
-    // Buscar patrones comunes de lead_id en webhooks de Kommo
-    const patterns = [
-      /leads\[add\]\[0\]\[id\]/,
-      /leads\[update\]\[0\]\[id\]/,
-      /leads\[status\]\[0\]\[id\]/,
-      /leads\[delete\]\[0\]\[id\]/
+    // Detectar tipo de evento y extraer lead_id
+    const eventPatterns = [
+      { pattern: /leads\[add\]\[0\]\[id\]/, type: 'add' },
+      { pattern: /leads\[update\]\[0\]\[id\]/, type: 'update' },
+      { pattern: /leads\[status\]\[0\]\[id\]/, type: 'status' },
+      { pattern: /leads\[delete\]\[0\]\[id\]/, type: 'delete' }
     ];
     
-    for (const pattern of patterns) {
+    for (const { pattern, type } of eventPatterns) {
       let foundLeadId: number | null = null;
       
       params.forEach((value, key) => {
@@ -293,13 +337,82 @@ function extractLeadIdFromWebhook(webhookBody: string): number | null {
       });
       
       if (foundLeadId !== null) {
-        return foundLeadId;
+        return { leadId: foundLeadId, eventType: type };
       }
     }
     
-    return null;
+    return { leadId: null, eventType: null };
   } catch (error) {
     console.error('Error parseando webhook:', error);
+    return { leadId: null, eventType: null };
+  }
+}
+
+// Obtener datos del lead desde Kommo API
+async function fetchLeadDataFromKommo(leadId: number): Promise<any | null> {
+  try {
+    console.log(`🔍 Obteniendo datos del lead ${leadId} desde Kommo...`);
+    
+    const { getKommoAccessToken } = await import('../../../../lib/kommo');
+    const accessToken = await getKommoAccessToken('open-house');
+    
+    // Obtener lead con contactos embebidos
+    const response = await fetch(
+      `https://winstonchurchill.kommo.com/api/v4/leads/${leadId}?with=contacts`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    
+    if (!response.ok) {
+      console.error(`❌ Error obteniendo lead ${leadId} desde Kommo:`, response.status);
+      return null;
+    }
+    
+    const leadData = await response.json();
+    console.log(`📥 Datos del lead obtenidos:`, JSON.stringify(leadData, null, 2));
+    
+    // Extraer contacto principal
+    let contactId = null;
+    let telefono = '';
+    let email = '';
+    let nombre = leadData.name || 'Sin nombre';
+    
+    if (leadData._embedded && leadData._embedded.contacts && leadData._embedded.contacts.length > 0) {
+      const contact = leadData._embedded.contacts[0];
+      contactId = contact.id;
+      
+      // Obtener teléfono y email del contacto
+      if (contact.custom_fields_values) {
+        for (const field of contact.custom_fields_values) {
+          if (field.field_id === 557098 && field.values && field.values.length > 0) {
+            // Campo teléfono
+            telefono = field.values[0].value || '';
+          }
+          if (field.field_id === 557100 && field.values && field.values.length > 0) {
+            // Campo email
+            email = field.values[0].value || '';
+          }
+        }
+      }
+    }
+    
+    return {
+      leadId: leadData.id,
+      contactId,
+      nombre,
+      telefono,
+      email,
+      pipelineId: leadData.pipeline_id,
+      statusId: leadData.status_id,
+      responsibleUserId: leadData.responsible_user_id
+    };
+  } catch (error) {
+    console.error(`❌ Error en fetchLeadDataFromKommo:`, error);
     return null;
   }
 }
