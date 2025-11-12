@@ -22,9 +22,9 @@ export async function POST(request: NextRequest) {
     try {
       const text = await request.text();
       
-      // 🛡️ PROTECCIÓN: Ignorar webhooks de tag SMS-24h-Enviado para evitar duplicados
-      if (text.includes('SMS-24h-Enviado')) {
-        console.log('⏭️ Webhook por tag "SMS-24h-Enviado" detectado, ignorando para evitar loop...');
+      // 🛡️ PROTECCIÓN: Ignorar webhooks de tags SMS para evitar duplicados
+      if (text.includes('SMS-24h-Enviado') || text.includes('SMS-48h-Enviado') || text.includes('SMS-72h-Enviado')) {
+        console.log('⏭️ Webhook por tag SMS detectado, ignorando para evitar loop...');
         return NextResponse.json({ 
           success: true, 
           message: 'Webhook de tag SMS ignorado (prevención de duplicados)' 
@@ -39,19 +39,26 @@ export async function POST(request: NextRequest) {
         // Obtener hora actual en México (UTC-6)
         const ahoraMexico = new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
         
-        // Actualizar last_contact_time para este lead
+        // Actualizar last_contact_time y resetear todos los flags de SMS
         const { error } = await supabase
           .from('kommo_lead_tracking')
           .update({
             last_contact_time: ahoraMexico.toISOString(),
-            updated_at: ahoraMexico.toISOString()
+            updated_at: ahoraMexico.toISOString(),
+            // Resetear flags de SMS (se reinicia el contador)
+            sms_24h_sent: false,
+            sms_24h_sent_at: null,
+            sms_48h_sent: false,
+            sms_48h_sent_at: null,
+            sms_72h_sent: false,
+            sms_72h_sent_at: null
           })
           .eq('kommo_lead_id', leadId);
         
         if (error) {
           console.error(`⚠️ Error actualizando timestamp para lead ${leadId}:`, error);
         } else {
-          console.log(`✅ Timestamp actualizado para lead ${leadId} - contador de 24h reseteado`);
+          console.log(`✅ Timestamp actualizado para lead ${leadId} - contadores de SMS reseteados (24h, 48h, 72h)`);
         }
       }
     } catch (parseError) {

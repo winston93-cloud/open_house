@@ -3,6 +3,168 @@ import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
 // =============================================================================
+// FUNCIÓN: Revisar y enviar SMS a leads con >72h sin comunicación
+// =============================================================================
+async function checkAndSendSMS72h(logId?: string) {
+  const log = logId ? `[${logId}]` : '';
+  
+  try {
+    console.log(`⏰ ${log} Iniciando revisión de leads con >72h sin comunicación...`);
+    
+    // Calcular timestamp de hace 72 horas (en hora de México)
+    const now = new Date();
+    const seventyTwoHoursAgo = new Date(now.getTime() - (72 * 60 * 60 * 1000));
+    
+    console.log(`📅 ${log} Buscando leads con last_contact_time < ${seventyTwoHoursAgo.toISOString()}`);
+    
+    // Buscar leads pendientes
+    const { data: pendingLeads, error } = await supabase
+      .from('kommo_lead_tracking')
+      .select('*')
+      .lt('last_contact_time', seventyTwoHoursAgo.toISOString())
+      .eq('sms_72h_sent', false)
+      .eq('lead_status', 'active');
+    
+    if (error) {
+      console.error(`❌ ${log} Error consultando leads pendientes (72h):`, error);
+      return;
+    }
+    
+    if (!pendingLeads || pendingLeads.length === 0) {
+      console.log(`✅ ${log} No hay leads pendientes de SMS 72h (todos están al día)`);
+      return;
+    }
+    
+    console.log(`📱 ${log} Encontrados ${pendingLeads.length} leads pendientes de SMS 72h`);
+    
+    // Procesar cada lead
+    for (const lead of pendingLeads) {
+      try {
+        console.log(`\n📋 ${log} Procesando lead (72h): ${lead.nombre} (ID: ${lead.kommo_lead_id})`);
+        console.log(`   📞 Teléfono: ${lead.telefono}`);
+        console.log(`   ⏱️ Último contacto: ${lead.last_contact_time}`);
+        
+        if (!lead.telefono || lead.telefono.trim() === '') {
+          console.log(`   ⚠️ Lead sin teléfono, omitiendo...`);
+          continue;
+        }
+        
+        // Enviar SMS
+        const smsResult = await sendSMS72hNotification(lead, log);
+        
+        if (smsResult.success) {
+          console.log(`   ✅ SMS 72h enviado exitosamente`);
+          
+          // Marcar como enviado
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_72h_sent: true,
+              sms_72h_sent_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          // Añadir tag en Kommo
+          await addTagToKommoLead(lead.kommo_lead_id, 'SMS-72h-Enviado', log);
+          
+          console.log(`   🏷️ Tag "SMS-72h-Enviado" añadido en Kommo`);
+        } else {
+          console.error(`   ❌ Error enviando SMS 72h:`, smsResult.error);
+        }
+      } catch (error) {
+        console.error(`   ❌ Error procesando lead ${lead.kommo_lead_id} (72h):`, error);
+      }
+    }
+    
+    console.log(`\n✅ ${log} Revisión 72h completada. Procesados ${pendingLeads.length} leads.`);
+  } catch (error) {
+    console.error(`❌ ${log} Error en checkAndSendSMS72h:`, error);
+  }
+}
+
+// =============================================================================
+// FUNCIÓN: Revisar y enviar SMS a leads con >48h sin comunicación
+// =============================================================================
+async function checkAndSendSMS48h(logId?: string) {
+  const log = logId ? `[${logId}]` : '';
+  
+  try {
+    console.log(`⏰ ${log} Iniciando revisión de leads con >48h sin comunicación...`);
+    
+    // Calcular timestamp de hace 48 horas (en hora de México)
+    const now = new Date();
+    const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
+    
+    console.log(`📅 ${log} Buscando leads con last_contact_time < ${fortyEightHoursAgo.toISOString()}`);
+    
+    // Buscar leads pendientes
+    const { data: pendingLeads, error } = await supabase
+      .from('kommo_lead_tracking')
+      .select('*')
+      .lt('last_contact_time', fortyEightHoursAgo.toISOString())
+      .eq('sms_48h_sent', false)
+      .eq('lead_status', 'active');
+    
+    if (error) {
+      console.error(`❌ ${log} Error consultando leads pendientes (48h):`, error);
+      return;
+    }
+    
+    if (!pendingLeads || pendingLeads.length === 0) {
+      console.log(`✅ ${log} No hay leads pendientes de SMS 48h (todos están al día)`);
+      return;
+    }
+    
+    console.log(`📱 ${log} Encontrados ${pendingLeads.length} leads pendientes de SMS 48h`);
+    
+    // Procesar cada lead
+    for (const lead of pendingLeads) {
+      try {
+        console.log(`\n📋 ${log} Procesando lead (48h): ${lead.nombre} (ID: ${lead.kommo_lead_id})`);
+        console.log(`   📞 Teléfono: ${lead.telefono}`);
+        console.log(`   ⏱️ Último contacto: ${lead.last_contact_time}`);
+        
+        if (!lead.telefono || lead.telefono.trim() === '') {
+          console.log(`   ⚠️ Lead sin teléfono, omitiendo...`);
+          continue;
+        }
+        
+        // Enviar SMS
+        const smsResult = await sendSMS48hNotification(lead, log);
+        
+        if (smsResult.success) {
+          console.log(`   ✅ SMS 48h enviado exitosamente`);
+          
+          // Marcar como enviado
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_48h_sent: true,
+              sms_48h_sent_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          // Añadir tag en Kommo
+          await addTagToKommoLead(lead.kommo_lead_id, 'SMS-48h-Enviado', log);
+          
+          console.log(`   🏷️ Tag "SMS-48h-Enviado" añadido en Kommo`);
+        } else {
+          console.error(`   ❌ Error enviando SMS 48h:`, smsResult.error);
+        }
+      } catch (error) {
+        console.error(`   ❌ Error procesando lead ${lead.kommo_lead_id} (48h):`, error);
+      }
+    }
+    
+    console.log(`\n✅ ${log} Revisión 48h completada. Procesados ${pendingLeads.length} leads.`);
+  } catch (error) {
+    console.error(`❌ ${log} Error en checkAndSendSMS48h:`, error);
+  }
+}
+
+// =============================================================================
 // FUNCIÓN: Revisar y enviar SMS a leads con >24h sin comunicación
 // =============================================================================
 async function checkAndSendSMS24h(logId?: string) {
@@ -91,7 +253,69 @@ async function checkAndSendSMS24h(logId?: string) {
   }
 }
 
-// Helper: Enviar SMS
+// Helper: Enviar SMS 72h
+async function sendSMS72hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
+  try {
+    const mensaje = `¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy! Escríbenos al 833 437 8743 y da el primer paso para formar parte del Instituto Winston Churchill.`;
+    
+    let telefono = lead.telefono.toString().trim();
+    if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
+      telefono = '+52' + telefono;
+    } else if (telefono.startsWith('52') && !telefono.startsWith('+')) {
+      telefono = '+' + telefono;
+    }
+    
+    console.log(`   📤 ${log} Enviando SMS 72h a ${telefono}...`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: telefono, message: mensaje })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      return { success: false, error: errorText };
+    }
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+
+// Helper: Enviar SMS 48h
+async function sendSMS48hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
+  try {
+    const mensaje = `¡Nos encantaría que conociera nuestro Instituto Winston Churchill! ¿Le gustaría agendar un recorrido por nuestras instalaciones? Envía un mensaje al 833 437 8743 y te ayudamos a reservar tu visita.`;
+    
+    let telefono = lead.telefono.toString().trim();
+    if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
+      telefono = '+52' + telefono;
+    } else if (telefono.startsWith('52') && !telefono.startsWith('+')) {
+      telefono = '+' + telefono;
+    }
+    
+    console.log(`   📤 ${log} Enviando SMS 48h a ${telefono}...`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: telefono, message: mensaje })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      return { success: false, error: errorText };
+    }
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+
+// Helper: Enviar SMS 24h
 async function sendSMS24hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
   try {
     const mensaje = `Hola! Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mandanos un mensaje por WhatsApp y con gusto te ayudamos.`;
@@ -1477,15 +1701,32 @@ export async function POST(request: NextRequest) {
       console.log(`✅ [${logId}] No hay recordatorios de sesiones pendientes`);
     }
 
-    // ===== REVISAR LEADS CON >24H SIN COMUNICACIÓN =====
-    console.log(`\n📱 [${logId}] ===== REVISANDO LEADS CON >24H SIN COMUNICACIÓN =====`);
+    // ===== REVISAR LEADS CON >24H, >48H Y >72H SIN COMUNICACIÓN =====
+    console.log(`\n📱 [${logId}] ===== REVISANDO LEADS SIN COMUNICACIÓN =====`);
     
     try {
+      console.log(`\n📱 [${logId}] --- Revisión 24h ---`);
       await checkAndSendSMS24h(logId);
       console.log(`✅ [${logId}] Revisión de leads 24h completada`);
     } catch (smsError) {
       console.error(`❌ [${logId}] Error en revisión de leads 24h:`, smsError);
       // No detener el proceso si falla el SMS, solo loguearlo
+    }
+    
+    try {
+      console.log(`\n📱 [${logId}] --- Revisión 48h ---`);
+      await checkAndSendSMS48h(logId);
+      console.log(`✅ [${logId}] Revisión de leads 48h completada`);
+    } catch (smsError) {
+      console.error(`❌ [${logId}] Error en revisión de leads 48h:`, smsError);
+    }
+    
+    try {
+      console.log(`\n📱 [${logId}] --- Revisión 72h ---`);
+      await checkAndSendSMS72h(logId);
+      console.log(`✅ [${logId}] Revisión de leads 72h completada`);
+    } catch (smsError) {
+      console.error(`❌ [${logId}] Error en revisión de leads 72h:`, smsError);
     }
 
     const endTime = new Date();
