@@ -11,8 +11,8 @@ import { supabase } from '../../../../lib/supabase';
 // 2. Actualizar last_contact_time cuando hay actividad
 // 3. Resetear contadores de SMS cuando hay actividad
 //
-// EL ENVÍO DE SMS se hace ÚNICAMENTE desde el cron job /api/reminders
-// a las 10:00 AM cada día.
+// EL ENVÍO DE SMS se hace ÚNICAMENTE desde el cron job /api/sms-cron
+// a las 8:00 AM cada día.
 //
 // =============================================================================
 
