@@ -4,11 +4,11 @@ import { supabase } from '../../../lib/supabase';
 // =============================================================================
 // CRON JOB: SISTEMA DE SMS AUTOMÁTICOS PARA LEADS DE KOMMO
 // =============================================================================
-// Se ejecuta diariamente a las 11:00 AM (hora de México)
+// Se ejecuta diariamente a las 12:30 PM hora de México (18:30 UTC)
 // Envía SMS a leads según el tiempo sin actividad:
-// - 24h: Primer recordatorio
-// - 48h: Segundo recordatorio
-// - 72h: Tercer recordatorio (último intento)
+// - 24h: Primer recordatorio de contacto
+// - 48h: Segundo recordatorio (invitación a recorrido)
+// - 72h: Tercer recordatorio (oferta especial)
 // =============================================================================
 
 // Función principal que ejecuta el cron job
