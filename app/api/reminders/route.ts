@@ -256,7 +256,9 @@ async function checkAndSendSMS24h(logId?: string) {
 // Helper: Enviar SMS 72h
 async function sendSMS72hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
   try {
-    const mensaje = `¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy! Escríbenos al 833 437 8743 y da el primer paso para formar parte del Instituto Winston Churchill.`;
+    const mensaje = `¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy!
+
+Escríbenos al 833 437 8743 y da el primer paso para formar parte del Instituto Winston Churchill.`;
     
     let telefono = lead.telefono.toString().trim();
     if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
@@ -287,7 +289,11 @@ async function sendSMS72hNotification(lead: any, log: string): Promise<{ success
 // Helper: Enviar SMS 48h
 async function sendSMS48hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
   try {
-    const mensaje = `¡Nos encantaría que conociera nuestro Instituto Winston Churchill! ¿Le gustaría agendar un recorrido por nuestras instalaciones? Envía un mensaje al 833 437 8743 y te ayudamos a reservar tu visita.`;
+    const mensaje = `¡Nos encantaría que conociera nuestro Instituto Winston Churchill!
+
+¿Le gustaría agendar un recorrido por nuestras instalaciones?
+
+Envía un mensaje al 833 437 8743 y te ayudamos a reservar tu visita.`;
     
     let telefono = lead.telefono.toString().trim();
     if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
@@ -318,7 +324,9 @@ async function sendSMS48hNotification(lead: any, log: string): Promise<{ success
 // Helper: Enviar SMS 24h
 async function sendSMS24hNotification(lead: any, log: string): Promise<{ success: boolean; error?: any }> {
   try {
-    const mensaje = `Hola! Queremos asegurarnos de que todo vaya bien con el proceso de tu hijo. Si tienes alguna duda o comentario, por favor mandanos un mensaje por WhatsApp y con gusto te ayudamos.`;
+    const mensaje = `¡Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admisión al Instituto Winston Churchill.
+
+Escríbenos por WhatsApp al 833 437 8743 y con gusto te brindamos toda la información necesaria.`;
     
     let telefono = lead.telefono.toString().trim();
     if (!telefono.startsWith('+52') && !telefono.startsWith('52')) {
