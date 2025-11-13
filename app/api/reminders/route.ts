@@ -1011,26 +1011,50 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
   return 0;
 };
 
-// Función para obtener la información del evento según el nivel
-const getEventInfo = (nivelAcademico: string) => {
-  if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    return {
-      fechaEvento: '1 de Diciembre',
-      horaEvento: '6:00 PM',
-      institucionNombre: 'Instituto Educativo Winston'
-    };
-  } else if (nivelAcademico === 'primaria') {
-    return {
-      fechaEvento: '8 de Diciembre',
-      horaEvento: '6:00 PM',
-      institucionNombre: 'Instituto Winston Churchill'
-    };
-  } else if (nivelAcademico === 'secundaria') {
-    return {
-      fechaEvento: '9 de Diciembre',
-      horaEvento: '6:00 PM',
-      institucionNombre: 'Instituto Winston Churchill'
-    };
+// Función para obtener la información del evento según el nivel y tipo de formulario
+const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
+  if (isOpenHouse) {
+    // OPEN HOUSE
+    if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
+      return {
+        fechaEvento: '29 de Noviembre',
+        horaEvento: '9:00 AM',
+        institucionNombre: 'Instituto Educativo Winston'
+      };
+    } else if (nivelAcademico === 'primaria') {
+      return {
+        fechaEvento: '6 de Diciembre',
+        horaEvento: '9:00 AM - 11:30 AM',
+        institucionNombre: 'Instituto Winston Churchill'
+      };
+    } else if (nivelAcademico === 'secundaria') {
+      return {
+        fechaEvento: '6 de Diciembre',
+        horaEvento: '11:30 AM - 2:00 PM',
+        institucionNombre: 'Instituto Winston Churchill'
+      };
+    }
+  } else {
+    // SESIONES INFORMATIVAS
+    if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
+      return {
+        fechaEvento: '1 de Diciembre',
+        horaEvento: '6:00 PM',
+        institucionNombre: 'Instituto Educativo Winston'
+      };
+    } else if (nivelAcademico === 'primaria') {
+      return {
+        fechaEvento: '8 de Diciembre',
+        horaEvento: '6:00 PM',
+        institucionNombre: 'Instituto Winston Churchill'
+      };
+    } else if (nivelAcademico === 'secundaria') {
+      return {
+        fechaEvento: '9 de Diciembre',
+        horaEvento: '6:00 PM',
+        institucionNombre: 'Instituto Winston Churchill'
+      };
+    }
   }
   
   return {
@@ -1044,7 +1068,7 @@ const getEventInfo = (nivelAcademico: string) => {
 const sendSesionesReminderEmail = async (sesion: any) => {
   try {
     const diasRestantes = calculateDaysUntilEvent(sesion.nivel_academico);
-    const eventInfo = getEventInfo(sesion.nivel_academico);
+    const eventInfo = getEventInfo(sesion.nivel_academico, false); // false = Sesiones Informativas
     
     // Crear el template del email con los días restantes calculados
     const emailHtml = createSesionesReminderEmailTemplate({
@@ -1074,11 +1098,11 @@ const sendSesionesReminderEmail = async (sesion: any) => {
   }
 };
 
-// Función para enviar email de recordatorio
+// Función para enviar email de recordatorio de Open House
 const sendReminderEmail = async (inscripcion: any) => {
   try {
     const diasRestantes = calculateDaysUntilEvent(inscripcion.nivel_academico);
-    const eventInfo = getEventInfo(inscripcion.nivel_academico);
+    const eventInfo = getEventInfo(inscripcion.nivel_academico, true); // true = Open House
     
     // Crear el template del email con los días restantes calculados
     const emailHtml = createReminderEmailTemplate({
