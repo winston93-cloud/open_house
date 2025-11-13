@@ -1,380 +1,399 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../../../lib/supabase';
-import nodemailer from 'nodemailer';
 
-// Función para enviar email de confirmación de backup consolidado
-async function sendBackupNotification(
-  inscripcionesData: any, 
-  inscripcionesTotal: number,
-  sesionesData: any,
-  sesionesTotal: number
-) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: 'isc.escobedo@gmail.com',
-    subject: `📊 Backup Automático Completo - ${new Date().toLocaleDateString('es-MX')}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 10px 10px 0 0;">
-          <h2 style="margin: 0; text-align: center; font-size: 24px;">📊 Backup Automático Completado</h2>
-          <p style="margin: 10px 0 0 0; text-align: center; opacity: 0.9;">Sistema Winston Churchill</p>
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 25px; border-radius: 0 0 10px 10px;">
-          <!-- Resumen General -->
-          <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <h3 style="color: #333; margin-top: 0; border-bottom: 2px solid #667eea; padding-bottom: 10px;">📈 Resumen General</h3>
-            <ul style="color: #666; line-height: 1.8; font-size: 14px;">
-              <li><strong>Fecha y hora:</strong> ${new Date().toLocaleString('es-MX')}</li>
-              <li><strong>Total de backups:</strong> 2 (Inscripciones + Sesiones)</li>
-              <li><strong>Estado:</strong> ✅ Todos los backups exitosos</li>
-            </ul>
-          </div>
-
-          <!-- Open House -->
-          <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #667eea;">
-            <h3 style="color: #667eea; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-              🎓 Open House
-            </h3>
-            <div style="background: #f0f4ff; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-              <p style="margin: 5px 0;"><strong>Total de registros:</strong> ${inscripcionesTotal} inscripciones</p>
-              <p style="margin: 5px 0;"><strong>Repositorio:</strong> winston93-cloud/inscripciones</p>
-            </div>
-            ${inscripcionesTotal > 0 ? `
-              <h4 style="color: #555; margin: 15px 0 10px 0; font-size: 14px;">📋 Últimas 3 inscripciones:</h4>
-              <div style="max-height: 150px; overflow-y: auto;">
-                ${inscripcionesData.slice(-3).map((inscripcion: any) => `
-                  <div style="border-left: 3px solid #667eea; padding: 8px 0 8px 12px; margin-bottom: 8px; background: #fafbff;">
-                    <strong style="color: #333;">${inscripcion.nombre_aspirante}</strong><br>
-                    <small style="color: #666; font-size: 12px;">
-                      ${inscripcion.nivel_academico} - ${inscripcion.grado_escolar} | 
-                      ${new Date(inscripcion.created_at).toLocaleString('es-MX')}
-                    </small>
-                  </div>
-                `).join('')}
-              </div>
-            ` : '<p style="color: #999; font-style: italic; margin: 0;">No hay inscripciones registradas aún.</p>'}
-          </div>
-
-          <!-- Sesiones Informativas -->
-          <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #FA9D00;">
-            <h3 style="color: #FA9D00; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-              📋 Sesiones Informativas
-            </h3>
-            <div style="background: #fff7ed; padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-              <p style="margin: 5px 0;"><strong>Total de registros:</strong> ${sesionesTotal} sesiones</p>
-              <p style="margin: 5px 0;"><strong>Repositorio:</strong> winston93-cloud/sesiones-informativas</p>
-            </div>
-            ${sesionesTotal > 0 ? `
-              <h4 style="color: #555; margin: 15px 0 10px 0; font-size: 14px;">📋 Últimas 3 sesiones:</h4>
-              <div style="max-height: 150px; overflow-y: auto;">
-                ${sesionesData.slice(-3).map((sesion: any) => `
-                  <div style="border-left: 3px solid #FA9D00; padding: 8px 0 8px 12px; margin-bottom: 8px; background: #fffbf5;">
-                    <strong style="color: #333;">${sesion.nombre_aspirante}</strong><br>
-                    <small style="color: #666; font-size: 12px;">
-                      ${sesion.nivel_academico} - ${sesion.grado_escolar} | 
-                      ${new Date(sesion.created_at).toLocaleString('es-MX')}
-                    </small>
-                  </div>
-                `).join('')}
-              </div>
-            ` : '<p style="color: #999; font-style: italic; margin: 0;">No hay sesiones registradas aún.</p>'}
-          </div>
-          
-          <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
-            <p style="margin: 0; color: #2d5a2d; font-weight: 600;">
-              ✅ Backup automático completado exitosamente<br>
-              <span style="font-size: 13px; font-weight: normal;">Los datos han sido respaldados en los repositorios de GitHub</span>
-            </p>
-          </div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
-          <p>Backup automático - Sistema Winston Churchill</p>
-        </div>
-      </div>
-    `,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('✅ Email de backup consolidado enviado exitosamente');
-  } catch (error) {
-    console.error('❌ Error al enviar email de backup:', error);
-  }
-}
-
-// Función para crear backup en formato JSON
-function createBackupFile(inscripciones: any[]) {
-  const backupData = {
-    metadata: {
-      fecha_backup: new Date().toISOString(),
-      total_registros: inscripciones.length,
-      version: '1.0',
-      sistema: 'Open House Winston Churchill'
-    },
-    inscripciones: inscripciones.map(inscripcion => ({
-      id: inscripcion.id,
-      nombre_aspirante: inscripcion.nombre_aspirante,
-      nivel_academico: inscripcion.nivel_academico,
-      grado_escolar: inscripcion.grado_escolar,
-      fecha_nacimiento: inscripcion.fecha_nacimiento,
-      nombre_padre: inscripcion.nombre_padre || inscripcion.nombre_completo || 'N/A',
-      nombre_madre: inscripcion.nombre_madre || inscripcion.nombre_completo || 'N/A',
-      telefono: inscripcion.telefono || 'N/A',
-      email: inscripcion.email,
-      direccion: inscripcion.direccion || 'N/A',
-      created_at: inscripcion.created_at,
-      fecha_inscripcion: inscripcion.fecha_inscripcion,
-      updated_at: inscripcion.updated_at,
-      reminder_sent: inscripcion.reminder_sent,
-      reminder_scheduled_for: inscripcion.reminder_scheduled_for,
-      reminder_sent_at: inscripcion.reminder_sent_at,
-      confirmacion_asistencia: inscripcion.confirmacion_asistencia,
-      fecha_confirmacion: inscripcion.fecha_confirmacion
-    }))
-  };
-
-  return JSON.stringify(backupData, null, 2);
-}
-
-// Función para subir a GitHub usando la GitHub API
-async function uploadToGitHub(backupContent: string, fileName: string) {
-  console.log(`📤 Subiendo backup a GitHub: ${fileName}`);
-  console.log(`📊 Tamaño del archivo: ${backupContent.length} caracteres`);
-  
-  try {
-    // GitHub API endpoint para crear/actualizar archivos
-    const githubUrl = `https://api.github.com/repos/winston93-cloud/inscripciones/contents/backups/${fileName}`;
-    
-    // Codificar el contenido en base64
-    const content = Buffer.from(backupContent).toString('base64');
-    
-    // Preparar el mensaje de commit
-    const commitMessage = `Backup automático: ${fileName}`;
-    
-    // Hacer la petición a la GitHub API
-    const response = await fetch(githubUrl, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: commitMessage,
-        content: content,
-        branch: 'main',
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`❌ Error en GitHub API: ${response.status} - ${errorText}`);
-      throw new Error(`GitHub API error: ${response.status}`);
-    }
-
-    const result = await response.json();
-    
-    console.log(`✅ Backup subido exitosamente a GitHub`);
-    console.log(`🔗 URL: ${result.content.html_url}`);
-    
-    return {
-      success: true,
-      url: result.content.html_url,
-      sha: result.content.sha,
-      downloadUrl: result.content.download_url
-    };
-  } catch (error) {
-    console.error('❌ Error al subir a GitHub:', error);
-    throw error;
-  }
-}
+// =============================================================================
+// CRON JOB: SISTEMA DE SMS AUTOMÁTICOS PARA LEADS DE KOMMO
+// =============================================================================
+// Se ejecuta diariamente a las 11:00 AM (hora de México)
+// Envía SMS a leads según el tiempo sin actividad:
+// - 24h: Primer recordatorio
+// - 48h: Segundo recordatorio
+// - 72h: Tercer recordatorio (último intento)
+// =============================================================================
 
 export async function GET(request: NextRequest) {
   const startTime = new Date();
-  const logId = `BACKUP_CONSOLIDADO_${startTime.getTime()}`;
+  const logId = `SMS_CRON_${startTime.getTime()}`;
   
-  console.log(`\n🔄 [${logId}] ===== INICIO DE BACKUP CONSOLIDADO =====`);
+  console.log(`\n🚀 [${logId}] ===== INICIO DE CRON JOB SMS =====`);
   console.log(`📅 [${logId}] Fecha y hora: ${startTime.toLocaleString('es-MX')}`);
+  console.log(`🌍 [${logId}] Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+  
+  const results = {
+    sms24h: { processed: 0, success: 0, errors: 0 },
+    sms48h: { processed: 0, success: 0, errors: 0 },
+    sms72h: { processed: 0, success: 0, errors: 0 }
+  };
   
   try {
-    // ========== BACKUP 1: INSCRIPCIONES (OPEN HOUSE) ==========
-    console.log(`\n📦 [${logId}] === INICIANDO BACKUP DE INSCRIPCIONES ===`);
+    // ========== SMS 24H ==========
+    console.log(`\n📱 [${logId}] === REVISIÓN SMS 24H ===`);
+    const result24h = await checkAndSendSMS24h(logId);
+    results.sms24h = result24h;
     
-    const { data: inscripciones, error: inscripcionesError } = await supabase
-      .from('inscripciones')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (inscripcionesError) {
-      console.error(`❌ [${logId}] Error al obtener inscripciones:`, inscripcionesError);
-      throw new Error(`Error al obtener inscripciones: ${inscripcionesError.message}`);
-    }
-
-    const totalInscripciones = inscripciones?.length || 0;
-    console.log(`📊 [${logId}] Total de inscripciones: ${totalInscripciones}`);
-
-    let inscripcionesBackupResult = null;
-    if (totalInscripciones > 0) {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const fileName = `inscripciones-backup-${timestamp}.json`;
-      const backupContent = createBackupFile(inscripciones);
-      
-      inscripcionesBackupResult = await uploadToGitHub(backupContent, fileName);
-      console.log(`✅ [${logId}] Backup de inscripciones completado`);
-    } else {
-      console.log(`⚠️ [${logId}] No hay inscripciones para respaldar`);
-    }
-
-    // ========== BACKUP 2: SESIONES INFORMATIVAS ==========
-    console.log(`\n📦 [${logId}] === INICIANDO BACKUP DE SESIONES ===`);
+    // ========== SMS 48H ==========
+    console.log(`\n📱 [${logId}] === REVISIÓN SMS 48H ===`);
+    const result48h = await checkAndSendSMS48h(logId);
+    results.sms48h = result48h;
     
-    const { data: sesiones, error: sesionesError } = await supabase
-      .from('sesiones')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (sesionesError) {
-      console.error(`❌ [${logId}] Error al obtener sesiones:`, sesionesError);
-      throw new Error(`Error al obtener sesiones: ${sesionesError.message}`);
-    }
-
-    const totalSesiones = sesiones?.length || 0;
-    console.log(`📊 [${logId}] Total de sesiones: ${totalSesiones}`);
-
-    let sesionesBackupResult = null;
-    if (totalSesiones > 0) {
-      // Crear backup de sesiones
-      const backupData = {
-        metadata: {
-          fecha_backup: new Date().toISOString(),
-          total_registros: sesiones.length,
-          version: '1.0',
-          sistema: 'Sesiones Informativas Winston Churchill'
-        },
-        sesiones: sesiones.map((sesion: any) => ({
-          id: sesion.id,
-          nombre_aspirante: sesion.nombre_aspirante,
-          nivel_academico: sesion.nivel_academico,
-          grado_escolar: sesion.grado_escolar,
-          fecha_nacimiento: sesion.fecha_nacimiento,
-          nombre_padre: sesion.nombre_padre || 'N/A',
-          nombre_madre: sesion.nombre_madre || 'N/A',
-          telefono: sesion.telefono || 'N/A',
-          email: sesion.email,
-          direccion: sesion.direccion || 'N/A',
-          created_at: sesion.created_at,
-          fecha_inscripcion: sesion.fecha_inscripcion,
-          updated_at: sesion.updated_at,
-          reminder_sent: sesion.reminder_sent,
-          reminder_scheduled_for: sesion.reminder_scheduled_for,
-          reminder_sent_at: sesion.reminder_sent_at,
-          confirmacion_asistencia: sesion.confirmacion_asistencia,
-          fecha_confirmacion: sesion.fecha_confirmacion,
-          parentesco: sesion.parentesco,
-          personas_asistiran: sesion.personas_asistiran,
-          medio_entero: sesion.medio_entero
-        }))
-      };
-
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const fileName = `sesiones-backup-${timestamp}.json`;
-      const backupContent = JSON.stringify(backupData, null, 2);
-      
-      // Subir a GitHub (repo diferente)
-      const token = process.env.GITHUB_TOKEN;
-      if (!token) {
-        throw new Error('GITHUB_TOKEN no configurado');
-      }
-
-      const owner = 'winston93-cloud';
-      const repo = 'sesiones-informativas';
-      const path = `backups/${fileName}`;
-      const content = Buffer.from(backupContent).toString('base64');
-
-      const uploadUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-      const uploadResponse = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: `Backup automático de sesiones informativas - ${new Date().toISOString()}`,
-          content: content,
-        }),
-      });
-
-      if (!uploadResponse.ok) {
-        throw new Error(`Error al subir backup de sesiones: ${uploadResponse.status}`);
-      }
-
-      const result = await uploadResponse.json();
-      sesionesBackupResult = { success: true, url: result.content.html_url };
-      console.log(`✅ [${logId}] Backup de sesiones completado`);
-    } else {
-      console.log(`⚠️ [${logId}] No hay sesiones para respaldar`);
-    }
-
-    // ========== ENVIAR EMAIL CONSOLIDADO ==========
-    console.log(`\n📧 [${logId}] Enviando email consolidado...`);
-    await sendBackupNotification(
-      inscripciones || [],
-      totalInscripciones,
-      sesiones || [],
-      totalSesiones
-    );
-
+    // ========== SMS 72H ==========
+    console.log(`\n📱 [${logId}] === REVISIÓN SMS 72H ===`);
+    const result72h = await checkAndSendSMS72h(logId);
+    results.sms72h = result72h;
+    
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
     
-    console.log(`\n✅ [${logId}] ===== BACKUP CONSOLIDADO COMPLETADO =====`);
-    console.log(`⏱️ [${logId}] Duración total: ${duration}ms`);
-    console.log(`📊 [${logId}] Inscripciones respaldadas: ${totalInscripciones}`);
-    console.log(`📊 [${logId}] Sesiones respaldadas: ${totalSesiones}`);
-    console.log(`🎯 [${logId}] ===== FIN DEL LOG =====\n`);
-
+    console.log(`\n🏁 [${logId}] ===== CRON JOB COMPLETADO =====`);
+    console.log(`⏱️ [${logId}] Duración: ${duration}ms`);
+    console.log(`📊 [${logId}] Resultados:`);
+    console.log(`   - SMS 24h: ${results.sms24h.success}/${results.sms24h.processed} exitosos`);
+    console.log(`   - SMS 48h: ${results.sms48h.success}/${results.sms48h.processed} exitosos`);
+    console.log(`   - SMS 72h: ${results.sms72h.success}/${results.sms72h.processed} exitosos`);
+    
     return NextResponse.json({
       success: true,
-      message: 'Backup consolidado completado exitosamente',
       logId,
       timestamp: endTime.toISOString(),
       duration: `${duration}ms`,
-      inscripciones: {
-        totalRecords: totalInscripciones,
-        backupSuccess: inscripcionesBackupResult?.success || false,
-        githubUrl: inscripcionesBackupResult?.url || null
-      },
-      sesiones: {
-        totalRecords: totalSesiones,
-        backupSuccess: sesionesBackupResult?.success || false,
-        githubUrl: sesionesBackupResult?.url || null
-      },
-      emailSent: true
+      results
     });
-
+    
   } catch (error) {
-    const endTime = new Date();
-    console.error(`\n💥 [${logId}] ===== ERROR EN BACKUP CONSOLIDADO =====`);
+    console.error(`\n💥 [${logId}] ===== ERROR EN CRON JOB =====`);
     console.error(`❌ [${logId}] Error:`, error);
-    console.error(`🎯 [${logId}] ===== FIN DEL LOG DE ERROR =====\n`);
     
     return NextResponse.json({
       success: false,
-      message: 'Error durante el proceso de backup consolidado',
       logId,
-      timestamp: endTime.toISOString(),
-      error: error instanceof Error ? error.message : 'Error desconocido'
+      error: error instanceof Error ? error.message : 'Error desconocido',
+      results
     }, { status: 500 });
   }
+}
+
+// =============================================================================
+// FUNCIÓN: Revisar y enviar SMS a leads con >24h sin comunicación
+// =============================================================================
+async function checkAndSendSMS24h(logId: string) {
+  const result = { processed: 0, success: 0, errors: 0 };
+  
+  try {
+    const twentyFourHoursAgo = new Date();
+    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+    
+    console.log(`📅 [${logId}] Buscando leads con >24h sin actividad...`);
+    console.log(`📅 [${logId}] Timestamp límite: ${twentyFourHoursAgo.toISOString()}`);
+    
+    const { data: pendingLeads, error } = await supabase
+      .from('kommo_lead_tracking')
+      .select('*')
+      .lt('last_contact_time', twentyFourHoursAgo.toISOString())
+      .eq('sms_24h_sent', false)
+      .eq('lead_status', 'active');
+    
+    if (error) {
+      console.error(`❌ [${logId}] Error consultando leads 24h:`, error);
+      return result;
+    }
+    
+    if (!pendingLeads || pendingLeads.length === 0) {
+      console.log(`✅ [${logId}] No hay leads pendientes de SMS 24h`);
+      return result;
+    }
+    
+    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 24h`);
+    result.processed = pendingLeads.length;
+    
+    for (const lead of pendingLeads) {
+      try {
+        console.log(`\n📋 [${logId}] Procesando: ${lead.nombre} (${lead.kommo_lead_id})`);
+        
+        if (!lead.telefono || lead.telefono.trim() === '') {
+          console.log(`   ⚠️ Sin teléfono, omitiendo...`);
+          continue;
+        }
+        
+        // Enviar SMS
+        const smsSuccess = await sendSMS(lead.telefono, getMensaje24h(), logId);
+        
+        if (smsSuccess) {
+          // Actualizar BD
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_24h_sent: true,
+              sms_24h_sent_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          // Agregar tag en Kommo
+          await addTagToKommo(lead.kommo_lead_id, 'SMS-24h-Enviado', logId);
+          
+          result.success++;
+          console.log(`   ✅ SMS 24h enviado exitosamente`);
+        } else {
+          result.errors++;
+        }
+        
+      } catch (error) {
+        console.error(`   ❌ Error procesando lead:`, error);
+        result.errors++;
+      }
+    }
+    
+    console.log(`✅ [${logId}] SMS 24h completado: ${result.success}/${result.processed}`);
+    return result;
+    
+  } catch (error) {
+    console.error(`❌ [${logId}] Error en checkAndSendSMS24h:`, error);
+    return result;
+  }
+}
+
+// =============================================================================
+// FUNCIÓN: Revisar y enviar SMS a leads con >48h sin comunicación
+// =============================================================================
+async function checkAndSendSMS48h(logId: string) {
+  const result = { processed: 0, success: 0, errors: 0 };
+  
+  try {
+    const fortyEightHoursAgo = new Date();
+    fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
+    
+    console.log(`📅 [${logId}] Buscando leads con >48h sin actividad...`);
+    
+    const { data: pendingLeads, error } = await supabase
+      .from('kommo_lead_tracking')
+      .select('*')
+      .lt('last_contact_time', fortyEightHoursAgo.toISOString())
+      .eq('sms_24h_sent', true)  // Ya debe tener el SMS de 24h enviado
+      .eq('sms_48h_sent', false)
+      .eq('lead_status', 'active');
+    
+    if (error) {
+      console.error(`❌ [${logId}] Error consultando leads 48h:`, error);
+      return result;
+    }
+    
+    if (!pendingLeads || pendingLeads.length === 0) {
+      console.log(`✅ [${logId}] No hay leads pendientes de SMS 48h`);
+      return result;
+    }
+    
+    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 48h`);
+    result.processed = pendingLeads.length;
+    
+    for (const lead of pendingLeads) {
+      try {
+        console.log(`\n📋 [${logId}] Procesando: ${lead.nombre} (${lead.kommo_lead_id})`);
+        
+        if (!lead.telefono || lead.telefono.trim() === '') {
+          console.log(`   ⚠️ Sin teléfono, omitiendo...`);
+          continue;
+        }
+        
+        const smsSuccess = await sendSMS(lead.telefono, getMensaje48h(), logId);
+        
+        if (smsSuccess) {
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_48h_sent: true,
+              sms_48h_sent_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          await addTagToKommo(lead.kommo_lead_id, 'SMS-48h-Enviado', logId);
+          
+          result.success++;
+          console.log(`   ✅ SMS 48h enviado exitosamente`);
+        } else {
+          result.errors++;
+        }
+        
+      } catch (error) {
+        console.error(`   ❌ Error procesando lead:`, error);
+        result.errors++;
+      }
+    }
+    
+    console.log(`✅ [${logId}] SMS 48h completado: ${result.success}/${result.processed}`);
+    return result;
+    
+  } catch (error) {
+    console.error(`❌ [${logId}] Error en checkAndSendSMS48h:`, error);
+    return result;
+  }
+}
+
+// =============================================================================
+// FUNCIÓN: Revisar y enviar SMS a leads con >72h sin comunicación
+// =============================================================================
+async function checkAndSendSMS72h(logId: string) {
+  const result = { processed: 0, success: 0, errors: 0 };
+  
+  try {
+    const seventyTwoHoursAgo = new Date();
+    seventyTwoHoursAgo.setHours(seventyTwoHoursAgo.getHours() - 72);
+    
+    console.log(`📅 [${logId}] Buscando leads con >72h sin actividad...`);
+    
+    const { data: pendingLeads, error } = await supabase
+      .from('kommo_lead_tracking')
+      .select('*')
+      .lt('last_contact_time', seventyTwoHoursAgo.toISOString())
+      .eq('sms_48h_sent', true)  // Ya debe tener el SMS de 48h enviado
+      .eq('sms_72h_sent', false)
+      .eq('lead_status', 'active');
+    
+    if (error) {
+      console.error(`❌ [${logId}] Error consultando leads 72h:`, error);
+      return result;
+    }
+    
+    if (!pendingLeads || pendingLeads.length === 0) {
+      console.log(`✅ [${logId}] No hay leads pendientes de SMS 72h`);
+      return result;
+    }
+    
+    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 72h`);
+    result.processed = pendingLeads.length;
+    
+    for (const lead of pendingLeads) {
+      try {
+        console.log(`\n📋 [${logId}] Procesando: ${lead.nombre} (${lead.kommo_lead_id})`);
+        
+        if (!lead.telefono || lead.telefono.trim() === '') {
+          console.log(`   ⚠️ Sin teléfono, omitiendo...`);
+          continue;
+        }
+        
+        const smsSuccess = await sendSMS(lead.telefono, getMensaje72h(), logId);
+        
+        if (smsSuccess) {
+          await supabase
+            .from('kommo_lead_tracking')
+            .update({
+              sms_72h_sent: true,
+              sms_72h_sent_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+            .eq('kommo_lead_id', lead.kommo_lead_id);
+          
+          await addTagToKommo(lead.kommo_lead_id, 'SMS-72h-Enviado', logId);
+          
+          result.success++;
+          console.log(`   ✅ SMS 72h enviado exitosamente`);
+        } else {
+          result.errors++;
+        }
+        
+      } catch (error) {
+        console.error(`   ❌ Error procesando lead:`, error);
+        result.errors++;
+      }
+    }
+    
+    console.log(`✅ [${logId}] SMS 72h completado: ${result.success}/${result.processed}`);
+    return result;
+    
+  } catch (error) {
+    console.error(`❌ [${logId}] Error en checkAndSendSMS72h:`, error);
+    return result;
+  }
+}
+
+// =============================================================================
+// HELPERS
+// =============================================================================
+
+async function sendSMS(telefono: string, mensaje: string, logId: string): Promise<boolean> {
+  try {
+    // Formatear teléfono
+    let phone = telefono.toString().trim();
+    if (!phone.startsWith('+52') && !phone.startsWith('52')) {
+      phone = '+52' + phone;
+    } else if (phone.startsWith('52') && !phone.startsWith('+')) {
+      phone = '+' + phone;
+    }
+    
+    console.log(`   📤 Enviando SMS a ${phone}...`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, message: mensaje })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`   ❌ Error SMS API: ${errorText}`);
+      return false;
+    }
+    
+    return true;
+    
+  } catch (error) {
+    console.error(`   ❌ Error enviando SMS:`, error);
+    return false;
+  }
+}
+
+async function addTagToKommo(leadId: number, tagName: string, logId: string): Promise<boolean> {
+  try {
+    const { getKommoAccessToken } = await import('../../../lib/kommo');
+    const accessToken = await getKommoAccessToken('open-house');
+    
+    const response = await fetch(
+      `https://winstonchurchill.kommo.com/api/v4/leads/${leadId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          _embedded: {
+            tags: [{ name: tagName }]
+          }
+        })
+      }
+    );
+    
+    if (!response.ok) {
+      console.error(`   ⚠️ Error agregando tag: ${response.status}`);
+      return false;
+    }
+    
+    console.log(`   🏷️ Tag "${tagName}" agregado`);
+    return true;
+    
+  } catch (error) {
+    console.error(`   ⚠️ Error con tag:`, error);
+    return false;
+  }
+}
+
+// Mensajes SMS
+function getMensaje24h(): string {
+  return `¡Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admisión al Instituto Winston Churchill.
+
+Escríbenos por WhatsApp al 833 437 8743 y con gusto te brindamos toda la información necesaria.`;
+}
+
+function getMensaje48h(): string {
+  return `¡Nos encantaría que conociera nuestro Instituto Winston Churchill!
+
+¿Le gustaría agendar un recorrido por nuestras instalaciones?
+
+Envía un mensaje al 833 437 8743 y te ayudamos a reservar tu visita.`;
+}
+
+function getMensaje72h(): string {
+  return `¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy!
+
+Escríbenos al 833 437 8743 y da el primer paso para formar parte del Instituto Winston Churchill.`;
 }
