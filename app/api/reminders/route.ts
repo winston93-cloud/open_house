@@ -1487,22 +1487,31 @@ export async function POST(request: NextRequest) {
   console.log(`🌍 [${logId}] Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
   
   try {
-    // Verificar que la petición viene de una fuente autorizada
+    // Verificar que la petición viene de una fuente autorizada (solo si no es cron)
     const authHeader = request.headers.get('authorization');
-    const expectedToken = process.env.REMINDER_API_TOKEN || 'default-secret-token';
+    const userAgent = request.headers.get('user-agent') || '';
+    const isCronJob = userAgent.includes('vercel-cron');
     
     console.log(`🔐 [${logId}] Verificando autorización...`);
     console.log(`🔐 [${logId}] Auth header presente: ${authHeader ? 'SÍ' : 'NO'}`);
+    console.log(`🔐 [${logId}] User-Agent: ${userAgent}`);
+    console.log(`🔐 [${logId}] Es cron job: ${isCronJob ? 'SÍ' : 'NO'}`);
     
-    if (authHeader !== `Bearer ${expectedToken}`) {
-      console.log(`❌ [${logId}] Autorización fallida`);
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 401 }
-      );
+    if (!isCronJob) {
+      const expectedToken = process.env.REMINDER_API_TOKEN || 'default-secret-token';
+      
+      if (authHeader !== `Bearer ${expectedToken}`) {
+        console.log(`❌ [${logId}] Autorización fallida`);
+        return NextResponse.json(
+          { error: 'No autorizado' },
+          { status: 401 }
+        );
+      }
+      
+      console.log(`✅ [${logId}] Autorización exitosa`);
+    } else {
+      console.log(`✅ [${logId}] Cron job detectado, omitiendo validación de token`);
     }
-    
-    console.log(`✅ [${logId}] Autorización exitosa`);
 
     console.log(`🔄 [${logId}] Iniciando procesamiento de recordatorios...`);
     
