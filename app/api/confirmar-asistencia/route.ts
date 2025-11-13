@@ -46,18 +46,18 @@ export async function POST(request: NextRequest) {
 
       if (sesionError) {
         console.error('Error al confirmar asistencia en sesiones:', sesionError);
-        return NextResponse.json(
-          { error: 'Error al actualizar la confirmación' },
-          { status: 500 }
-        );
-      }
+      return NextResponse.json(
+        { error: 'Error al actualizar la confirmación' },
+        { status: 500 }
+      );
+    }
 
       if (!sesionData || sesionData.length === 0) {
-        return NextResponse.json(
-          { error: 'Inscripción no encontrada' },
-          { status: 404 }
-        );
-      }
+      return NextResponse.json(
+        { error: 'Inscripción no encontrada' },
+        { status: 404 }
+      );
+    }
 
       data = sesionData;
       tabla = 'sesiones';
@@ -121,17 +121,17 @@ export async function GET(request: NextRequest) {
 
       if (sesionError) {
         console.error('Error al obtener inscripción de sesiones:', sesionError);
-        return NextResponse.json(
-          { error: 'Error al obtener la inscripción' },
-          { status: 500 }
-        );
-      }
+      return NextResponse.json(
+        { error: 'Error al obtener la inscripción' },
+        { status: 500 }
+      );
+    }
 
       if (!sesionData) {
-        return NextResponse.json(
-          { error: 'Inscripción no encontrada' },
-          { status: 404 }
-        );
+      return NextResponse.json(
+        { error: 'Inscripción no encontrada' },
+        { status: 404 }
+      );
       }
 
       data = sesionData;

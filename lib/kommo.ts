@@ -186,7 +186,7 @@ export async function createKommoLead(leadData: {
     console.log('✅ Lead creado exitosamente con ID:', leadId);
     
     if (tagName) {
-      console.log('🏷️ Etiqueta incluida en el payload del lead');
+    console.log('🏷️ Etiqueta incluida en el payload del lead');
     }
     
     console.log('📱 El Salesbot de Kommo se encargará del envío de WhatsApp automáticamente');

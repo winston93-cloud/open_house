@@ -382,7 +382,7 @@ export default function SesionesForm() {
                   <strong>{selectedEventInfo.title}</strong>
                   <span>{selectedEventInfo.subtitle}</span>
                 </div>
-              )}
+                )}
               </div>
 
               <div className="form-group">
