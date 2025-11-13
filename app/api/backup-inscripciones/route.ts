@@ -139,11 +139,8 @@ async function checkAndSendSMS24h(logId: string) {
             })
             .eq('kommo_lead_id', lead.kommo_lead_id);
           
-          // Agregar tag en Kommo
-          await addTagToKommo(lead.kommo_lead_id, 'SMS-24h-Enviado', logId);
-          
           result.success++;
-          console.log(`   ✅ SMS 24h enviado exitosamente`);
+          console.log(`   ✅ SMS 24h enviado exitosamente (sin tag)`);
         } else {
           result.errors++;
         }
@@ -217,10 +214,8 @@ async function checkAndSendSMS48h(logId: string) {
             })
             .eq('kommo_lead_id', lead.kommo_lead_id);
           
-          await addTagToKommo(lead.kommo_lead_id, 'SMS-48h-Enviado', logId);
-          
           result.success++;
-          console.log(`   ✅ SMS 48h enviado exitosamente`);
+          console.log(`   ✅ SMS 48h enviado exitosamente (sin tag)`);
         } else {
           result.errors++;
         }
@@ -294,10 +289,8 @@ async function checkAndSendSMS72h(logId: string) {
             })
             .eq('kommo_lead_id', lead.kommo_lead_id);
           
-          await addTagToKommo(lead.kommo_lead_id, 'SMS-72h-Enviado', logId);
-          
           result.success++;
-          console.log(`   ✅ SMS 72h enviado exitosamente`);
+          console.log(`   ✅ SMS 72h enviado exitosamente (sin tag)`);
         } else {
           result.errors++;
         }
