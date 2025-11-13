@@ -20,9 +20,9 @@ const transporter = nodemailer.createTransport({
 
 // Template del email de recordatorio para Open House - MEJORADO PARA MÓVILES
 const createReminderEmailTemplate = (formData: any) => {
-  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, diasRestantes, fechaEvento, horaEvento, institucionNombre } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, fechaEvento, horaEvento, institucionNombre } = formData;
   
-  // NOTA: Los valores de diasRestantes, fechaEvento, horaEvento e institucionNombre
+  // NOTA: Los valores de fechaEvento, horaEvento e institucionNombre
   // deben pasarse desde sendReminderEmail() para que sean dinámicos y precisos
 
   return `
@@ -441,11 +441,7 @@ const createReminderEmailTemplate = (formData: any) => {
                 <div class="welcome">
                     <h2>¡No te olvides de nuestro Open House!</h2>
                     <p>Estimado(a) ${nombreCompleto},</p>
-                </div>
-                
-                <div class="countdown-card">
-                    <div class="countdown-number">${diasRestantes}</div>
-                    <div class="countdown-text">día restante</div>
+                    <p style="text-align: center; margin-top: 15px; font-size: 18px; color: #1e3a8a; font-weight: 600;">¡Mañana es el gran día!</p>
                 </div>
                 
                 <div class="info-card">
@@ -514,9 +510,9 @@ const createReminderEmailTemplate = (formData: any) => {
 
 // Template del email de recordatorio para Sesiones Informativas - MEJORADO PARA MÓVILES
 const createSesionesReminderEmailTemplate = (formData: any) => {
-  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, diasRestantes, fechaEvento, horaEvento, institucionNombre } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, fechaEvento, horaEvento, institucionNombre } = formData;
   
-  // NOTA: Los valores de diasRestantes, fechaEvento, horaEvento e institucionNombre
+  // NOTA: Los valores de fechaEvento, horaEvento e institucionNombre
   // deben pasarse desde sendSesionesReminderEmail() para que sean dinámicos y precisos
 
   return `
@@ -923,11 +919,7 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
                 <div class="welcome">
                     <h2>¡No te olvides de nuestra Sesión Informativa!</h2>
                     <p>Estimado(a) ${nombreCompleto},</p>
-                </div>
-                
-                <div class="countdown-card">
-                    <div class="countdown-number">${diasRestantes}</div>
-                    <div class="countdown-text">día restante</div>
+                    <p style="margin-top: 15px; font-size: 18px; color: #1e3a8a; font-weight: 600;">¡Mañana es el gran día!</p>
                 </div>
                 
                 <div class="info-card">
@@ -1067,13 +1059,11 @@ const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
 // Función para enviar email de recordatorio de Sesiones Informativas
 const sendSesionesReminderEmail = async (sesion: any) => {
   try {
-    const diasRestantes = calculateDaysUntilEvent(sesion.nivel_academico);
     const eventInfo = getEventInfo(sesion.nivel_academico, false); // false = Sesiones Informativas
     
-    // Crear el template del email con los días restantes calculados
+    // Crear el template del email
     const emailHtml = createSesionesReminderEmailTemplate({
       ...sesion,
-      diasRestantes,
       fechaEvento: eventInfo.fechaEvento,
       horaEvento: eventInfo.horaEvento,
       institucionNombre: eventInfo.institucionNombre
@@ -1085,7 +1075,7 @@ const sendSesionesReminderEmail = async (sesion: any) => {
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: sesion.email,
-      subject: `🔔 Recordatorio - Sesión Informativa ${eventInfo.institucionNombre} (${diasRestantes} día${diasRestantes !== 1 ? 's' : ''} restante${diasRestantes !== 1 ? 's' : ''})`,
+      subject: `🔔 Recordatorio - Sesión Informativa ${eventInfo.institucionNombre} - ¡Mañana es el gran día!`,
       html: emailHtml
     };
     
@@ -1101,13 +1091,11 @@ const sendSesionesReminderEmail = async (sesion: any) => {
 // Función para enviar email de recordatorio de Open House
 const sendReminderEmail = async (inscripcion: any) => {
   try {
-    const diasRestantes = calculateDaysUntilEvent(inscripcion.nivel_academico);
     const eventInfo = getEventInfo(inscripcion.nivel_academico, true); // true = Open House
     
-    // Crear el template del email con los días restantes calculados
+    // Crear el template del email
     const emailHtml = createReminderEmailTemplate({
       ...inscripcion,
-      diasRestantes,
       fechaEvento: eventInfo.fechaEvento,
       horaEvento: eventInfo.horaEvento,
       institucionNombre: eventInfo.institucionNombre
@@ -1119,7 +1107,7 @@ const sendReminderEmail = async (inscripcion: any) => {
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: inscripcion.email,
-      subject: `🔔 Recordatorio - Open House ${eventInfo.institucionNombre} (${diasRestantes} días restantes)`,
+      subject: `🔔 Recordatorio - Open House ${eventInfo.institucionNombre} - ¡Mañana es el gran día!`,
       html: emailHtml
     };
 
