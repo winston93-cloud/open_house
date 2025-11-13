@@ -11,7 +11,8 @@ import { supabase } from '../../../lib/supabase';
 // - 72h: Tercer recordatorio (último intento)
 // =============================================================================
 
-export async function GET(request: NextRequest) {
+// Función principal que ejecuta el cron job
+async function executeCronJob() {
   const startTime = new Date();
   const logId = `SMS_CRON_${startTime.getTime()}`;
   
@@ -70,6 +71,16 @@ export async function GET(request: NextRequest) {
       results
     }, { status: 500 });
   }
+}
+
+// Endpoint GET (para navegador)
+export async function GET(request: NextRequest) {
+  return executeCronJob();
+}
+
+// Endpoint POST (para Vercel Cron)
+export async function POST(request: NextRequest) {
+  return executeCronJob();
 }
 
 // =============================================================================
