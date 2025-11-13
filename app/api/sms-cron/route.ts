@@ -9,7 +9,7 @@ import { supabase } from '../../../lib/supabase';
 // - 24 horas: Primer recordatorio de contacto
 // - 48 horas: Segundo recordatorio (invitación a recorrido)
 // - 72 horas: Tercer recordatorio (oferta especial)
-// Última actualización: 13 noviembre 2025
+// Última actualización: 13 noviembre 2025 - 13:35
 // =============================================================================
 
 // Función principal que ejecuta el cron job
