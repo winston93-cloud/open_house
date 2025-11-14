@@ -20,7 +20,8 @@ const transporter = nodemailer.createTransport({
 
 // Template del email de recordatorio para Open House - MEJORADO PARA MÓVILES
 const createReminderEmailTemplate = (formData: any) => {
-  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, fechaEvento, horaEvento, institucionNombre } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombre_padre, fechaEvento, horaEvento, institucionNombre } = formData;
+  const nombreCompleto = nombre_padre || 'Familia';
   
   // NOTA: Los valores de fechaEvento, horaEvento e institucionNombre
   // deben pasarse desde sendReminderEmail() para que sean dinámicos y precisos
@@ -510,7 +511,8 @@ const createReminderEmailTemplate = (formData: any) => {
 
 // Template del email de recordatorio para Sesiones Informativas - MEJORADO PARA MÓVILES
 const createSesionesReminderEmailTemplate = (formData: any) => {
-  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, fechaEvento, horaEvento, institucionNombre } = formData;
+  const { id, nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombre_padre, fechaEvento, horaEvento, institucionNombre } = formData;
+  const nombreCompleto = nombre_padre || 'Familia';
   
   // NOTA: Los valores de fechaEvento, horaEvento e institucionNombre
   // deben pasarse desde sendSesionesReminderEmail() para que sean dinámicos y precisos
