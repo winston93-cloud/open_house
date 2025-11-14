@@ -1065,7 +1065,12 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     
     // Crear el template del email
     const emailHtml = createSesionesReminderEmailTemplate({
-      ...sesion,
+      id: sesion.id,
+      nombreAspirante: sesion.nombre_aspirante,
+      nivelAcademico: sesion.nivel_academico,
+      gradoEscolar: sesion.grado_escolar,
+      fechaNacimiento: sesion.fecha_nacimiento,
+      nombre_padre: sesion.nombre_padre,
       fechaEvento: eventInfo.fechaEvento,
       horaEvento: eventInfo.horaEvento,
       institucionNombre: eventInfo.institucionNombre
@@ -1097,7 +1102,12 @@ const sendReminderEmail = async (inscripcion: any) => {
     
     // Crear el template del email
     const emailHtml = createReminderEmailTemplate({
-      ...inscripcion,
+      id: inscripcion.id,
+      nombreAspirante: inscripcion.nombre_aspirante,
+      nivelAcademico: inscripcion.nivel_academico,
+      gradoEscolar: inscripcion.grado_escolar,
+      fechaNacimiento: inscripcion.fecha_nacimiento,
+      nombre_padre: inscripcion.nombre_padre,
       fechaEvento: eventInfo.fechaEvento,
       horaEvento: eventInfo.horaEvento,
       institucionNombre: eventInfo.institucionNombre
