@@ -95,13 +95,17 @@ async function checkAndSendSMS24h(logId: string) {
     const twentyFourHoursAgo = new Date();
     twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
     
-    console.log(`📅 [${logId}] Buscando leads con >24h sin actividad...`);
-    console.log(`📅 [${logId}] Timestamp límite: ${twentyFourHoursAgo.toISOString()}`);
+    const fortyEightHoursAgo = new Date();
+    fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
+    
+    console.log(`📅 [${logId}] Buscando leads con >24h y <48h sin actividad...`);
+    console.log(`📅 [${logId}] Rango: ${fortyEightHoursAgo.toISOString()} a ${twentyFourHoursAgo.toISOString()}`);
     
     const { data: pendingLeads, error } = await supabase
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', twentyFourHoursAgo.toISOString())
+      .gte('last_contact_time', fortyEightHoursAgo.toISOString())
       .eq('sms_24h_sent', false)
       .eq('lead_status', 'active');
     
@@ -172,12 +176,17 @@ async function checkAndSendSMS48h(logId: string) {
     const fortyEightHoursAgo = new Date();
     fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
     
-    console.log(`📅 [${logId}] Buscando leads con >48h sin actividad...`);
+    const seventyTwoHoursAgo = new Date();
+    seventyTwoHoursAgo.setHours(seventyTwoHoursAgo.getHours() - 72);
+    
+    console.log(`📅 [${logId}] Buscando leads con >48h y <72h sin actividad...`);
+    console.log(`📅 [${logId}] Rango: ${seventyTwoHoursAgo.toISOString()} a ${fortyEightHoursAgo.toISOString()}`);
     
     const { data: pendingLeads, error } = await supabase
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', fortyEightHoursAgo.toISOString())
+      .gte('last_contact_time', seventyTwoHoursAgo.toISOString())
       .eq('sms_24h_sent', true)  // Ya debe tener el SMS de 24h enviado
       .eq('sms_48h_sent', false)
       .eq('lead_status', 'active');
