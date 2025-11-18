@@ -1392,33 +1392,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Endpoint GET para verificar el estado del sistema de recordatorios
-export async function GET() {
-  try {
-    const { data: pendingReminders, error } = await supabase
-      .from('inscripciones')
-      .select('id, email, nombre_aspirante, nivel_academico, created_at, reminder_sent')
-      .eq('reminder_sent', false)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      return NextResponse.json(
-        { error: 'Error al consultar recordatorios pendientes' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      pendingReminders: pendingReminders || [],
-      count: pendingReminders?.length || 0
-    });
-  } catch (error) {
-    console.error('Error al obtener estado de recordatorios:', error);
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
-  }
+// Endpoint GET: Redirige al POST para enviar recordatorios
+export async function GET(request: NextRequest) {
+  // Llamar directamente al POST para enviar los recordatorios
+  return POST(request);
 }
 // Force rebuild vie 14 nov 2025 10:09:41 CST
