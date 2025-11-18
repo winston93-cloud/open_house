@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server';
 
-const GATEWAY_URL = process.env.SMS_GATEWAY_URL;
-const GATEWAY_TOKEN = process.env.SMS_GATEWAY_TOKEN;
+// =============================================================================
+// CONFIGURACIÓN DE TWILIO
+// =============================================================================
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 
 export async function POST(request: Request) {
-  if (!GATEWAY_URL || !GATEWAY_TOKEN) {
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
     return NextResponse.json(
       {
-        error: 'SMS gateway no configurado',
-        details: 'Verifica SMS_GATEWAY_URL y SMS_GATEWAY_TOKEN',
+        error: 'Twilio no configurado',
+        details: 'Verifica TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN y TWILIO_PHONE_NUMBER',
       },
       { status: 500 }
     );
@@ -24,45 +28,55 @@ export async function POST(request: Request) {
       );
     }
 
+    // Formatear número para Twilio (debe incluir código de país)
+    let formattedPhone = phone.toString().trim();
+    if (!formattedPhone.startsWith('+')) {
+      formattedPhone = '+52' + formattedPhone; // México por defecto
+    }
+
+    // Enviar SMS usando Twilio REST API
+    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+    
     const payload = new URLSearchParams({
-      apikey: GATEWAY_TOKEN,
-      recipients: phone,
-      message,
-      sendsms: '1',
+      From: TWILIO_PHONE_NUMBER,
+      To: formattedPhone,
+      Body: message,
     });
 
-    const gatewayResponse = await fetch(GATEWAY_URL, {
+    const twilioResponse = await fetch(twilioUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64'),
       },
       body: payload.toString(),
     });
 
-    const rawBody = await gatewayResponse.text();
+    const responseData = await twilioResponse.json();
 
-    if (!gatewayResponse.ok) {
+    if (!twilioResponse.ok) {
+      console.error('Error de Twilio:', responseData);
       return NextResponse.json(
         {
-          error: 'Gateway respondió con error',
-          status: gatewayResponse.status,
-          body: rawBody,
+          error: 'Twilio respondió con error',
+          status: twilioResponse.status,
+          details: responseData,
         },
         { status: 502 }
       );
     }
 
-    let parsedBody: unknown = rawBody;
-
-    try {
-      parsedBody = JSON.parse(rawBody);
-    } catch {
-      // El gateway puede devolver texto plano; lo devolvemos tal cual
-    }
+    console.log('✅ SMS enviado exitosamente:', {
+      to: formattedPhone,
+      sid: responseData.sid,
+      status: responseData.status
+    });
 
     return NextResponse.json({
       success: true,
-      gatewayResponse: parsedBody,
+      messageSid: responseData.sid,
+      status: responseData.status,
+      to: formattedPhone,
     });
   } catch (error) {
     console.error('Error enviando SMS:', error);
