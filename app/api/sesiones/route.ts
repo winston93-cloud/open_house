@@ -722,8 +722,7 @@ export async function POST(request: NextRequest) {
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
           mensaje = `¡Hola! Tu registro para la Sesión Informativa ha sido confirmado.
 
-📞 Instituto Educativo Winston
-WhatsApp: 833 347 4507
+📞 Instituto Educativo Winston: 833 347 4507
 
 Te enviaremos un recordatorio por email un día antes. Si tienes dudas, escríbenos por WhatsApp.
 
@@ -731,8 +730,7 @@ Te enviaremos un recordatorio por email un día antes. Si tienes dudas, escríbe
         } else {
           mensaje = `¡Hola! Tu registro para la Sesión Informativa ha sido confirmado.
 
-📞 Instituto Winston Churchill
-WhatsApp: 833 437 8743
+📞 Instituto Winston Churchill: 833 437 8743
 
 Te enviaremos un recordatorio por email un día antes. Si tienes dudas, escríbenos por WhatsApp.
 
