@@ -1183,35 +1183,27 @@ async function processReminders() {
       );
     }
 
-    if (!inscripciones || inscripciones.length === 0) {
-      console.log(`✅ [${logId}] No hay recordatorios pendientes`);
-      console.log(`📋 [${logId}] Esto significa que no hay inscripciones programadas para hoy`);
-      return NextResponse.json({
-        success: true,
-        message: 'No hay recordatorios pendientes',
-        processed: 0,
-        logId
-      });
-    }
-
-    console.log(`📧 [${logId}] Procesando ${inscripciones.length} recordatorios...`);
-    
-    // Log detallado de cada inscripción encontrada
-    inscripciones.forEach((inscripcion, index) => {
-      console.log(`📝 [${logId}] Inscripción ${index + 1}:`);
-      console.log(`   - ID: ${inscripcion.id}`);
-      console.log(`   - Nombre: ${inscripcion.nombre_aspirante}`);
-      console.log(`   - Email: ${inscripcion.email}`);
-      console.log(`   - Fecha programada: ${new Date(inscripcion.reminder_scheduled_for).toLocaleString('es-MX')}`);
-      console.log(`   - Recordatorio enviado: ${inscripcion.reminder_sent}`);
-    });
-    
     let successCount = 0;
     let errorCount = 0;
     const results = [];
 
-    // Procesar cada inscripción
-    for (let index = 0; index < inscripciones.length; index++) {
+    if (!inscripciones || inscripciones.length === 0) {
+      console.log(`✅ [${logId}] No hay inscripciones de Open House pendientes para hoy`);
+    } else {
+      console.log(`📧 [${logId}] Procesando ${inscripciones.length} recordatorios de Open House...`);
+      
+      // Log detallado de cada inscripción encontrada
+      inscripciones.forEach((inscripcion, index) => {
+        console.log(`📝 [${logId}] Inscripción ${index + 1}:`);
+        console.log(`   - ID: ${inscripcion.id}`);
+        console.log(`   - Nombre: ${inscripcion.nombre_aspirante}`);
+        console.log(`   - Email: ${inscripcion.email}`);
+        console.log(`   - Fecha programada: ${new Date(inscripcion.reminder_scheduled_for).toLocaleString('es-MX')}`);
+        console.log(`   - Recordatorio enviado: ${inscripcion.reminder_sent}`);
+      });
+
+      // Procesar cada inscripción
+      for (let index = 0; index < inscripciones.length; index++) {
       const inscripcion = inscripciones[index];
       console.log(`\n📤 [${logId}] Procesando inscripción ${index + 1}/${inscripciones.length}: ${inscripcion.email}`);
       
@@ -1260,6 +1252,7 @@ async function processReminders() {
           status: 'error',
           message: 'Error inesperado'
         });
+      }
       }
     }
 
