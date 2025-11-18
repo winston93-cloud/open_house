@@ -7,6 +7,7 @@ import { supabase } from '../../../lib/supabase';
 // =============================================================================
 // Se ejecuta diariamente a las 9:00 AM hora de México (15:00 UTC)
 // Envía recordatorios de Open House y Sesiones Informativas
+// Última actualización: 18 noviembre 2025 - 08:25
 // =============================================================================
 
 // Configuración del transporter de email
