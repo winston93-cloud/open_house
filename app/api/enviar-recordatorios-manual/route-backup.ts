@@ -3,12 +3,11 @@ import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
 // =============================================================================
-// ENDPOINT MANUAL: ENVIAR RECORDATORIOS DEL DÍA
+// CRON JOB: SISTEMA DE RECORDATORIOS POR EMAIL
 // =============================================================================
-// Envía recordatorios programados para HOY de forma manual
-// Utiliza los mismos templates y lógica que el cron automático
-// URL: https://open-house-chi.vercel.app/api/enviar-recordatorios-manual
-// Última actualización: 18 noviembre 2025 - 09:00
+// Se ejecuta diariamente a las 9:00 AM hora de México (15:00 UTC)
+// Envía recordatorios de Open House y Sesiones Informativas
+// Última actualización: 18 noviembre 2025 - 08:25
 // =============================================================================
 
 // Configuración del transporter de email
