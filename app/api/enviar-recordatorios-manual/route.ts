@@ -1401,4 +1401,4 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   return processReminders();
 }
-// Force rebuild vie 14 nov 2025 10:09:41 CST
+// Force rebuild lun 18 nov 2025 09:31 CST - UTC fix
