@@ -24,6 +24,8 @@ interface Sesion {
   fecha_inscripcion: string;
   created_at: string;
   reminder_sent: boolean;
+  confirmacion_asistencia: string;
+  fecha_confirmacion?: string;
 }
 
 export default function AdminDashboard() {
@@ -742,9 +744,15 @@ export default function AdminDashboard() {
                           </td>
                           <td>
                             <span className={`admin-confirmation-badge ${
-                              item.reminder_sent ? 'admin-confirmation-confirmed' : 'admin-confirmation-pending'
+                              item.confirmacion_asistencia === 'confirmado' ? 'admin-confirmation-confirmed' : 
+                              item.confirmacion_asistencia === 'cancelado' ? 'admin-confirmation-cancelled' : 
+                              item.reminder_sent ? 'admin-confirmation-confirmed' : 
+                              'admin-confirmation-pending'
                             }`}>
-                              {item.reminder_sent ? '✅ Enviado' : '⏳ Pendiente'}
+                              {item.confirmacion_asistencia === 'confirmado' ? '✅ Confirmado' : 
+                               item.confirmacion_asistencia === 'cancelado' ? '❌ Cancelado' : 
+                               item.reminder_sent ? '✅ Enviado' : 
+                               '⏳ Pendiente'}
                             </span>
                           </td>
                         </tr>
