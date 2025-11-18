@@ -711,6 +711,60 @@ export async function POST(request: NextRequest) {
       console.error('❌ Error en integración Kommo:', kommoError);
     }
 
+    // ===== ENVIAR SMS DE CONFIRMACIÓN =====
+    if (formData.telefono) {
+      try {
+        console.log('📱 Enviando SMS de confirmación...');
+        
+        // Determinar mensaje según nivel académico
+        let mensaje = '';
+        if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+          mensaje = `¡Hola! Tu registro para el Open House ha sido confirmado.
+
+📞 Instituto Educativo Winston
+WhatsApp: 833 347 4507
+
+Te enviaremos un recordatorio por email un día antes. Si tienes dudas, escríbenos por WhatsApp.
+
+¡Gracias por tu participación!`;
+        } else {
+          mensaje = `¡Hola! Tu registro para el Open House ha sido confirmado.
+
+📞 Instituto Winston Churchill
+WhatsApp: 833 437 8743
+
+Te enviaremos un recordatorio por email un día antes. Si tienes dudas, escríbenos por WhatsApp.
+
+¡Gracias por tu participación!`;
+        }
+        
+        // Formatear teléfono
+        let phone = formData.telefono.toString().trim();
+        if (!phone.startsWith('+52') && !phone.startsWith('52')) {
+          phone = '+52' + phone;
+        } else if (phone.startsWith('52') && !phone.startsWith('+')) {
+          phone = '+' + phone;
+        }
+        
+        // Enviar SMS
+        const smsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, message: mensaje })
+        });
+        
+        if (smsResponse.ok) {
+          console.log('✅ SMS de confirmación enviado exitosamente');
+        } else {
+          console.error('❌ Error al enviar SMS:', await smsResponse.text());
+        }
+        
+      } catch (smsError) {
+        console.error('❌ Error al enviar SMS de confirmación:', smsError);
+        // No retornamos error para que el proceso continúe
+      }
+    }
+
     // Crear el template del email
     const emailHtml = createEmailTemplate(formData);
     
