@@ -1,18 +1,36 @@
 import { NextResponse } from 'next/server';
 
 // =============================================================================
-// CONFIGURACIÓN DE TWILIO
+// ENDPOINT: Enviar SMS via Twilio
 // =============================================================================
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 
 export async function POST(request: Request) {
+  // Obtener variables de entorno
+  const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+  const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+  const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+
+  console.log('🔍 Verificando variables de Twilio:', {
+    hasSID: !!TWILIO_ACCOUNT_SID,
+    hasToken: !!TWILIO_AUTH_TOKEN,
+    hasPhone: !!TWILIO_PHONE_NUMBER,
+  });
+
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+    console.error('❌ Twilio no configurado. Variables faltantes:', {
+      TWILIO_ACCOUNT_SID: !!TWILIO_ACCOUNT_SID,
+      TWILIO_AUTH_TOKEN: !!TWILIO_AUTH_TOKEN,
+      TWILIO_PHONE_NUMBER: !!TWILIO_PHONE_NUMBER,
+    });
     return NextResponse.json(
       {
         error: 'Twilio no configurado',
-        details: 'Verifica TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN y TWILIO_PHONE_NUMBER',
+        details: 'Verifica TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN y TWILIO_PHONE_NUMBER en Vercel',
+        missing: {
+          sid: !TWILIO_ACCOUNT_SID,
+          token: !TWILIO_AUTH_TOKEN,
+          phone: !TWILIO_PHONE_NUMBER,
+        }
       },
       { status: 500 }
     );
