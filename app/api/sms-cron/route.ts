@@ -394,21 +394,30 @@ async function addTagToKommo(leadId: number, tagName: string, logId: string): Pr
 
 // Mensajes SMS
 function getMensaje24h(): string {
-  return `¡Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admisión al Instituto Winston Churchill.
+  return `¡Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admisión:
 
-Escríbenos por WhatsApp al 833 437 8743 y con gusto te brindamos toda la información necesaria.`;
+📞 Instituto Winston Churchill: 833 437 8743
+📞 Instituto Educativo Winston: 833 347 4507
+
+Escríbenos por WhatsApp y con gusto te brindamos toda la información necesaria.`;
 }
 
 function getMensaje48h(): string {
-  return `¡Nos encantaría que conociera nuestro Instituto Winston Churchill!
+  return `¡Nos encantaría que conocieras nuestras instalaciones!
 
-¿Le gustaría agendar un recorrido por nuestras instalaciones?
+¿Te gustaría agendar un recorrido?
 
-Envía un mensaje al 833 437 8743 y te ayudamos a reservar tu visita.`;
+📞 Winston Churchill: 833 437 8743
+📞 Educativo Winston: 833 347 4507
+
+Envía un mensaje y te ayudamos a reservar tu visita.`;
 }
 
 function getMensaje72h(): string {
-  return `¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy!
+  return `¡Aprovecha nuestro descuento especial al iniciar tu proceso de admisión hoy!
 
-Escríbenos al 833 437 8743 y da el primer paso para formar parte del Instituto Winston Churchill.`;
+📞 Winston Churchill: 833 437 8743
+📞 Educativo Winston: 833 347 4507
+
+Escríbenos y da el primer paso para formar parte de nuestra familia Winston.`;
 }
