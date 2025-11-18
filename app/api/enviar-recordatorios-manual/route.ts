@@ -1151,9 +1151,9 @@ async function processReminders() {
     
     // Buscar inscripciones que necesitan recordatorio (fecha programada = hoy)
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Inicio del día de hoy (00:00:00)
+    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0)); // Inicio del día de hoy UTC (00:00:00)
     const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1); // Inicio de mañana (00:00:00)
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1); // Inicio de mañana UTC (00:00:00)
     
     console.log(`📅 [${logId}] Calculando rangos de fecha:`);
     console.log(`📅 [${logId}] Fecha actual: ${now.toISOString()}`);
