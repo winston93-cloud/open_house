@@ -54,18 +54,19 @@ export default function SmsSenderPage() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        setStatus({
-          state: 'error',
-          message:
-            result.error ||
-            'Error al enviar. Revisa la conexión con el teléfono gateway.',
-        });
+          setStatus({
+            state: 'error',
+            message:
+              result.error ||
+              result.details?.message ||
+              'Error al enviar SMS via Twilio.',
+          });
         return;
       }
 
       setStatus({
         state: 'success',
-        message: 'SMS enviado correctamente desde el gateway 🎉',
+        message: 'SMS enviado correctamente via Twilio 🎉',
       });
       setPhone('');
       setMessage('');
@@ -190,8 +191,7 @@ export default function SmsSenderPage() {
         <header>
           <h1>Enviar SMS</h1>
           <p>
-            Los mensajes se envían desde tu teléfono Android configurado como
-            gateway.
+            Los mensajes se envían a través de Twilio.
           </p>
         </header>
 
@@ -233,8 +233,8 @@ export default function SmsSenderPage() {
 
         <footer>
           <p>
-            Asegúrate de que el teléfono esté en la misma red y con la app
-            `SMS Mobile API` en modo <strong>ON</strong>.
+            Los SMS se envían desde el número <strong>+1 (608) 429-6260</strong> de Twilio.
+            Costo aproximado: <strong>$0.90 MXN</strong> por SMS.
           </p>
         </footer>
       </div>
