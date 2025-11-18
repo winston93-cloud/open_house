@@ -1134,8 +1134,8 @@ const sendReminderEmail = async (inscripcion: any) => {
   }
 };
 
-// Endpoint POST para procesar recordatorios (llamado por el cron job)
-export async function POST(request: NextRequest) {
+// Función principal que procesa recordatorios
+async function processReminders() {
   const startTime = new Date();
   const logId = `REMINDER_${startTime.getTime()}`;
   
@@ -1392,9 +1392,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Endpoint GET: Redirige al POST para enviar recordatorios
+// Endpoint POST para procesar recordatorios
+export async function POST(request: NextRequest) {
+  return processReminders();
+}
+
+// Endpoint GET: También envía recordatorios (para poder usar desde navegador)
 export async function GET(request: NextRequest) {
-  // Llamar directamente al POST para enviar los recordatorios
-  return POST(request);
+  return processReminders();
 }
 // Force rebuild vie 14 nov 2025 10:09:41 CST
