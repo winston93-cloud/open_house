@@ -394,13 +394,33 @@ async function addTagToKommo(leadId: number, tagName: string, logId: string): Pr
 
 // Mensajes SMS
 function getMensaje24h(): string {
-  return `Estamos disponibles para apoyarte con admision. Churchill: 833 437 8743 o Educativo: 833 347 4507 (WhatsApp)`;
+  return `¡Hola! 👋 Somos el equipo de admisiones de los institutos Winston. Vimos tu interés en nuestro programa educativo y estamos aquí para apoyarte. ¿Tienes alguna duda? 💬 Contáctanos por WhatsApp:
+  
+📍 Instituto Winston Churchill (Primaria/Secundaria): 833 437 8743
+📍 Instituto Educativo Winston (Maternal/Kinder): 833 347 4507
+
+¡Estamos disponibles para ti! 🏫✨`;
 }
 
 function getMensaje48h(): string {
-  return `Nos encantaria que conocieras nuestras instalaciones. Agenda tu recorrido: Churchill 833 437 8743 o Educativo 833 347 4507`;
+  return `¡Hola de nuevo! 😊 Notamos que aún no has podido contactarnos. Nos encantaría que conocieras nuestras instalaciones y te mostremos todo lo que ofrecemos para tu familia. 🏫
+
+¿Te gustaría agendar un recorrido personalizado? 📅 Escríbenos por WhatsApp:
+
+📍 Winston Churchill: 833 437 8743
+📍 Educativo Winston: 833 347 4507
+
+¡Esperamos verte pronto! 🌟`;
 }
 
 function getMensaje72h(): string {
-  return `Aprovecha descuento especial al iniciar tu admision hoy. Churchill: 833 437 8743 o Educativo: 833 347 4507 (WhatsApp)`;
+  return `¡Última oportunidad! ⏰ Tenemos una promoción especial para las familias que inician su proceso de admisión esta semana. 🎁
+
+No dejes pasar esta oportunidad de ser parte de nuestra comunidad educativa. 💙
+
+📲 Contáctanos HOY por WhatsApp:
+📍 Winston Churchill: 833 437 8743
+📍 Educativo Winston: 833 347 4507
+
+¡Te esperamos! 🏫✨`;
 }

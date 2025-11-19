@@ -720,9 +720,9 @@ export async function POST(request: NextRequest) {
         // Determinar mensaje según nivel académico
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `Tu registro para Sesion Informativa ha sido confirmado. Te enviaremos recordatorio por email. Dudas: 833 347 4507 (WhatsApp)`;
+          mensaje = `¡Gracias por registrarte a nuestra Sesión Informativa 2025! 📚 Tu asistencia para ${formData.nombreAspirante} ha sido confirmada. Te enviaremos recordatorio por email 1 día antes. Instituto Educativo Winston: 833 347 4507 (WhatsApp). ¡Nos vemos pronto! 🌟`;
         } else {
-          mensaje = `Tu registro para Sesion Informativa ha sido confirmado. Te enviaremos recordatorio por email. Dudas: 833 437 8743 (WhatsApp)`;
+          mensaje = `¡Gracias por registrarte a nuestra Sesión Informativa 2025! 📚 Tu asistencia para ${formData.nombreAspirante} ha sido confirmada. Te enviaremos recordatorio por email 1 día antes. Instituto Winston Churchill: 833 437 8743 (WhatsApp). ¡Nos vemos pronto! 🌟`;
         }
         
         // Formatear teléfono

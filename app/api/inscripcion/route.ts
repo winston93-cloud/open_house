@@ -719,9 +719,9 @@ export async function POST(request: NextRequest) {
         // Determinar mensaje según nivel académico
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `Tu registro para Open House ha sido confirmado. Te enviaremos recordatorio por email. Dudas: 833 347 4507 (WhatsApp)`;
+          mensaje = `¡Gracias por tu registro al Open House 2025! 🎉 Hemos confirmado tu asistencia para el ${formData.nombreAspirante}. Recibirás un recordatorio por email 1 día antes del evento. Instituto Educativo Winston: 833 347 4507 (WhatsApp). ¡Te esperamos! 🏫`;
         } else {
-          mensaje = `Tu registro para Open House ha sido confirmado. Te enviaremos recordatorio por email. Dudas: 833 437 8743 (WhatsApp)`;
+          mensaje = `¡Gracias por tu registro al Open House 2025! 🎉 Hemos confirmado tu asistencia para ${formData.nombreAspirante}. Recibirás un recordatorio por email 1 día antes del evento. Instituto Winston Churchill: 833 437 8743 (WhatsApp). ¡Te esperamos! 🏫`;
         }
         
         // Formatear teléfono
