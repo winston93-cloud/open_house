@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     // Importar funciones de Kommo
     const { getKommoAccessToken } = await import('../../../../lib/kommo');
-    const accessToken = await getKommoAccessToken();
+    const accessToken = await getKommoAccessToken('open-house');
 
     if (!accessToken) {
       console.error('❌ [AGENTE-IA] No se pudo obtener token de Kommo');
