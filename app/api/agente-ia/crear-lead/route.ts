@@ -34,27 +34,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Crear contacto en Kommo
+    // Crear contacto en Kommo (sin custom fields para evitar errores de validación)
     const contactPayload: any = {
-      name: nombre || 'Usuario del chat',
-      custom_fields_values: []
+      name: nombre || 'Usuario del chat'
     };
-
-    // Agregar email si está disponible
-    if (email && email.trim() !== '') {
-      contactPayload.custom_fields_values.push({
-        field_id: 1584197, // Email
-        values: [{ value: email }]
-      });
-    }
-
-    // Agregar teléfono si está disponible
-    if (telefono && telefono.trim() !== '') {
-      contactPayload.custom_fields_values.push({
-        field_id: 1584199, // Teléfono
-        values: [{ value: telefono, enum_code: 'WORK' }]
-      });
-    }
 
     console.log('📞 [AGENTE-IA] Creando contacto en Kommo...');
     const contactResponse = await fetch('https://winstonchurchill.kommo.com/api/v4/contacts', {
@@ -94,13 +77,7 @@ export async function POST(request: NextRequest) {
       price: 0,
       _embedded: {
         contacts: [{ id: contactId }]
-      },
-      custom_fields_values: [
-        {
-          field_id: 1584201, // Campo personalizado para el mensaje inicial
-          values: [{ value: mensaje }]
-        }
-      ]
+      }
     };
 
     console.log('📝 [AGENTE-IA] Creando lead en Kommo...');
@@ -135,12 +112,20 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ [AGENTE-IA] Lead creado:', leadId);
 
-    // Agregar nota con el mensaje inicial
+    // Agregar nota con el mensaje inicial y datos del usuario
+    let noteText = `💬 Mensaje inicial del chat:\n\n"${mensaje}"\n\n📱 Fuente: Chat Agente IA`;
+    
+    if (email || telefono) {
+      noteText += '\n\n📋 Datos de contacto:';
+      if (email) noteText += `\n• Email: ${email}`;
+      if (telefono) noteText += `\n• Teléfono: ${telefono}`;
+    }
+    
     const notePayload = {
       entity_id: leadId,
       note_type: 'common',
       params: {
-        text: `💬 Mensaje inicial del chat:\n\n"${mensaje}"\n\n📱 Fuente: Chat Agente IA`
+        text: noteText
       }
     };
 
