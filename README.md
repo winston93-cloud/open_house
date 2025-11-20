@@ -237,3 +237,4 @@ El proyecto incluye un asistente virtual powered by Claude AI (Anthropic) que ay
 
 **Personalización:**
 La información que el asistente conoce está en `lib/assistant-context.ts`. Puedes editarlo para actualizar FAQ, horarios, o agregar nueva información.
+# Force redeploy jue 20 nov 2025 11:14:46 CST
