@@ -2,8 +2,105 @@
 
 import { useState } from 'react';
 
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
+  timestamp: Date;
+}
+
 export default function AgenteIAPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: '👋 ¡Hola! Soy tu asistente virtual de Winston. ¿En qué puedo ayudarte hoy?',
+      sender: 'bot',
+      timestamp: new Date()
+    }
+  ]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [leadCreated, setLeadCreated] = useState(false);
+  const [showInfoForm, setShowInfoForm] = useState(false);
+  
+  // Datos del usuario (opcionales)
+  const [userInfo, setUserInfo] = useState({
+    nombre: '',
+    email: '',
+    telefono: ''
+  });
+
+  const handleSendMessage = async () => {
+    if (!inputMessage.trim() && !showInfoForm) return;
+
+    const messageText = inputMessage.trim();
+    
+    // Si es el primer mensaje y no hay lead creado, mostrar formulario
+    if (!leadCreated && !showInfoForm) {
+      setShowInfoForm(true);
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Agregar mensaje del usuario al chat
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        text: messageText,
+        sender: 'user',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      setInputMessage('');
+      setShowInfoForm(false);
+
+      // Crear lead en Kommo si es el primer mensaje
+      if (!leadCreated) {
+        const response = await fetch('/api/agente-ia/crear-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombre: userInfo.nombre || 'Usuario del chat',
+            email: userInfo.email,
+            telefono: userInfo.telefono,
+            mensaje: messageText
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al crear el lead');
+        }
+
+        const data = await response.json();
+        console.log('✅ Lead creado:', data);
+        setLeadCreated(true);
+
+        // Mensaje de confirmación del bot
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: '✅ ¡Gracias! Tu consulta ha sido registrada. Un asesor te responderá muy pronto por el canal que prefieras (WhatsApp, email o teléfono).\n\n📱 También puedes llamarnos:\n• Winston Churchill: 833 437 8743\n• Instituto Educativo: 833 347 4507',
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
+      }
+
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: '❌ Lo siento, hubo un error al procesar tu mensaje. Por favor intenta de nuevo o contáctanos directamente.',
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -149,44 +246,116 @@ export default function AgenteIAPage() {
 
           {/* Área de mensajes */}
           <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-            {/* Mensaje de bienvenida */}
-            <div className="mb-4">
-              <div className="bg-white rounded-lg shadow p-3 inline-block max-w-[80%]">
-                <p className="text-sm text-gray-800">
-                  👋 ¡Hola! Soy tu asistente virtual de Winston. ¿En qué puedo ayudarte hoy?
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  Escribe tu mensaje para comenzar...
-                </p>
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`mb-4 flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`rounded-lg shadow p-3 max-w-[80%] ${
+                    message.sender === 'user'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                      : 'bg-white text-gray-800'
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                  <p className={`text-xs mt-1 ${message.sender === 'user' ? 'text-white/70' : 'text-gray-500'}`}>
+                    {message.timestamp.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
               </div>
-            </div>
+            ))}
+            
+            {isLoading && (
+              <div className="mb-4 flex justify-start">
+                <div className="bg-white rounded-lg shadow p-3">
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input de mensaje */}
           <div className="p-4 bg-white border-t border-gray-200">
-            <div className="flex items-center space-x-2">
-              <input
-                type="text"
-                placeholder="Escribe tu mensaje..."
-                className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-blue-500"
-              />
-              <button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-2 hover:shadow-lg transition-shadow">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+            {showInfoForm ? (
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 mb-2">
+                  Para crear tu consulta, proporciona tus datos (opcional):
+                </p>
+                <input
+                  type="text"
+                  placeholder="Tu nombre"
+                  value={userInfo.nombre}
+                  onChange={(e) => setUserInfo({ ...userInfo, nombre: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="email"
+                  placeholder="Tu email"
+                  value={userInfo.email}
+                  onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="tel"
+                  placeholder="Tu teléfono"
+                  value={userInfo.telefono}
+                  onChange={(e) => setUserInfo({ ...userInfo, telefono: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                />
+                <div className="flex space-x-2">
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={isLoading}
+                    className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg py-2 text-sm font-medium hover:shadow-lg transition-shadow disabled:opacity-50"
+                  >
+                    {isLoading ? 'Enviando...' : 'Enviar consulta'}
+                  </button>
+                  <button
+                    onClick={() => setShowInfoForm(false)}
+                    className="px-4 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300"
+                  >
+                    Omitir
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  placeholder="Escribe tu mensaje..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  disabled={isLoading}
+                  className="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-blue-500 disabled:opacity-50"
+                />
+                <button
+                  onClick={handleSendMessage}
+                  disabled={isLoading || !inputMessage.trim()}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full p-2 hover:shadow-lg transition-shadow disabled:opacity-50"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                  />
-                </svg>
-              </button>
-            </div>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
