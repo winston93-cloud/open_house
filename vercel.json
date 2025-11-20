@@ -3,10 +3,6 @@
   "framework": "nextjs",
   "crons": [
     {
-      "path": "/api/recordatorios",
-      "schedule": "0 15 * * *"
-    },
-    {
       "path": "/api/sms-cron",
       "schedule": "0 16 * * *"
     }
