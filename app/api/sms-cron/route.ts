@@ -4,13 +4,12 @@ import { supabase } from '../../../lib/supabase';
 // =============================================================================
 // CRON JOB: SISTEMA DE SMS AUTOMÁTICOS PARA LEADS DE KOMMO
 // =============================================================================
-// Horario: 8:00 AM hora de México (14:00 UTC)
+// Horario: 10:00 AM hora de México (16:00 UTC)
 // Envía SMS automatizados a leads según el tiempo sin actividad:
 // - 24 horas: Primer recordatorio de contacto
 // - 48 horas: Segundo recordatorio (invitación a recorrido)
 // - 72 horas: Tercer recordatorio (oferta especial)
-// Última actualización: 14 noviembre 2025 - 08:22
-// Deploy forzado para sincronizar cron job
+// Última actualización: 20 noviembre 2025 - 10:00 AM
 // =============================================================================
 
 // Función principal que ejecuta el cron job
@@ -92,11 +91,10 @@ async function checkAndSendSMS24h(logId: string) {
   const result = { processed: 0, success: 0, errors: 0 };
   
   try {
-    const twentyFourHoursAgo = new Date();
-    twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-    
-    const fortyEightHoursAgo = new Date();
-    fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
+    // Usar UTC para evitar problemas de timezone
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+    const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
     
     console.log(`📅 [${logId}] Buscando leads con >24h y <48h sin actividad...`);
     console.log(`📅 [${logId}] Rango: ${fortyEightHoursAgo.toISOString()} a ${twentyFourHoursAgo.toISOString()}`);
@@ -173,11 +171,10 @@ async function checkAndSendSMS48h(logId: string) {
   const result = { processed: 0, success: 0, errors: 0 };
   
   try {
-    const fortyEightHoursAgo = new Date();
-    fortyEightHoursAgo.setHours(fortyEightHoursAgo.getHours() - 48);
-    
-    const seventyTwoHoursAgo = new Date();
-    seventyTwoHoursAgo.setHours(seventyTwoHoursAgo.getHours() - 72);
+    // Usar UTC para evitar problemas de timezone
+    const now = new Date();
+    const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
+    const seventyTwoHoursAgo = new Date(now.getTime() - (72 * 60 * 60 * 1000));
     
     console.log(`📅 [${logId}] Buscando leads con >48h y <72h sin actividad...`);
     console.log(`📅 [${logId}] Rango: ${seventyTwoHoursAgo.toISOString()} a ${fortyEightHoursAgo.toISOString()}`);
@@ -253,8 +250,9 @@ async function checkAndSendSMS72h(logId: string) {
   const result = { processed: 0, success: 0, errors: 0 };
   
   try {
-    const seventyTwoHoursAgo = new Date();
-    seventyTwoHoursAgo.setHours(seventyTwoHoursAgo.getHours() - 72);
+    // Usar UTC para evitar problemas de timezone
+    const now = new Date();
+    const seventyTwoHoursAgo = new Date(now.getTime() - (72 * 60 * 60 * 1000));
     
     console.log(`📅 [${logId}] Buscando leads con >72h sin actividad...`);
     

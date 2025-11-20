@@ -8,7 +8,7 @@
     },
     {
       "path": "/api/sms-cron",
-      "schedule": "0 14 * * *"
+      "schedule": "0 16 * * *"
     }
   ]
 }
