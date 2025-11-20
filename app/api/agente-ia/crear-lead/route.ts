@@ -34,10 +34,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Crear contacto en Kommo (sin custom fields para evitar errores de validación)
+    // Crear contacto en Kommo
     const contactPayload: any = {
-      name: nombre || 'Usuario del chat'
+      name: nombre || 'Usuario del chat',
+      custom_fields_values: []
     };
+
+    // Agregar email si está disponible
+    if (email && email.trim() !== '') {
+      contactPayload.custom_fields_values.push({
+        field_id: 557100, // Email
+        values: [{ value: email, enum_id: 360080, enum_code: 'WORK' }]
+      });
+    }
+
+    // Agregar teléfono si está disponible
+    if (telefono && telefono.trim() !== '') {
+      contactPayload.custom_fields_values.push({
+        field_id: 557098, // Teléfono
+        values: [{ value: telefono, enum_id: 360068, enum_code: 'WORK' }]
+      });
+    }
 
     console.log('📞 [AGENTE-IA] Creando contacto en Kommo...');
     const contactResponse = await fetch('https://winstonchurchill.kommo.com/api/v4/contacts', {
