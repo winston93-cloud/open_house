@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     const { getKommoAccessToken } = await import('../../../lib/kommo');
-    const accessToken = await getKommoAccessToken();
+    const accessToken = await getKommoAccessToken('open-house');
 
     if (!accessToken) {
       return NextResponse.json(
