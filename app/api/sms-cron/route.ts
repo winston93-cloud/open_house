@@ -400,5 +400,5 @@ function getMensaje48h(): string {
 }
 
 function getMensaje72h(): string {
-  return `⏰ Última oportunidad! Promoción especial esta semana. WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507 🎁`;
+  return `⏰ Última oportunidad! Promoción especial esta semana. WhatsApp: Winston Churchill 833 437 8743 | Educativo 833 347 4507 🎁`;
 }
