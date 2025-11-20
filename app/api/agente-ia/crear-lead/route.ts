@@ -154,7 +154,26 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify([notePayload]),
     });
 
-    console.log('✅ [AGENTE-IA] Lead creado exitosamente');
+    // Agregar etiqueta "Prueba Agente de IA"
+    console.log('🏷️ [AGENTE-IA] Agregando etiqueta al lead...');
+    const tagPayload = {
+      _embedded: {
+        tags: [
+          { name: 'Prueba Agente de IA' }
+        ]
+      }
+    };
+
+    await fetch(`https://winstonchurchill.kommo.com/api/v4/leads/${leadId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(tagPayload),
+    });
+
+    console.log('✅ [AGENTE-IA] Lead creado exitosamente con etiqueta');
 
     return NextResponse.json({
       success: true,
