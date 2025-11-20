@@ -15,7 +15,7 @@ export default function AgenteIAPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '👋 ¡Hola! Soy tu asistente virtual de Winston. ¿En qué puedo ayudarte hoy?',
+      text: '👋 ¡Hola! Soy tu asistente técnico virtual. ¿Qué problema de sistemas o tecnología puedo ayudarte a resolver hoy?',
       sender: 'bot',
       timestamp: new Date()
     }
@@ -76,7 +76,7 @@ export default function AgenteIAPage() {
 
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: '✅ ¡Gracias! Tu consulta ha sido registrada. Un asesor te responderá muy pronto por el canal que prefieras (WhatsApp, email o teléfono).\n\n📱 También puedes llamarnos:\n• Winston Churchill: 833 437 8743\n• Instituto Educativo: 833 347 4507',
+          text: '✅ ¡Gracias! Tu ticket de soporte ha sido creado. Un técnico especializado te responderá muy pronto por el canal que prefieras.\n\n📱 Para soporte urgente, también puedes contactarnos directamente.',
           sender: 'bot',
           timestamp: new Date()
         };
@@ -88,7 +88,7 @@ export default function AgenteIAPage() {
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: '❌ Lo siento, hubo un error al procesar tu mensaje. Por favor intenta de nuevo o contáctanos directamente.',
+        text: '❌ Lo siento, hubo un error al crear tu ticket de soporte. Por favor intenta de nuevo o contáctanos directamente.',
         sender: 'bot',
         timestamp: new Date()
       };
@@ -103,25 +103,25 @@ export default function AgenteIAPage() {
       <div className="agente-ia-content">
         {/* Header */}
         <div className="agente-ia-header">
-          <h1 className="agente-ia-title">📚 Winston Informes y Citas 📝</h1>
-          <p className="agente-ia-subtitle">Tu asistente educativo personalizado</p>
+          <h1 className="agente-ia-title">💻 Sistemas y Soporte Técnico 🛠️</h1>
+          <p className="agente-ia-subtitle">Tu asistente de tecnología e infraestructura</p>
         </div>
 
         {/* Tarjetas de características */}
         <div className="agente-ia-features">
           <div className="agente-ia-feature-card">
-            <div className="agente-ia-feature-icon">📞</div>
-            <h3 className="agente-ia-feature-title">Atención Inmediata</h3>
+            <div className="agente-ia-feature-icon">🔧</div>
+            <h3 className="agente-ia-feature-title">Soporte Técnico</h3>
             <p className="agente-ia-feature-text">
-              Respuestas rápidas a tus consultas educativas
+              Asistencia inmediata para tus problemas tecnológicos
             </p>
           </div>
 
           <div className="agente-ia-feature-card">
-            <div className="agente-ia-feature-icon">📅</div>
-            <h3 className="agente-ia-feature-title">Agenda tu Cita</h3>
+            <div className="agente-ia-feature-icon">💾</div>
+            <h3 className="agente-ia-feature-title">Infraestructura TI</h3>
             <p className="agente-ia-feature-text">
-              Programa tu visita de forma fácil y rápida
+              Soporte en servidores, redes y sistemas empresariales
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export default function AgenteIAPage() {
             <div className="agente-ia-feature-icon">🤖</div>
             <h3 className="agente-ia-feature-title">Asistente IA</h3>
             <p className="agente-ia-feature-text">
-              Tecnología de inteligencia artificial avanzada
+              Inteligencia artificial para resolver tus dudas técnicas
             </p>
           </div>
         </div>
@@ -147,19 +147,19 @@ export default function AgenteIAPage() {
             <li className="agente-ia-instruction-item">
               <span className="agente-ia-instruction-icon">✅</span>
               <span className="agente-ia-instruction-text">
-                Escribe tu consulta o solicitud
+                Describe tu problema técnico o consulta de sistemas
               </span>
             </li>
             <li className="agente-ia-instruction-item">
               <span className="agente-ia-instruction-icon">✅</span>
               <span className="agente-ia-instruction-text">
-                Nuestro agente de IA te responderá al instante
+                Nuestro agente de IA te ayudará con soluciones inmediatas
               </span>
             </li>
             <li className="agente-ia-instruction-item">
               <span className="agente-ia-instruction-icon">✅</span>
               <span className="agente-ia-instruction-text">
-                Agenda citas, solicita información y más
+                Abre tickets, solicita soporte especializado y más
               </span>
             </li>
           </ul>
@@ -200,7 +200,7 @@ export default function AgenteIAPage() {
             <div className="agente-ia-chat-header-info">
               <div className="agente-ia-chat-avatar">🤖</div>
               <div>
-                <div className="agente-ia-chat-title">Asistente Winston</div>
+                <div className="agente-ia-chat-title">Soporte Técnico IA</div>
                 <div className="agente-ia-chat-status">
                   <span className="agente-ia-status-dot"></span>
                   En línea
@@ -264,7 +264,7 @@ export default function AgenteIAPage() {
             {showInfoForm ? (
               <div className="agente-ia-info-form">
                 <p className="agente-ia-info-title">
-                  Para crear tu consulta, proporciona tus datos (opcional):
+                  Para crear tu ticket de soporte, proporciona tus datos (opcional):
                 </p>
                 <input
                   type="text"
@@ -293,7 +293,7 @@ export default function AgenteIAPage() {
                     disabled={isLoading}
                     className="agente-ia-info-submit"
                   >
-                    {isLoading ? 'Enviando...' : 'Enviar consulta'}
+                    {isLoading ? 'Creando ticket...' : 'Crear ticket de soporte'}
                   </button>
                   <button
                     onClick={() => setShowInfoForm(false)}
