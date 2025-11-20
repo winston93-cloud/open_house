@@ -89,9 +89,12 @@ export async function POST(request: NextRequest) {
     console.log('✅ [AGENTE-IA] Contacto creado:', contactId);
 
     // Crear lead en Kommo
+    // Pipeline: EMBUDO DE VENTAS (5030645)
+    // Status: LEADS ENTRANTES (la primera etapa)
     const leadPayload = {
       name: `Chat IA: ${nombre || 'Usuario'}`,
       price: 0,
+      pipeline_id: 5030645,
       _embedded: {
         contacts: [{ id: contactId }]
       }
