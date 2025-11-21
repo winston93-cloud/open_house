@@ -15,7 +15,7 @@ export default function AgenteIAPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '👋 ¡Hola! Soy tu asistente técnico virtual. ¿Qué problema de sistemas o tecnología puedo ayudarte a resolver hoy?',
+      text: '👋 ¡Hola! Soy tu asistente virtual de admisiones. ¿En qué puedo ayudarte hoy? Puedo informarte sobre el proceso de inscripción, requisitos, fechas y más.',
       sender: 'bot',
       timestamp: new Date()
     }
@@ -76,7 +76,7 @@ export default function AgenteIAPage() {
 
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: '✅ ¡Gracias! Tu ticket de soporte ha sido creado. Un técnico especializado te responderá muy pronto por el canal que prefieras.\n\n📱 Para soporte urgente, también puedes contactarnos directamente.',
+          text: '✅ ¡Gracias! Tu consulta ha sido registrada. Un asesor de admisiones te responderá muy pronto para ayudarte con el proceso de inscripción.\n\n📱 También puedes contactarnos directamente.',
           sender: 'bot',
           timestamp: new Date()
         };
@@ -88,7 +88,7 @@ export default function AgenteIAPage() {
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: '❌ Lo siento, hubo un error al crear tu ticket de soporte. Por favor intenta de nuevo o contáctanos directamente.',
+        text: '❌ Lo siento, hubo un error al registrar tu consulta. Por favor intenta de nuevo o contáctanos directamente.',
         sender: 'bot',
         timestamp: new Date()
       };
@@ -103,25 +103,25 @@ export default function AgenteIAPage() {
       <div className="agente-ia-content">
         {/* Header */}
         <div className="agente-ia-header">
-          <h1 className="agente-ia-title">💻 Sistemas y Soporte Técnico 🛠️</h1>
-          <p className="agente-ia-subtitle">Tu asistente de tecnología e infraestructura</p>
+          <h1 className="agente-ia-title">🎓 Admisiones e Inscripciones 📝</h1>
+          <p className="agente-ia-subtitle">Tu asistente virtual para el proceso de admisión</p>
         </div>
 
         {/* Tarjetas de características */}
         <div className="agente-ia-features">
           <div className="agente-ia-feature-card">
-            <div className="agente-ia-feature-icon">🔧</div>
-            <h3 className="agente-ia-feature-title">Soporte Técnico</h3>
+            <div className="agente-ia-feature-icon">📋</div>
+            <h3 className="agente-ia-feature-title">Información de Admisión</h3>
             <p className="agente-ia-feature-text">
-              Asistencia inmediata para tus problemas tecnológicos
+              Conoce los requisitos y proceso de inscripción
             </p>
           </div>
 
           <div className="agente-ia-feature-card">
-            <div className="agente-ia-feature-icon">💾</div>
-            <h3 className="agente-ia-feature-title">Infraestructura TI</h3>
+            <div className="agente-ia-feature-icon">📅</div>
+            <h3 className="agente-ia-feature-title">Fechas y Eventos</h3>
             <p className="agente-ia-feature-text">
-              Soporte en servidores, redes y sistemas empresariales
+              Agenda tu Open House y conoce las fechas importantes
             </p>
           </div>
 
@@ -129,7 +129,7 @@ export default function AgenteIAPage() {
             <div className="agente-ia-feature-icon">🤖</div>
             <h3 className="agente-ia-feature-title">Asistente IA</h3>
             <p className="agente-ia-feature-text">
-              Inteligencia artificial para resolver tus dudas técnicas
+              Respuestas inmediatas a tus dudas sobre admisiones
             </p>
           </div>
         </div>
@@ -147,19 +147,19 @@ export default function AgenteIAPage() {
             <li className="agente-ia-instruction-item">
               <span className="agente-ia-instruction-icon">✅</span>
               <span className="agente-ia-instruction-text">
-                Describe tu problema técnico o consulta de sistemas
+                Pregunta sobre admisiones, inscripciones o requisitos
               </span>
             </li>
             <li className="agente-ia-instruction-item">
               <span className="agente-ia-instruction-icon">✅</span>
               <span className="agente-ia-instruction-text">
-                Nuestro agente de IA te ayudará con soluciones inmediatas
+                Nuestro agente de IA te proporcionará información inmediata
               </span>
             </li>
             <li className="agente-ia-instruction-item">
               <span className="agente-ia-instruction-icon">✅</span>
               <span className="agente-ia-instruction-text">
-                Abre tickets, solicita soporte especializado y más
+                Un asesor te contactará para continuar con el proceso
               </span>
             </li>
           </ul>
@@ -200,7 +200,7 @@ export default function AgenteIAPage() {
             <div className="agente-ia-chat-header-info">
               <div className="agente-ia-chat-avatar">🤖</div>
               <div>
-                <div className="agente-ia-chat-title">Soporte Técnico IA</div>
+                <div className="agente-ia-chat-title">Admisiones IA</div>
                 <div className="agente-ia-chat-status">
                   <span className="agente-ia-status-dot"></span>
                   En línea
@@ -264,7 +264,7 @@ export default function AgenteIAPage() {
             {showInfoForm ? (
               <div className="agente-ia-info-form">
                 <p className="agente-ia-info-title">
-                  Para crear tu ticket de soporte, proporciona tus datos (opcional):
+                  Para continuar con tu consulta de admisión, proporciona tus datos (opcional):
                 </p>
                 <input
                   type="text"
@@ -293,7 +293,7 @@ export default function AgenteIAPage() {
                     disabled={isLoading}
                     className="agente-ia-info-submit"
                   >
-                    {isLoading ? 'Creando ticket...' : 'Crear ticket de soporte'}
+                    {isLoading ? 'Enviando consulta...' : 'Enviar consulta'}
                   </button>
                   <button
                     onClick={() => setShowInfoForm(false)}
