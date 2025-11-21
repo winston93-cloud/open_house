@@ -160,6 +160,25 @@ export async function POST(request: NextRequest) {
       body: JSON.stringify([notePayload]),
     });
 
+    // Enviar mensaje al chat de Kommo para activar el agente de IA
+    console.log('💬 [AGENTE-IA] Enviando mensaje al chat de Kommo...');
+    const chatMessagePayload = {
+      entity_id: leadId,
+      note_type: 'common_message_from',
+      params: {
+        text: mensaje
+      }
+    };
+
+    await fetch(`https://winstonchurchill.kommo.com/api/v4/leads/${leadId}/notes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify([chatMessagePayload]),
+    });
+
     // Agregar etiqueta "Prueba Agente de IA"
     console.log('🏷️ [AGENTE-IA] Agregando etiqueta al lead...');
     const tagPayload = {
