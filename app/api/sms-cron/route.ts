@@ -8,8 +8,8 @@ import { supabase } from '../../../lib/supabase';
 // Envía SMS automatizados a leads según el tiempo sin actividad:
 // - 24 horas: Primer recordatorio de contacto
 // - 48 horas: Segundo recordatorio (invitación a recorrido)
-// - 72 horas: Tercer recordatorio (oferta especial)
-// Última actualización: 20 noviembre 2025 - 10:00 AM
+// - 5 días: Tercer recordatorio (oferta especial)
+// Última actualización: 21 noviembre 2025
 // =============================================================================
 
 // Función principal que ejecuta el cron job
@@ -24,7 +24,7 @@ async function executeCronJob() {
   const results = {
     sms24h: { processed: 0, success: 0, errors: 0 },
     sms48h: { processed: 0, success: 0, errors: 0 },
-    sms72h: { processed: 0, success: 0, errors: 0 }
+    sms5d: { processed: 0, success: 0, errors: 0 }
   };
   
   try {
@@ -38,10 +38,10 @@ async function executeCronJob() {
     const result48h = await checkAndSendSMS48h(logId);
     results.sms48h = result48h;
     
-    // ========== SMS 72H ==========
-    console.log(`\n📱 [${logId}] === REVISIÓN SMS 72H ===`);
-    const result72h = await checkAndSendSMS72h(logId);
-    results.sms72h = result72h;
+    // ========== SMS 5 DÍAS ==========
+    console.log(`\n📱 [${logId}] === REVISIÓN SMS 5 DÍAS ===`);
+    const result5d = await checkAndSendSMS5d(logId);
+    results.sms5d = result5d;
     
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
@@ -51,7 +51,7 @@ async function executeCronJob() {
     console.log(`📊 [${logId}] Resultados:`);
     console.log(`   - SMS 24h: ${results.sms24h.success}/${results.sms24h.processed} exitosos`);
     console.log(`   - SMS 48h: ${results.sms48h.success}/${results.sms48h.processed} exitosos`);
-    console.log(`   - SMS 72h: ${results.sms72h.success}/${results.sms72h.processed} exitosos`);
+    console.log(`   - SMS 5 días: ${results.sms5d.success}/${results.sms5d.processed} exitosos`);
     
     return NextResponse.json({
       success: true,
@@ -174,16 +174,16 @@ async function checkAndSendSMS48h(logId: string) {
     // Usar UTC para evitar problemas de timezone
     const now = new Date();
     const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
-    const seventyTwoHoursAgo = new Date(now.getTime() - (72 * 60 * 60 * 1000));
+    const fiveDaysAgo = new Date(now.getTime() - (5 * 24 * 60 * 60 * 1000));
     
-    console.log(`📅 [${logId}] Buscando leads con >48h y <72h sin actividad...`);
-    console.log(`📅 [${logId}] Rango: ${seventyTwoHoursAgo.toISOString()} a ${fortyEightHoursAgo.toISOString()}`);
+    console.log(`📅 [${logId}] Buscando leads con >48h y <5 días sin actividad...`);
+    console.log(`📅 [${logId}] Rango: ${fiveDaysAgo.toISOString()} a ${fortyEightHoursAgo.toISOString()}`);
     
     const { data: pendingLeads, error } = await supabase
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', fortyEightHoursAgo.toISOString())
-      .gte('last_contact_time', seventyTwoHoursAgo.toISOString())
+      .gte('last_contact_time', fiveDaysAgo.toISOString())
       .eq('sms_24h_sent', true)  // Ya debe tener el SMS de 24h enviado
       .eq('sms_48h_sent', false)
       .eq('lead_status', 'active');
@@ -244,37 +244,37 @@ async function checkAndSendSMS48h(logId: string) {
 }
 
 // =============================================================================
-// FUNCIÓN: Revisar y enviar SMS a leads con >72h sin comunicación
+// FUNCIÓN: Revisar y enviar SMS a leads con >5 días sin comunicación
 // =============================================================================
-async function checkAndSendSMS72h(logId: string) {
+async function checkAndSendSMS5d(logId: string) {
   const result = { processed: 0, success: 0, errors: 0 };
   
   try {
     // Usar UTC para evitar problemas de timezone
     const now = new Date();
-    const seventyTwoHoursAgo = new Date(now.getTime() - (72 * 60 * 60 * 1000));
+    const fiveDaysAgo = new Date(now.getTime() - (5 * 24 * 60 * 60 * 1000));
     
-    console.log(`📅 [${logId}] Buscando leads con >72h sin actividad...`);
+    console.log(`📅 [${logId}] Buscando leads con >5 días sin actividad...`);
     
     const { data: pendingLeads, error } = await supabase
       .from('kommo_lead_tracking')
       .select('*')
-      .lt('last_contact_time', seventyTwoHoursAgo.toISOString())
+      .lt('last_contact_time', fiveDaysAgo.toISOString())
       .eq('sms_48h_sent', true)  // Ya debe tener el SMS de 48h enviado
-      .eq('sms_72h_sent', false)
+      .eq('sms_72h_sent', false)  // Campo reutilizado para 5 días
       .eq('lead_status', 'active');
     
     if (error) {
-      console.error(`❌ [${logId}] Error consultando leads 72h:`, error);
+      console.error(`❌ [${logId}] Error consultando leads 5 días:`, error);
       return result;
     }
     
     if (!pendingLeads || pendingLeads.length === 0) {
-      console.log(`✅ [${logId}] No hay leads pendientes de SMS 72h`);
+      console.log(`✅ [${logId}] No hay leads pendientes de SMS 5 días`);
       return result;
     }
     
-    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 72h`);
+    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 5 días`);
     result.processed = pendingLeads.length;
     
     for (const lead of pendingLeads) {
@@ -286,20 +286,20 @@ async function checkAndSendSMS72h(logId: string) {
           continue;
         }
         
-        const smsSuccess = await sendSMS(lead.telefono, getMensaje72h(), logId);
+        const smsSuccess = await sendSMS(lead.telefono, getMensaje5d(), logId);
         
         if (smsSuccess) {
           await supabase
             .from('kommo_lead_tracking')
             .update({
-              sms_72h_sent: true,
+              sms_72h_sent: true,  // Campo reutilizado para 5 días
               sms_72h_sent_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             })
             .eq('kommo_lead_id', lead.kommo_lead_id);
           
           result.success++;
-          console.log(`   ✅ SMS 72h enviado exitosamente (sin tag)`);
+          console.log(`   ✅ SMS 5 días enviado exitosamente (sin tag)`);
         } else {
           result.errors++;
         }
@@ -310,11 +310,11 @@ async function checkAndSendSMS72h(logId: string) {
       }
     }
     
-    console.log(`✅ [${logId}] SMS 72h completado: ${result.success}/${result.processed}`);
+    console.log(`✅ [${logId}] SMS 5 días completado: ${result.success}/${result.processed}`);
     return result;
     
   } catch (error) {
-    console.error(`❌ [${logId}] Error en checkAndSendSMS72h:`, error);
+    console.error(`❌ [${logId}] Error en checkAndSendSMS5d:`, error);
     return result;
   }
 }
@@ -399,6 +399,6 @@ function getMensaje48h(): string {
   return `😊 Hola! ¿Te gustaría agendar un recorrido? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507 📅`;
 }
 
-function getMensaje72h(): string {
+function getMensaje5d(): string {
   return `⏰ Última oportunidad! Promoción especial esta semana. WhatsApp: Winston Churchill 833 437 8743 | Educativo 833 347 4507 🎁`;
 }
