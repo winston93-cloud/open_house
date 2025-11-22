@@ -5,7 +5,7 @@ import * as nodemailer from 'nodemailer';
 // =============================================================================
 // CRON JOB: SISTEMA DE SMS Y EMAILS AUTOMÁTICOS PARA LEADS DE KOMMO
 // =============================================================================
-// Horario: 10:00 AM hora de México (16:00 UTC)
+// Horario: 12:50 PM hora de México (18:50 UTC)
 // Envía SMS y Emails automatizados a leads según el tiempo sin actividad:
 // - 24 horas: Primer recordatorio de contacto
 // - 48 horas: Segundo recordatorio (invitación a recorrido)
