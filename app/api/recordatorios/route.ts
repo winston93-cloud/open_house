@@ -3,11 +3,11 @@ import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 
 // =============================================================================
-// CRON JOB: SISTEMA DE RECORDATORIOS POR EMAIL
+// CRON JOB: SISTEMA DE RECORDATORIOS POR EMAIL Y SMS
 // =============================================================================
 // Se ejecuta diariamente a las 9:00 AM hora de México (15:00 UTC)
 // Envía recordatorios de Open House y Sesiones Informativas
-// Última actualización: 18 noviembre 2025 - 08:25
+// Última actualización: 22 noviembre 2025 - 17:21
 // =============================================================================
 
 // Configuración del transporter de email
