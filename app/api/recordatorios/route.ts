@@ -1089,12 +1089,57 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     
     await transporter.sendMail(mailOptions);
     console.log(`✅ Recordatorio enviado exitosamente a ${sesion.email}`);
+    
+    // Enviar SMS de recordatorio
+    const smsMessage = `📚 Recordatorio Winston - Sesión Informativa\n\nMañana ${eventInfo.fechaEvento} a las ${eventInfo.horaEvento}\n\n${eventInfo.institucionNombre}\n\nConfirma tu asistencia aquí:\nhttps://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confirmado\n\n¡Te esperamos!`;
+    
+    await sendReminderSMS(sesion.telefono, smsMessage);
+    
     return { success: true };
   } catch (error) {
     console.error(`❌ Error al enviar recordatorio a ${sesion.email}:`, error);
     return { success: false, error };
   }
 };
+
+// Función para enviar SMS de recordatorio
+async function sendReminderSMS(telefono: string, mensaje: string): Promise<boolean> {
+  try {
+    if (!telefono || telefono.trim() === '') {
+      console.log(`   ⚠️ Sin teléfono, omitiendo SMS...`);
+      return false;
+    }
+    
+    // Formatear teléfono
+    let phone = telefono.toString().trim();
+    if (!phone.startsWith('+52') && !phone.startsWith('52')) {
+      phone = '+52' + phone;
+    } else if (phone.startsWith('52') && !phone.startsWith('+')) {
+      phone = '+' + phone;
+    }
+    
+    console.log(`   📤 Enviando SMS de recordatorio a ${phone}...`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, message: mensaje })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`   ❌ Error SMS API: ${errorText}`);
+      return false;
+    }
+    
+    console.log(`   ✅ SMS de recordatorio enviado exitosamente`);
+    return true;
+    
+  } catch (error) {
+    console.error(`   ❌ Error enviando SMS:`, error);
+    return false;
+  }
+}
 
 // Función para enviar email de recordatorio de Open House
 const sendReminderEmail = async (inscripcion: any) => {
@@ -1126,6 +1171,12 @@ const sendReminderEmail = async (inscripcion: any) => {
 
     await transporter.sendMail(mailOptions);
     console.log(`✅ Email de recordatorio enviado a: ${inscripcion.email}`);
+    
+    // Enviar SMS de recordatorio
+    const smsMessage = `🏫 Recordatorio Winston - Open House\n\nMañana ${eventInfo.fechaEvento} a las ${eventInfo.horaEvento}\n\n${eventInfo.institucionNombre}\n\nConfirma tu asistencia aquí:\nhttps://open-house-chi.vercel.app/asistencia?id=${inscripcion.id}&confirmacion=confirmado\n\n¡Te esperamos!`;
+    
+    await sendReminderSMS(inscripcion.telefono, smsMessage);
+    
     return { success: true };
   } catch (error) {
     console.error(`❌ Error al enviar recordatorio a ${inscripcion.email}:`, error);
