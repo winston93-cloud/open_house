@@ -30,6 +30,7 @@ async function executeCronJob() {
   console.log(`\n🚀 [${logId}] ===== INICIO DE CRON JOB SMS =====`);
   console.log(`📅 [${logId}] Fecha y hora: ${startTime.toLocaleString('es-MX')}`);
   console.log(`🌍 [${logId}] Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+  console.log(`⏰ [${logId}] Horario configurado: 12:50 PM México`);
   
   const results = {
     sms24h: { processed: 0, success: 0, errors: 0 },
