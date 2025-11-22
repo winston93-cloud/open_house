@@ -10,7 +10,7 @@ import nodemailer from 'nodemailer';
 // - 24 horas: Primer recordatorio de contacto
 // - 48 horas: Segundo recordatorio (invitación a recorrido)
 // - 5 días: Tercer recordatorio (oferta especial)
-// Última actualización: 21 noviembre 2025
+// Última actualización: 22 noviembre 2025
 // =============================================================================
 
 // Configuración del transporter de email
