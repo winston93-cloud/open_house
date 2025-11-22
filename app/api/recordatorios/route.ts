@@ -1059,6 +1059,45 @@ const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
   };
 };
 
+// Función para enviar SMS de recordatorio
+async function sendReminderSMS(telefono: string, mensaje: string): Promise<boolean> {
+  try {
+    if (!telefono || telefono.trim() === '') {
+      console.log(`   ⚠️ Sin teléfono, omitiendo SMS...`);
+      return false;
+    }
+    
+    // Formatear teléfono
+    let phone = telefono.toString().trim();
+    if (!phone.startsWith('+52') && !phone.startsWith('52')) {
+      phone = '+52' + phone;
+    } else if (phone.startsWith('52') && !phone.startsWith('+')) {
+      phone = '+' + phone;
+    }
+    
+    console.log(`   📤 Enviando SMS de recordatorio a ${phone}...`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, message: mensaje })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`   ❌ Error SMS API: ${errorText}`);
+      return false;
+    }
+    
+    console.log(`   ✅ SMS de recordatorio enviado exitosamente`);
+    return true;
+    
+  } catch (error) {
+    console.error(`   ❌ Error enviando SMS:`, error);
+    return false;
+  }
+}
+
 // Función para enviar email de recordatorio de Sesiones Informativas
 const sendSesionesReminderEmail = async (sesion: any) => {
   try {
@@ -1101,45 +1140,6 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     return { success: false, error };
   }
 };
-
-// Función para enviar SMS de recordatorio
-async function sendReminderSMS(telefono: string, mensaje: string): Promise<boolean> {
-  try {
-    if (!telefono || telefono.trim() === '') {
-      console.log(`   ⚠️ Sin teléfono, omitiendo SMS...`);
-      return false;
-    }
-    
-    // Formatear teléfono
-    let phone = telefono.toString().trim();
-    if (!phone.startsWith('+52') && !phone.startsWith('52')) {
-      phone = '+52' + phone;
-    } else if (phone.startsWith('52') && !phone.startsWith('+')) {
-      phone = '+' + phone;
-    }
-    
-    console.log(`   📤 Enviando SMS de recordatorio a ${phone}...`);
-    
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'https://open-house-chi.vercel.app'}/api/sms/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, message: mensaje })
-    });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`   ❌ Error SMS API: ${errorText}`);
-      return false;
-    }
-    
-    console.log(`   ✅ SMS de recordatorio enviado exitosamente`);
-    return true;
-    
-  } catch (error) {
-    console.error(`   ❌ Error enviando SMS:`, error);
-    return false;
-  }
-}
 
 // Función para enviar email de recordatorio de Open House
 const sendReminderEmail = async (inscripcion: any) => {
