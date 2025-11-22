@@ -1092,7 +1092,7 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     console.log(`✅ Recordatorio enviado exitosamente a ${sesion.email}`);
     
     // Enviar SMS de recordatorio
-    const smsMessage = `📚 Recordatorio Winston - Sesión Informativa\n\nMañana ${eventInfo.fechaEvento} a las ${eventInfo.horaEvento}\n\n${eventInfo.institucionNombre}\n\nConfirma tu asistencia aquí:\nhttps://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confirmado\n\n¡Te esperamos!`;
+    const smsMessage = `Recordatorio Winston - Sesión Informativa mañana ${eventInfo.fechaEvento} ${eventInfo.horaEvento}. Confirma: https://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confirmado`;
     await sendReminderSMS(sesion.telefono, smsMessage);
     
     return { success: true };
@@ -1173,7 +1173,7 @@ const sendReminderEmail = async (inscripcion: any) => {
     console.log(`✅ Email de recordatorio enviado a: ${inscripcion.email}`);
     
     // Enviar SMS de recordatorio
-    const smsMessage = `🏫 Recordatorio Winston - Open House\n\nMañana ${eventInfo.fechaEvento} a las ${eventInfo.horaEvento}\n\n${eventInfo.institucionNombre}\n\nConfirma tu asistencia aquí:\nhttps://open-house-chi.vercel.app/asistencia?id=${inscripcion.id}&confirmacion=confirmado\n\n¡Te esperamos!`;
+    const smsMessage = `Recordatorio Winston - Open House mañana ${eventInfo.fechaEvento} ${eventInfo.horaEvento}. Confirma: https://open-house-chi.vercel.app/asistencia?id=${inscripcion.id}&confirmacion=confirmado`;
     await sendReminderSMS(inscripcion.telefono, smsMessage);
     
     return { success: true };
