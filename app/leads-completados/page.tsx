@@ -172,7 +172,7 @@ export default function LeadsCompletados() {
             Gestión de Leads Completados
           </h1>
           <p className="leads-subtitle">
-            Leads que completaron su ciclo completo de SMS (24h → 48h → 72h)
+            Leads que completaron su ciclo completo de SMS (24h → 48h → 5 días)
           </p>
           <div className="leads-warning">
             <span className="warning-icon">⚠️</span>
@@ -266,7 +266,7 @@ export default function LeadsCompletados() {
             <div className="vacio-icon">✅</div>
             <div className="vacio-titulo">No hay leads completados</div>
             <div className="vacio-texto">
-              Todos los leads están activos o aún no han completado su ciclo de seguimiento (72 horas)
+              Todos los leads están activos o aún no han completado su ciclo de seguimiento (5 días)
             </div>
           </div>
         ) : (
@@ -287,7 +287,7 @@ export default function LeadsCompletados() {
                   <th className="col-email">Email</th>
                   <th className="col-plantel">Plantel</th>
                   <th className="col-contacto">Último Contacto</th>
-                  <th className="col-sms">SMS 72h Enviado</th>
+                  <th className="col-sms">SMS 5 días Enviado</th>
                 </tr>
               </thead>
               <tbody>

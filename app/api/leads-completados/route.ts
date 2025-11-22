@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../../../lib/supabase';
 
 // =============================================================================
-// MÓDULO: Gestión de Leads Completados (Ciclo de 72h terminado)
+// MÓDULO: Gestión de Leads Completados (Ciclo de 5 días terminado)
 // =============================================================================
 // Endpoint para listar y eliminar leads que ya completaron su ciclo de SMS
-// (sms_72h_sent = true)
+// (24h -> 48h -> 5 días)
+// El campo sms_72h_sent se reutiliza para marcar el envío del SMS de 5 días
 // =============================================================================
 
 // GET: Listar leads completados
