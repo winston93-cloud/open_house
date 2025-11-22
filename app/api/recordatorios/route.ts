@@ -1175,6 +1175,10 @@ const sendReminderEmail = async (inscripcion: any) => {
     await transporter.sendMail(mailOptions);
     console.log(`✅ Email de recordatorio enviado a: ${inscripcion.email}`);
     
+    console.log(`🔍 DEBUG: Email enviado, ahora voy a procesar SMS...`);
+    console.log(`🔍 DEBUG: Teléfono: ${inscripcion.telefono}`);
+    console.log(`🔍 DEBUG: Tipo de teléfono: ${typeof inscripcion.telefono}`);
+    
     // Enviar SMS de recordatorio
     console.log(`📱 Preparando SMS para: ${inscripcion.telefono}`);
     const smsMessage = `🏫 Recordatorio Winston - Open House\n\nMañana ${eventInfo.fechaEvento} a las ${eventInfo.horaEvento}\n\n${eventInfo.institucionNombre}\n\nConfirma tu asistencia aquí:\nhttps://open-house-chi.vercel.app/asistencia?id=${inscripcion.id}&confirmacion=confirmado\n\n¡Te esperamos!`;
