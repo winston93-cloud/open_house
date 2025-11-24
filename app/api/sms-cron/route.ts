@@ -747,8 +747,8 @@ Vimos que estuviste interesado en conocer más sobre nuestros programas educativ
 ¿Tienes alguna duda que podamos resolver? Estamos aquí para ayudarte.
 
 📱 Contáctanos por WhatsApp:
-• Winston Churchill: 833 437 8743
-• Educativo: 833 347 4507
+• Winston Churchill: https://wa.me/528334378743
+• Educativo: https://wa.me/528333474507
 
 ¡Esperamos saber de ti pronto! 🏫`;
 }
@@ -761,8 +761,8 @@ Nos encantaría que conocieras nuestras instalaciones y platiques con nuestro eq
 ¿Te gustaría agendar un recorrido personalizado por el campus?
 
 📱 Escríbenos por WhatsApp:
-• Winston Churchill: 833 437 8743
-• Educativo: 833 347 4507
+• Winston Churchill: https://wa.me/528334378743
+• Educativo: https://wa.me/528333474507
 
 ¡Será un placer recibirte! 📅`;
 }
@@ -775,8 +775,8 @@ Tenemos una promoción especial esta semana para nuevos ingresos.
 No dejes pasar esta oportunidad de formar parte de nuestra comunidad educativa.
 
 📱 Contáctanos hoy:
-• Winston Churchill: 833 437 8743
-• Educativo: 833 347 4507
+• Winston Churchill: https://wa.me/528334378743
+• Educativo: https://wa.me/528333474507
 
 ¡Te esperamos! 🎁`;
 }
