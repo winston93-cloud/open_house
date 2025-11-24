@@ -718,11 +718,17 @@ export async function POST(request: NextRequest) {
         console.log('📱 Enviando SMS de confirmación...');
         
         // Determinar mensaje según nivel académico (acortado para 1 segmento)
+        // Normalizar nombre sin tildes para SMS
+        const nombreSinTildes = formData.nombreAspirante
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toUpperCase();
+        
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `Sesion Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 dia antes. WhatsApp: 833 347 4507`;
+          mensaje = `Sesion Informativa 2025 confirmada para ${nombreSinTildes}. Recordatorio por email 1 dia antes. WhatsApp: 833 347 4507`;
         } else {
-          mensaje = `Sesion Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 dia antes. WhatsApp: 833 437 8743`;
+          mensaje = `Sesion Informativa 2025 confirmada para ${nombreSinTildes}. Recordatorio por email 1 dia antes. WhatsApp: 833 437 8743`;
         }
         
         // Formatear teléfono
