@@ -1,35 +1,31 @@
 import { NextResponse } from 'next/server';
 
 // =============================================================================
-// ENDPOINT: Enviar SMS via Twilio
+// ENDPOINT: Enviar SMS via SMS Mobile API (Android Gateway)
 // =============================================================================
 
 export async function POST(request: Request) {
   // Obtener variables de entorno
-  const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
-  const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
-  const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+  const SMS_GATEWAY_URL = process.env.SMS_GATEWAY_URL;
+  const SMS_GATEWAY_TOKEN = process.env.SMS_GATEWAY_TOKEN;
 
-  console.log('🔍 Verificando variables de Twilio:', {
-    hasSID: !!TWILIO_ACCOUNT_SID,
-    hasToken: !!TWILIO_AUTH_TOKEN,
-    hasPhone: !!TWILIO_PHONE_NUMBER,
+  console.log('🔍 Verificando variables de SMS Mobile API:', {
+    hasURL: !!SMS_GATEWAY_URL,
+    hasToken: !!SMS_GATEWAY_TOKEN,
   });
 
-  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
-    console.error('❌ Twilio no configurado. Variables faltantes:', {
-      TWILIO_ACCOUNT_SID: !!TWILIO_ACCOUNT_SID,
-      TWILIO_AUTH_TOKEN: !!TWILIO_AUTH_TOKEN,
-      TWILIO_PHONE_NUMBER: !!TWILIO_PHONE_NUMBER,
+  if (!SMS_GATEWAY_URL || !SMS_GATEWAY_TOKEN) {
+    console.error('❌ SMS Mobile API no configurado. Variables faltantes:', {
+      SMS_GATEWAY_URL: !!SMS_GATEWAY_URL,
+      SMS_GATEWAY_TOKEN: !!SMS_GATEWAY_TOKEN,
     });
     return NextResponse.json(
       {
-        error: 'Twilio no configurado',
-        details: 'Verifica TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN y TWILIO_PHONE_NUMBER en Vercel',
+        error: 'SMS Mobile API no configurado',
+        details: 'Verifica SMS_GATEWAY_URL y SMS_GATEWAY_TOKEN en Vercel',
         missing: {
-          sid: !TWILIO_ACCOUNT_SID,
-          token: !TWILIO_AUTH_TOKEN,
-          phone: !TWILIO_PHONE_NUMBER,
+          url: !SMS_GATEWAY_URL,
+          token: !SMS_GATEWAY_TOKEN,
         }
       },
       { status: 500 }
@@ -46,58 +42,57 @@ export async function POST(request: Request) {
       );
     }
 
-    // Formatear número para Twilio (debe incluir código de país)
+    // Formatear número (SMS Mobile API acepta cualquier formato)
     let formattedPhone = phone.toString().trim();
-    if (!formattedPhone.startsWith('+')) {
-      formattedPhone = '+52' + formattedPhone; // México por defecto
+    // Remover +52 si lo tiene
+    if (formattedPhone.startsWith('+52')) {
+      formattedPhone = formattedPhone.substring(3);
+    } else if (formattedPhone.startsWith('52')) {
+      formattedPhone = formattedPhone.substring(2);
     }
 
-    // Enviar SMS usando Twilio REST API
-    const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
-    
-    const payload = new URLSearchParams({
-      From: TWILIO_PHONE_NUMBER,
-      To: formattedPhone,
-      Body: message,
-    });
+    console.log('📤 Enviando SMS via Mobile API a:', formattedPhone);
 
-    const twilioResponse = await fetch(twilioUrl, {
+    // Enviar SMS usando SMS Mobile API
+    const smsResponse = await fetch(SMS_GATEWAY_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64'),
+        'Content-Type': 'application/json',
       },
-      body: payload.toString(),
+      body: JSON.stringify({
+        token: SMS_GATEWAY_TOKEN,
+        phone: formattedPhone,
+        message: message,
+        sim: 1, // SIM 1 por defecto
+      }),
     });
 
-    const responseData = await twilioResponse.json();
+    const responseData = await smsResponse.json();
 
-    if (!twilioResponse.ok) {
-      console.error('Error de Twilio:', responseData);
+    if (!smsResponse.ok || !responseData.success) {
+      console.error('❌ Error de SMS Mobile API:', responseData);
       return NextResponse.json(
         {
-          error: 'Twilio respondió con error',
-          status: twilioResponse.status,
+          error: 'SMS Mobile API respondió con error',
+          status: smsResponse.status,
           details: responseData,
         },
         { status: 502 }
       );
     }
 
-    console.log('✅ SMS enviado exitosamente:', {
+    console.log('✅ SMS enviado exitosamente via Mobile API:', {
       to: formattedPhone,
-      sid: responseData.sid,
-      status: responseData.status
+      messageId: responseData.messageId,
     });
 
     return NextResponse.json({
       success: true,
-      messageSid: responseData.sid,
-      status: responseData.status,
+      messageId: responseData.messageId,
       to: formattedPhone,
     });
   } catch (error) {
-    console.error('Error enviando SMS:', error);
+    console.error('❌ Error enviando SMS:', error);
     return NextResponse.json(
       {
         error: 'No se pudo enviar el SMS',
