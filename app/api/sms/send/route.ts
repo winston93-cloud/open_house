@@ -57,19 +57,21 @@ export async function POST(request: Request) {
     const smsResponse = await fetch(SMS_GATEWAY_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SMS_GATEWAY_TOKEN}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify({
-        number: formattedPhone,
+      body: new URLSearchParams({
+        apikey: SMS_GATEWAY_TOKEN,
+        recipients: formattedPhone,
         message: message,
-        device_id: '0', // 0 = dispositivo por defecto
       }),
     });
 
     const responseData = await smsResponse.json();
 
-    if (!smsResponse.ok || !responseData.success) {
+    console.log('📥 Respuesta de SMS Mobile API:', responseData);
+
+    // SMS Mobile API devuelve { result: { error, sent, guid } }
+    if (responseData.result && responseData.result.error) {
       console.error('❌ Error de SMS Mobile API:', responseData);
       return NextResponse.json(
         {
@@ -83,12 +85,12 @@ export async function POST(request: Request) {
 
     console.log('✅ SMS enviado exitosamente via Mobile API:', {
       to: formattedPhone,
-      messageId: responseData.messageId,
+      guid: responseData.result?.guid,
     });
 
     return NextResponse.json({
       success: true,
-      messageId: responseData.messageId,
+      messageId: responseData.result?.guid,
       to: formattedPhone,
     });
   } catch (error) {
