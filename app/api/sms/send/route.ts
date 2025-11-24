@@ -42,16 +42,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Formatear número - SMS Mobile API necesita el número SIN +52, solo 10 dígitos
+    // Formatear número - SMS Mobile API necesita formato: 528331234567 (52 + 10 dígitos)
     let formattedPhone = phone.toString().trim();
     
-    // Remover cualquier formato: +52, 52, espacios, guiones
-    formattedPhone = formattedPhone.replace(/[\s\-\(\)]/g, ''); // Quitar espacios, guiones, paréntesis
+    // Remover espacios, guiones, paréntesis
+    formattedPhone = formattedPhone.replace(/[\s\-\(\)]/g, '');
     
-    if (formattedPhone.startsWith('+52')) {
-      formattedPhone = formattedPhone.substring(3); // Quitar +52
-    } else if (formattedPhone.startsWith('52') && formattedPhone.length > 10) {
-      formattedPhone = formattedPhone.substring(2); // Quitar 52
+    // Remover el + si existe
+    if (formattedPhone.startsWith('+')) {
+      formattedPhone = formattedPhone.substring(1);
+    }
+    
+    // Si NO empieza con 52, agregarlo
+    if (!formattedPhone.startsWith('52')) {
+      formattedPhone = '52' + formattedPhone;
     }
 
     console.log('📤 Enviando SMS via Mobile API a:', formattedPhone);
