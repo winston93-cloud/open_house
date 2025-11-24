@@ -726,9 +726,9 @@ export async function POST(request: NextRequest) {
         
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `Sesion Informativa 2025 confirmada para ${nombreSinTildes}. Recordatorio por email 1 dia antes. WhatsApp: 833 347 4507`;
+          mensaje = `Su reserva para Sesion Informativa 2025 de ${nombreSinTildes} ha sido confirmada. Recordatorio por email manana. Info en 833 347 4507`;
         } else {
-          mensaje = `Sesion Informativa 2025 confirmada para ${nombreSinTildes}. Recordatorio por email 1 dia antes. WhatsApp: 833 437 8743`;
+          mensaje = `Su reserva para Sesion Informativa 2025 de ${nombreSinTildes} ha sido confirmada. Recordatorio por email manana. Info en 833 437 8743`;
         }
         
         // Formatear teléfono
