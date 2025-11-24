@@ -740,13 +740,43 @@ async function sendEmail(email: string, nombre: string, template: string, subjec
 // =============================================================================
 
 function getMensaje24h(): string {
-  return `👋 Hola! Somos admisiones Winston. ¿Tienes dudas? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507 🏫`;
+  return `👋 Hola! Somos el equipo de admisiones de Winston Churchill.
+
+Vimos que estuviste interesado en conocer más sobre nuestros programas educativos.
+
+¿Tienes alguna duda que podamos resolver? Estamos aquí para ayudarte.
+
+📱 Contáctanos por WhatsApp:
+• Winston Churchill: 833 437 8743
+• Educativo: 833 347 4507
+
+¡Esperamos saber de ti pronto! 🏫`;
 }
 
 function getMensaje48h(): string {
-  return `😊 Hola! ¿Te gustaría agendar un recorrido? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507 📅`;
+  return `😊 Hola de nuevo! 
+
+Nos encantaría que conocieras nuestras instalaciones y platiques con nuestro equipo.
+
+¿Te gustaría agendar un recorrido personalizado por el campus?
+
+📱 Escríbenos por WhatsApp:
+• Winston Churchill: 833 437 8743
+• Educativo: 833 347 4507
+
+¡Será un placer recibirte! 📅`;
 }
 
 function getMensaje5d(): string {
-  return `⏰ Última oportunidad! Promoción especial esta semana. WhatsApp: Winston Churchill 833 437 8743 | Educativo 833 347 4507 🎁`;
+  return `⏰ ¡Última oportunidad!
+
+Tenemos una promoción especial esta semana para nuevos ingresos.
+
+No dejes pasar esta oportunidad de formar parte de nuestra comunidad educativa.
+
+📱 Contáctanos hoy:
+• Winston Churchill: 833 437 8743
+• Educativo: 833 347 4507
+
+¡Te esperamos! 🎁`;
 }
