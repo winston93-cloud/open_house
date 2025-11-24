@@ -724,7 +724,11 @@ export async function POST(request: NextRequest) {
           .toUpperCase();
         
         let mensaje = '';
-        mensaje = `Open House 2025 confirmado`;
+        if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+          mensaje = `Open House 2025 confirmado para ${nombreSinTildes}. Recordatorio por email 1 dia antes. WhatsApp 833 347 4507`;
+        } else {
+          mensaje = `Open House 2025 confirmado para ${nombreSinTildes}. Recordatorio por email 1 dia antes. WhatsApp 833 437 8743`;
+        }
         
         // Formatear teléfono
         let phone = formData.telefono.toString().trim();
