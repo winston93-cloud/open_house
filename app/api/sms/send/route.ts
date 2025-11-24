@@ -58,12 +58,12 @@ export async function POST(request: Request) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SMS_GATEWAY_TOKEN}`,
       },
       body: JSON.stringify({
-        token: SMS_GATEWAY_TOKEN,
-        phone: formattedPhone,
+        number: formattedPhone,
         message: message,
-        sim: 1, // SIM 1 por defecto
+        device_id: '0', // 0 = dispositivo por defecto
       }),
     });
 
