@@ -720,9 +720,9 @@ export async function POST(request: NextRequest) {
         // Determinar mensaje según nivel académico (acortado para 1 segmento)
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `✅ Sesión Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: 833 347 4507 📚`;
+          mensaje = `Sesion Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 dia antes. WhatsApp: 833 347 4507`;
         } else {
-          mensaje = `✅ Sesión Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: 833 437 8743 📚`;
+          mensaje = `Sesion Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 dia antes. WhatsApp: 833 437 8743`;
         }
         
         // Formatear teléfono

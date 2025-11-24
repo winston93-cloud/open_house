@@ -740,13 +740,13 @@ async function sendEmail(email: string, nombre: string, template: string, subjec
 // =============================================================================
 
 function getMensaje24h(): string {
-  return `👋 Hola! Somos admisiones Winston. ¿Tienes dudas? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507 🏫`;
+  return `Hola! Somos admisiones Winston. Tienes dudas? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507`;
 }
 
 function getMensaje48h(): string {
-  return `😊 Hola! ¿Te gustaría agendar un recorrido? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507 📅`;
+  return `Hola! Te gustaria agendar un recorrido? WhatsApp: Churchill 833 437 8743 | Educativo 833 347 4507`;
 }
 
 function getMensaje5d(): string {
-  return `⏰ Última oportunidad! Promoción especial esta semana. WhatsApp: Winston Churchill 833 437 8743 | Educativo 833 347 4507 🎁`;
+  return `Ultima oportunidad! Promocion especial esta semana. WhatsApp: Winston Churchill 833 437 8743 | Educativo 833 347 4507`;
 }

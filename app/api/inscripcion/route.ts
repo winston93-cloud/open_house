@@ -719,9 +719,9 @@ export async function POST(request: NextRequest) {
         // Determinar mensaje según nivel académico (acortado para 1 segmento)
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `✅ Open House 2025 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: 833 347 4507 🏫`;
+          mensaje = `Open House 2025 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 dia antes. WhatsApp: 833 347 4507`;
         } else {
-          mensaje = `✅ Open House 2025 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: 833 437 8743 🏫`;
+          mensaje = `Open House 2025 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 dia antes. WhatsApp: 833 437 8743`;
         }
         
         // Formatear teléfono
