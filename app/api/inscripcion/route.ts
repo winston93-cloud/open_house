@@ -724,7 +724,7 @@ export async function POST(request: NextRequest) {
           .toUpperCase();
         
         let mensaje = '';
-        mensaje = `Open House 2025 confirmado. Recordatorio por email.`;
+        mensaje = `Open House 2025 confirmado`;
         
         // Formatear teléfono
         let phone = formData.telefono.toString().trim();
