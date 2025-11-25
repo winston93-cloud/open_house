@@ -59,19 +59,19 @@ body {
 
 /* Banner de Becas Winston */
 .becas-banner {
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     border-radius: 20px;
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 3rem;
     margin: 0 auto 3rem;
-    max-width: 600px;
+    max-width: 700px;
+    width: 90%;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1.5rem;
     box-shadow: 
-        0 10px 30px rgba(255, 215, 0, 0.4),
-        0 0 0 3px rgba(255, 255, 255, 0.3),
-        inset 0 2px 4px rgba(255, 255, 255, 0.5);
+        0 8px 25px rgba(255, 165, 0, 0.5),
+        0 0 0 4px rgba(255, 255, 255, 0.9);
     animation: fadeInScale 0.8s ease-out 0.3s backwards;
     position: relative;
     overflow: hidden;
@@ -87,30 +87,30 @@ body {
     background: linear-gradient(
         45deg,
         transparent 30%,
-        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.4) 50%,
         transparent 70%
     );
     animation: shine 3s infinite;
 }
 
 .becas-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
-    color: #001f3f;
+    color: #FFFFFF;
     margin: 0;
     text-shadow: 
-        2px 2px 0px rgba(255, 255, 255, 0.5),
-        -1px -1px 0px rgba(0, 0, 0, 0.1);
-    letter-spacing: 0.02em;
+        2px 2px 4px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     position: relative;
     z-index: 1;
 }
 
 .becas-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     animation: bounce 2s infinite;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
     position: relative;
     z-index: 1;
 }
@@ -493,16 +493,16 @@ body {
     }
     
     .becas-banner {
-        max-width: 550px;
-        padding: 1.25rem 1.75rem;
+        max-width: 650px;
+        padding: 1.25rem 2.5rem;
     }
 
     .becas-title {
-        font-size: 2.2rem;
+        font-size: 2.4rem;
     }
 
     .becas-icon {
-        font-size: 1.8rem;
+        font-size: 2.2rem;
     }
     
     .cards-grid {
@@ -520,18 +520,18 @@ body {
     }
 
     .becas-banner {
-        max-width: 90%;
-        padding: 1.25rem 1.5rem;
+        max-width: 95%;
+        padding: 1rem 2rem;
         margin-bottom: 2.5rem;
-        gap: 1rem;
+        gap: 1.25rem;
     }
 
     .becas-title {
-        font-size: 1.8rem;
+        font-size: 2rem;
     }
 
     .becas-icon {
-        font-size: 1.6rem;
+        font-size: 2rem;
     }
 
     .cards-grid {
@@ -595,20 +595,17 @@ body {
     }
 
     .becas-banner {
-        padding: 1rem 1.25rem;
+        padding: 1rem 1.5rem;
         margin-bottom: 2rem;
-        gap: 0.75rem;
-        flex-wrap: wrap;
+        gap: 1rem;
     }
 
     .becas-title {
-        font-size: 1.5rem;
-        flex: 1 0 100%;
-        text-align: center;
+        font-size: 1.6rem;
     }
 
     .becas-icon {
-        font-size: 1.4rem;
+        font-size: 1.8rem;
     }
 
     .card-icon {
