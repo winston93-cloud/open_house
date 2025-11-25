@@ -1,86 +1,124 @@
-# Sistema de Gestión Administrativa - Winston Churchill
+# Sistema de Gestión de Becas Winston - PDF
 
-## 📋 Instrucciones de Instalación
+## 📋 Descripción
 
-### 1. Subir archivos al hosting
+Sistema de reportes en PDF para gestión de becas escolares por nivel educativo.
 
-Sube toda la carpeta `gestion` a tu hosting mediante FTP o el administrador de archivos de cPanel.
+## 🎓 Reportes Disponibles
 
-**Ruta final:** `public_html/open_house/gestion/`
+### 1. **Maternal y Kinder** 🧸
+- Muestra ambos niveles separados en el mismo PDF
+- Maternal A y Maternal B
+- Kínder 1, 2 y 3
 
-**URL de acceso:** `https://winston93.edu.mx/open_house/gestion/`
+### 2. **Primaria** 📚
+- 1ro a 6to grado
 
-### 2. Verificar permisos
+### 3. **Secundaria** 🎓
+- 7mo, 8vo y 9no grado
 
-Los archivos PHP deben tener permisos **644** y las carpetas **755**
+## 📊 Estructura del Reporte
 
-### 3. Estructura de archivos
+Cada PDF muestra:
+```
+NIVEL EDUCATIVO
+━━━━━━━━━━━━━━━━━━━━━━━━━
+Porcentaje   | Total Alumnos
+━━━━━━━━━━━━━━━━━━━━━━━━━
+10%          | 5
+20%          | 15
+30%          | 8
+...
+━━━━━━━━━━━━━━━━━━━━━━━━━
+TOTAL:       | 45 alumnos
+```
+
+## 🔍 Filtros Aplicados
+
+### Tabla `alumno`:
+- `alumno_ciclo_escolar = 22` (Ciclo 2017-2018)
+- `alumno_status = 1` (Activo)
+- `alumno_nivel` = 1, 2, 3 o 4
+
+### Tabla `alumno_beca`:
+- `beca_ciclo_escolar = 22`
+- `beca_estatus = 1` (Beca activa)
+- Agrupado por `beca_porcentaje`
+
+## 📁 Archivos del Sistema
 
 ```
 gestion/
-├── index.php              (Página principal con las 3 tarjetas)
-├── config.php             (Configuración de base de datos)
-├── maternal-kinder.php    (Listado de alumnos Maternal/Kinder)
-├── primaria.php           (Listado de alumnos Primaria)
-├── secundaria.php         (Listado de alumnos Secundaria)
-├── styles.css             (Estilos del sistema)
-└── README.md              (Este archivo)
+├── index.php                      ← Página principal
+├── config.php                     ← Conexión MySQL
+├── fpdf.php                       ← Librería PDF
+├── reporte-maternal-kinder.php    ← PDF Maternal + Kínder
+├── reporte-primaria.php           ← PDF Primaria
+├── reporte-secundaria.php         ← PDF Secundaria
+├── styles.css                     ← Estilos
+├── test-conexion.php              ← Prueba de BD
+└── README.md                      ← Este archivo
 ```
 
-### 4. Configuración de Base de Datos
+## 🚀 Instalación
 
-El archivo `config.php` ya está configurado con tus credenciales:
-- Host: localhost
-- Usuario: winston_richard
-- Password: 101605
-- Base de datos: winston_general
+1. **Subir al hosting:**
+   - Sube toda la carpeta `gestion` a: `public_html/open_house/gestion/`
 
-### 5. Ajustar las consultas SQL
+2. **Acceder:**
+   - URL: `https://winston93.edu.mx/open_house/gestion/`
 
-**⚠️ IMPORTANTE:** Necesitas verificar que los nombres de las columnas en las consultas coincidan con tu tabla `alumno`.
+3. **Probar conexión (opcional):**
+   - `https://winston93.edu.mx/open_house/gestion/test-conexion.php`
+   - ⚠️ **Eliminar después por seguridad**
 
-Actualmente el sistema espera estas columnas:
-- `nombre`
-- `nivel`
-- `grado`
-- `edad`
-- `tutor`
-- `telefono`
-- `email`
+## 📝 Niveles y Grados
 
-**Si tus columnas tienen otros nombres, edita los archivos:**
-- `maternal-kinder.php`
-- `primaria.php`
-- `secundaria.php`
+| Nivel | Nombre      | Grados                |
+|-------|-------------|-----------------------|
+| 1     | Maternal    | 1=Maternal A, 2=Maternal B |
+| 2     | Kínder      | 1=Kinder-1, 2=Kinder-2, 3=Kinder-3 |
+| 3     | Primaria    | 1=1ro, 2=2do, ... 6=6to |
+| 4     | Secundaria  | 1=7mo, 2=8vo, 3=9no |
 
-Y cambia los nombres en las consultas SQL y en la tabla HTML.
+## 🔧 Características Técnicas
 
-### 6. Compatibilidad PHP
+✅ **PHP 5.1 compatible**  
+✅ **FPDF** para generación de PDFs  
+✅ **MySQL** con funciones `mysql_*`  
+✅ **UTF-8** para tildes y ñ  
+✅ **Responsive** en el índice  
+✅ **PDFs se abren en nueva pestaña**  
 
-El código está desarrollado para **PHP 5.1** usando `mysql_*` functions.
+## 🎨 Personalización
 
-**Nota:** Si tu hosting usa PHP 7+ necesitarás actualizar a `mysqli_*` o PDO.
+### Cambiar Ciclo Escolar:
+Edita en cada archivo `reporte-*.php`:
+```php
+WHERE alumno_ciclo_escolar = 22  // Cambiar número
+AND beca_ciclo_escolar = 22      // Cambiar número
+```
 
-## 🎨 Características
+### Cambiar Colores del PDF:
+```php
+$pdf->SetFillColor(255, 215, 0);  // RGB del color dorado
+```
 
-✅ Diseño elegante con degradados azul marino
-✅ 3 tarjetas principales con hover effects
-✅ Listados de alumnos por nivel
-✅ Botón de impresión en cada listado
-✅ Responsive (funciona en móviles)
-✅ Compatible con PHP 5.1
+## ⚠️ Notas Importantes
 
-## 🔧 Próximos pasos
-
-1. Verificar la estructura de la tabla `alumno` en phpMyAdmin
-2. Ajustar los nombres de columnas si es necesario
-3. Agregar funcionalidad de exportar a PDF si lo deseas
-4. Agregar filtros por grado o búsqueda
+- Los PDFs se generan dinámicamente desde la base de datos
+- Si no hay alumnos con becas, muestra mensaje informativo
+- Los totales se calculan automáticamente
+- Solo muestra alumnos activos con becas activas
 
 ## 📞 Soporte
 
-Si hay algún error, revisa:
-1. Los logs de PHP en cPanel
-2. La consola del navegador (F12)
-3. Verifica que la tabla `alumno` exista en la base de datos
+Si hay errores:
+1. Revisar logs de PHP en cPanel
+2. Verificar credenciales en `config.php`
+3. Probar `test-conexion.php`
+4. Verificar que existan datos en las tablas
 
+## 📄 Licencia
+
+Uso exclusivo del Colegio Educativo Winston Churchill.

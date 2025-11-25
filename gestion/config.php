@@ -21,5 +21,4 @@ if (!$db) {
 
 // Configurar charset (importante para tildes y ñ)
 mysql_query("SET NAMES 'utf8'", $conn);
-?>
 

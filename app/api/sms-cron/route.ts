@@ -8,9 +8,9 @@ import * as nodemailer from 'nodemailer';
 // Horario: 12:50 PM hora de México (18:50 UTC)
 // Envía SMS y Emails automatizados a leads según el tiempo sin actividad:
 // - 24 horas: Primer recordatorio de contacto
-// - 48 horas: Segundo recordatorio (invitación a recorrido)
-// - 5 días: Tercer recordatorio (oferta especial)
-// Última actualización: 22 noviembre 2025
+// - 72 horas: Segundo recordatorio (invitación a recorrido)
+// - 5 días: Tercer recordatorio (oferta especial/descuento)
+// Última actualización: 25 noviembre 2025
 // =============================================================================
 
 // Configuración del transporter de email
@@ -34,7 +34,7 @@ async function executeCronJob() {
   
   const results = {
     sms24h: { processed: 0, success: 0, errors: 0 },
-    sms48h: { processed: 0, success: 0, errors: 0 },
+    sms72h: { processed: 0, success: 0, errors: 0 },
     sms5d: { processed: 0, success: 0, errors: 0 }
   };
   
@@ -44,10 +44,10 @@ async function executeCronJob() {
     const result24h = await checkAndSendSMS24h(logId);
     results.sms24h = result24h;
     
-    // ========== SMS 48H ==========
-    console.log(`\n📱 [${logId}] === REVISIÓN SMS 48H ===`);
-    const result48h = await checkAndSendSMS48h(logId);
-    results.sms48h = result48h;
+    // ========== SMS 72H ==========
+    console.log(`\n📱 [${logId}] === REVISIÓN SMS 72H ===`);
+    const result72h = await checkAndSendSMS72h(logId);
+    results.sms72h = result72h;
     
     // ========== SMS 5 DÍAS ==========
     console.log(`\n📱 [${logId}] === REVISIÓN SMS 5 DÍAS ===`);
@@ -61,7 +61,7 @@ async function executeCronJob() {
     console.log(`⏱️ [${logId}] Duración: ${duration}ms`);
     console.log(`📊 [${logId}] Resultados:`);
     console.log(`   - SMS 24h: ${results.sms24h.success}/${results.sms24h.processed} exitosos`);
-    console.log(`   - SMS 48h: ${results.sms48h.success}/${results.sms48h.processed} exitosos`);
+    console.log(`   - SMS 72h: ${results.sms72h.success}/${results.sms72h.processed} exitosos`);
     console.log(`   - SMS 5 días: ${results.sms5d.success}/${results.sms5d.processed} exitosos`);
     
     return NextResponse.json({
@@ -185,40 +185,40 @@ async function checkAndSendSMS24h(logId: string) {
 }
 
 // =============================================================================
-// FUNCIÓN: Revisar y enviar SMS a leads con >48h sin comunicación
+// FUNCIÓN: Revisar y enviar SMS a leads con >72h sin comunicación
 // =============================================================================
-async function checkAndSendSMS48h(logId: string) {
+async function checkAndSendSMS72h(logId: string) {
   const result = { processed: 0, success: 0, errors: 0 };
   
   try {
     // Usar UTC para evitar problemas de timezone
     const now = new Date();
-    const fortyEightHoursAgo = new Date(now.getTime() - (48 * 60 * 60 * 1000));
+    const seventyTwoHoursAgo = new Date(now.getTime() - (72 * 60 * 60 * 1000));
     const fiveDaysAgo = new Date(now.getTime() - (5 * 24 * 60 * 60 * 1000));
     
-    console.log(`📅 [${logId}] Buscando leads con >48h y <5 días sin actividad...`);
-    console.log(`📅 [${logId}] Rango: ${fiveDaysAgo.toISOString()} a ${fortyEightHoursAgo.toISOString()}`);
+    console.log(`📅 [${logId}] Buscando leads con >72h y <5 días sin actividad...`);
+    console.log(`📅 [${logId}] Rango: ${fiveDaysAgo.toISOString()} a ${seventyTwoHoursAgo.toISOString()}`);
     
     const { data: pendingLeads, error } = await supabase
       .from('kommo_lead_tracking')
       .select('*')
-      .lt('last_contact_time', fortyEightHoursAgo.toISOString())
+      .lt('last_contact_time', seventyTwoHoursAgo.toISOString())
       .gte('last_contact_time', fiveDaysAgo.toISOString())
       .eq('sms_24h_sent', true)  // Ya debe tener el SMS de 24h enviado
       .eq('sms_48h_sent', false)
       .eq('lead_status', 'active');
     
     if (error) {
-      console.error(`❌ [${logId}] Error consultando leads 48h:`, error);
+      console.error(`❌ [${logId}] Error consultando leads 72h:`, error);
       return result;
     }
     
     if (!pendingLeads || pendingLeads.length === 0) {
-      console.log(`✅ [${logId}] No hay leads pendientes de SMS 48h`);
+      console.log(`✅ [${logId}] No hay leads pendientes de SMS 72h`);
       return result;
     }
     
-    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 48h`);
+    console.log(`📱 [${logId}] Encontrados ${pendingLeads.length} leads para SMS 72h`);
     result.processed = pendingLeads.length;
     
     for (const lead of pendingLeads) {
@@ -230,13 +230,13 @@ async function checkAndSendSMS48h(logId: string) {
           continue;
         }
         
-        const smsSuccess = await sendSMS(lead.telefono, getMensaje48h(), logId);
+        const smsSuccess = await sendSMS(lead.telefono, getMensaje72h(), logId);
         
         // Enviar Email
         const emailSuccess = await sendEmail(
           lead.email,
           lead.nombre,
-          getEmailTemplate48h(lead.nombre),
+          getEmailTemplate72h(lead.nombre),
           '📅 Agenda tu recorrido - Winston Churchill',
           logId
         );
@@ -252,7 +252,7 @@ async function checkAndSendSMS48h(logId: string) {
             .eq('kommo_lead_id', lead.kommo_lead_id);
           
           result.success++;
-          console.log(`   ✅ Notificación 48h enviada (SMS: ${smsSuccess ? '✓' : '✗'}, Email: ${emailSuccess ? '✓' : '✗'})`);
+          console.log(`   ✅ Notificación 72h enviada (SMS: ${smsSuccess ? '✓' : '✗'}, Email: ${emailSuccess ? '✓' : '✗'})`);
         } else {
           result.errors++;
         }
@@ -263,11 +263,11 @@ async function checkAndSendSMS48h(logId: string) {
       }
     }
     
-    console.log(`✅ [${logId}] SMS 48h completado: ${result.success}/${result.processed}`);
+    console.log(`✅ [${logId}] SMS 72h completado: ${result.success}/${result.processed}`);
     return result;
     
   } catch (error) {
-    console.error(`❌ [${logId}] Error en checkAndSendSMS48h:`, error);
+    console.error(`❌ [${logId}] Error en checkAndSendSMS72h:`, error);
     return result;
   }
 }
@@ -289,7 +289,7 @@ async function checkAndSendSMS5d(logId: string) {
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', fiveDaysAgo.toISOString())
-      .eq('sms_48h_sent', true)  // Ya debe tener el SMS de 48h enviado
+      .eq('sms_48h_sent', true)  // Ya debe tener el SMS de 72h enviado
       .eq('sms_72h_sent', false)  // Campo reutilizado para 5 días
       .eq('lead_status', 'active');
     
@@ -519,7 +519,7 @@ function getEmailTemplate24h(nombre: string): string {
   `;
 }
 
-function getEmailTemplate48h(nombre: string): string {
+function getEmailTemplate72h(nombre: string): string {
   return `
     <!DOCTYPE html>
     <html>
@@ -736,47 +736,40 @@ async function sendEmail(email: string, nombre: string, template: string, subjec
 }
 
 // =============================================================================
-// Mensajes SMS (acortados para 1 segmento y reducir costos)
+// Mensajes SMS
 // =============================================================================
 
 function getMensaje24h(): string {
-  return `👋 Hola! Somos el equipo de admisiones de Winston Churchill.
+  return `RECORDATORIO
 
-Vimos que estuviste interesado en conocer más sobre nuestros programas educativos.
+¡Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admisión al Instituto Winston Churchill.
 
-¿Tienes alguna duda que podamos resolver? Estamos aquí para ayudarte.
+Escríbenos por WhatsApp y con gusto te brindamos toda la información necesaria:
 
-📱 Contáctanos por WhatsApp:
 • Winston Churchill: https://wa.me/528334378743
-• Educativo: https://wa.me/528333474507
-
-¡Esperamos saber de ti pronto! 🏫`;
+• Educativo Winston: https://wa.me/528333474507`;
 }
 
-function getMensaje48h(): string {
-  return `😊 Hola de nuevo! 
+function getMensaje72h(): string {
+  return `¿AGENDAMOS UN RECORRIDO?
 
-Nos encantaría que conocieras nuestras instalaciones y platiques con nuestro equipo.
+¡Nos encantaría que conociera nuestro Instituto Winston Churchill!
 
-¿Te gustaría agendar un recorrido personalizado por el campus?
+¿Le gustaría agendar un recorrido por nuestras instalaciones?
 
-📱 Escríbenos por WhatsApp:
+Envía un mensaje y te ayudamos a reservar tu visita:
+
 • Winston Churchill: https://wa.me/528334378743
-• Educativo: https://wa.me/528333474507
-
-¡Será un placer recibirte! 📅`;
+• Educativo Winston: https://wa.me/528333474507`;
 }
 
 function getMensaje5d(): string {
-  return `⏰ ¡Última oportunidad!
+  return `DESCUENTO ESPECIAL AL INICIAR TU PROCESO DE ADMISIÓN HOY
 
-Tenemos una promoción especial esta semana para nuevos ingresos.
+¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy!
 
-No dejes pasar esta oportunidad de formar parte de nuestra comunidad educativa.
+Escríbenos y da el primer paso para formar parte del Instituto Winston Churchill:
 
-📱 Contáctanos hoy:
 • Winston Churchill: https://wa.me/528334378743
-• Educativo: https://wa.me/528333474507
-
-¡Te esperamos! 🎁`;
+• Educativo Winston: https://wa.me/528333474507`;
 }

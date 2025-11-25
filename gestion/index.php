@@ -21,46 +21,92 @@
 
             <div class="becas-banner">
                 <span class="becas-icon">🎓</span>
-                <h2 class="becas-title">Becas Winston</h2>
+                <h2 class="becas-title">Becas Winston / Becas SEP</h2>
                 <span class="becas-icon">🎓</span>
             </div>
 
-            <div class="cards-grid">
-                <!-- Tarjeta Maternal y Kinder -->
-                <a href="maternal-kinder.php" class="admin-card maternal-card">
-                    <div class="card-icon">🧸</div>
-                    <h2 class="card-title">Maternal y Kinder</h2>
-                    <p class="card-description">
-                        Gestión de alumnos de nivel inicial
-                    </p>
-                    <div class="card-footer">
-                        <span class="card-action">Ver documentos →</span>
-                    </div>
-                </a>
+            <!-- SECCIÓN 1: Reportes Resumen -->
+            <div class="seccion-reportes">
+                <h3 class="seccion-titulo">📊 Reportes Resumen por Porcentaje</h3>
+                <div class="cards-grid">
+                    <!-- Tarjeta Maternal y Kinder -->
+                    <a href="reporte-maternal-kinder.php" target="_blank" class="admin-card maternal-card">
+                        <div class="card-icon">🧸</div>
+                        <h2 class="card-title">Maternal y Kinder</h2>
+                        <p class="card-description">
+                            Reporte de becas por porcentaje
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-action">Generar PDF →</span>
+                        </div>
+                    </a>
 
-                <!-- Tarjeta Primaria -->
-                <a href="primaria.php" class="admin-card primaria-card">
-                    <div class="card-icon">📚</div>
-                    <h2 class="card-title">Primaria</h2>
-                    <p class="card-description">
-                        Gestión de alumnos de nivel primaria
-                    </p>
-                    <div class="card-footer">
-                        <span class="card-action">Ver documentos →</span>
-                    </div>
-                </a>
+                    <!-- Tarjeta Primaria -->
+                    <a href="reporte-primaria.php" target="_blank" class="admin-card primaria-card">
+                        <div class="card-icon">📚</div>
+                        <h2 class="card-title">Primaria</h2>
+                        <p class="card-description">
+                            Reporte de becas por porcentaje
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-action">Generar PDF →</span>
+                        </div>
+                    </a>
 
-                <!-- Tarjeta Secundaria -->
-                <a href="secundaria.php" class="admin-card secundaria-card">
-                    <div class="card-icon">🎓</div>
-                    <h2 class="card-title">Secundaria</h2>
-                    <p class="card-description">
-                        Gestión de alumnos de nivel secundaria
-                    </p>
-                    <div class="card-footer">
-                        <span class="card-action">Ver documentos →</span>
-                    </div>
-                </a>
+                    <!-- Tarjeta Secundaria -->
+                    <a href="reporte-secundaria.php" target="_blank" class="admin-card secundaria-card">
+                        <div class="card-icon">🎓</div>
+                        <h2 class="card-title">Secundaria</h2>
+                        <p class="card-description">
+                            Reporte de becas por porcentaje
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-action">Generar PDF →</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: Reportes Detallados -->
+            <div class="seccion-reportes seccion-detalle">
+                <h3 class="seccion-titulo">📋 Reportes Detallados con Nombres</h3>
+                <div class="cards-grid">
+                    <!-- Tarjeta Maternal y Kinder Detallado -->
+                    <a href="reporte-maternal-kinder-detalle.php" target="_blank" class="admin-card maternal-card">
+                        <div class="card-icon">🧸</div>
+                        <h2 class="card-title">Maternal y Kinder</h2>
+                        <p class="card-description">
+                            Con nombres y grados de alumnos
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-action">Generar PDF →</span>
+                        </div>
+                    </a>
+
+                    <!-- Tarjeta Primaria Detallado -->
+                    <a href="reporte-primaria-detalle.php" target="_blank" class="admin-card primaria-card">
+                        <div class="card-icon">📚</div>
+                        <h2 class="card-title">Primaria</h2>
+                        <p class="card-description">
+                            Con nombres y grados de alumnos
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-action">Generar PDF →</span>
+                        </div>
+                    </a>
+
+                    <!-- Tarjeta Secundaria Detallado -->
+                    <a href="reporte-secundaria-detalle.php" target="_blank" class="admin-card secundaria-card">
+                        <div class="card-icon">🎓</div>
+                        <h2 class="card-title">Secundaria</h2>
+                        <p class="card-description">
+                            Con nombres y grados de alumnos
+                        </p>
+                        <div class="card-footer">
+                            <span class="card-action">Generar PDF →</span>
+                        </div>
+                    </a>
+                </div>
             </div>
 
             <footer class="gestion-footer">
