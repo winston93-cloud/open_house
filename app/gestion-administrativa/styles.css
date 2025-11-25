@@ -47,6 +47,72 @@
   box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
 }
 
+/* Banner de Becas Winston */
+.becas-banner {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  margin: 0 auto 3rem;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  box-shadow: 
+    0 10px 30px rgba(255, 215, 0, 0.4),
+    0 0 0 3px rgba(255, 255, 255, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.5);
+  animation: fadeInScale 0.8s ease-out 0.3s backwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.becas-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  animation: shine 3s infinite;
+}
+
+.becas-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #001f3f;
+  margin: 0;
+  text-shadow: 
+    2px 2px 0px rgba(255, 255, 255, 0.5),
+    -1px -1px 0px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.becas-icon {
+  font-size: 2rem;
+  animation: bounce 2s infinite;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  position: relative;
+  z-index: 1;
+}
+
+.becas-icon:first-child {
+  animation-delay: 0s;
+}
+
+.becas-icon:last-child {
+  animation-delay: 0.5s;
+}
+
 /* Grid de tarjetas */
 .cards-grid {
   display: grid;
@@ -217,10 +283,52 @@
   }
 }
 
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.1);
+  }
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .gestion-title {
     font-size: 2.8rem;
+  }
+  
+  .becas-banner {
+    max-width: 550px;
+    padding: 1.25rem 1.75rem;
+  }
+
+  .becas-title {
+    font-size: 2.2rem;
+  }
+
+  .becas-icon {
+    font-size: 1.8rem;
   }
   
   .cards-grid {
@@ -235,6 +343,21 @@
 
   .gestion-title {
     font-size: 2.2rem;
+  }
+
+  .becas-banner {
+    max-width: 90%;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    gap: 1rem;
+  }
+
+  .becas-title {
+    font-size: 1.8rem;
+  }
+
+  .becas-icon {
+    font-size: 1.6rem;
   }
 
   .cards-grid {
@@ -267,6 +390,23 @@
 @media (max-width: 480px) {
   .gestion-title {
     font-size: 1.8rem;
+  }
+
+  .becas-banner {
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .becas-title {
+    font-size: 1.5rem;
+    flex: 1 0 100%;
+    text-align: center;
+  }
+
+  .becas-icon {
+    font-size: 1.4rem;
   }
 
   .card-icon {

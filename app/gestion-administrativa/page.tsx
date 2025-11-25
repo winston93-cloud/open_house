@@ -20,6 +20,12 @@ export default function GestionAdministrativa() {
           <div className="title-underline"></div>
         </header>
 
+        <div className="becas-banner">
+          <span className="becas-icon">🎓</span>
+          <h2 className="becas-title">Becas Winston</h2>
+          <span className="becas-icon">🎓</span>
+        </div>
+
         <div className="cards-grid">
           {/* Tarjeta Maternal y Kinder */}
           <div 

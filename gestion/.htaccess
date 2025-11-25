@@ -1,0 +1,32 @@
+# Protección del directorio de gestión
+# Descomenta estas líneas si quieres proteger con usuario y contraseña
+
+# AuthType Basic
+# AuthName "Área Administrativa - Acceso Restringido"
+# AuthUserFile /home/tu_usuario/.htpasswd
+# Require valid-user
+
+# Proteger archivos sensibles
+<Files "config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Habilitar visualización de errores (solo para desarrollo)
+# php_flag display_errors on
+# php_value error_reporting E_ALL
+
+# Desactivar listado de directorios
+Options -Indexes
+
+# Configuración de charset UTF-8
+AddDefaultCharset UTF-8
+
+# Caché para archivos estáticos
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+</IfModule>
+
