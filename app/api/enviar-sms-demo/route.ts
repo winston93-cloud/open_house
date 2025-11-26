@@ -7,7 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const TELEFONOS_DEMO = [
   '+528333246904',  // Mario
   '+525536590893',  // Jefe (iPhone)
-  '+528331491483'   // Jefe (otro número)
+  '+528331491483',  // Jefe (otro número)
+  '+528334182855'   // 4to número
 ];
 
 export async function GET(request: NextRequest) {
