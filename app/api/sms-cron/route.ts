@@ -13,6 +13,9 @@ import * as nodemailer from 'nodemailer';
 // Última actualización: 25 noviembre 2025
 // =============================================================================
 
+// ⛔ DESACTIVACIÓN TEMPORAL - Cambiar a true para reactivar
+const ENVIOS_ACTIVOS = false;
+
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -31,6 +34,19 @@ async function executeCronJob() {
   console.log(`📅 [${logId}] Fecha y hora: ${startTime.toLocaleString('es-MX')}`);
   console.log(`🌍 [${logId}] Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
   console.log(`⏰ [${logId}] Horario configurado: 12:50 PM México`);
+  
+  // ⛔ VERIFICAR SI LOS ENVÍOS ESTÁN ACTIVOS
+  if (!ENVIOS_ACTIVOS) {
+    console.log(`\n⛔ [${logId}] ENVÍOS DESACTIVADOS TEMPORALMENTE`);
+    console.log(`🔧 [${logId}] Se están realizando correcciones en SMS y correos`);
+    return NextResponse.json({
+      success: true,
+      message: 'Envíos desactivados temporalmente',
+      logId,
+      timestamp: new Date().toISOString(),
+      envios_activos: false
+    });
+  }
   
   const results = {
     sms24h: { processed: 0, success: 0, errors: 0 },
