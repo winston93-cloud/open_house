@@ -70,14 +70,28 @@ SELECT
     
     COUNT(DISTINCT a.alumno_id) AS total_alumnos,
     
-    COUNT(DISTINCT CASE WHEN b.alumno_id IS NOT NULL THEN a.alumno_id END) AS alumnos_becados,
+    COUNT(DISTINCT CASE WHEN (b.alumno_id IS NOT NULL OR sep.id IS NOT NULL) THEN a.alumno_id END) AS alumnos_becados,
+    
+    COUNT(DISTINCT CASE WHEN b.alumno_id IS NOT NULL THEN a.alumno_id END) AS alumnos_beca_winston,
+    
+    COUNT(DISTINCT CASE WHEN sep.id IS NOT NULL THEN a.alumno_id END) AS alumnos_beca_sep,
     
     COUNT(DISTINCT CASE WHEN a.mes = 1 THEN a.alumno_id END) AS plan_10_meses,
     
     COUNT(DISTINCT CASE WHEN a.mes = 2 THEN a.alumno_id END) AS plan_12_meses,
     
     SUM(
-       (CASE 
+        CASE 
+            -- Si el concepto es de noviembre (03) a julio (26) Y tiene beca SEP, usar monto prorrateado directamente
+            WHEN ('$concepto' >= '03' AND '$concepto' <= '26')
+                 AND sep.id IS NOT NULL 
+                 AND sep.estatus = 1 
+                 AND sep.ciclo_escolar = 22
+            THEN sep.monto_prorrateado
+            
+            -- Si no tiene beca SEP, usar cálculo normal (sin descuento de beca para bruto)
+            ELSE (
+                CASE 
            WHEN a.alumno_nivel = 1 AND a.mes = 1 THEN 3550
            WHEN a.alumno_nivel = 1 AND a.mes = 2 THEN 3225
            WHEN a.alumno_nivel = 2 AND a.mes = 1 THEN 3150
@@ -86,16 +100,23 @@ SELECT
            WHEN a.alumno_nivel = 3 AND a.mes = 2 THEN 4400
            WHEN a.alumno_nivel = 4 AND a.mes = 1 THEN 5200
            WHEN a.alumno_nivel = 4 AND a.mes = 2 THEN 4780
-        END)
-        * (CASE WHEN EXISTS (
-             SELECT 1 FROM pago_detalle pd
-             WHERE pd.pago_referencia LIKE CONCAT(a.alumno_ref, '%$concepto%22%')
-             AND pd.alumno_id = a.alumno_id
-           ) THEN 1 ELSE 0 END)
+                END
+            )
+        END
     ) AS ingreso_bruto,
     
     SUM(
-       (CASE 
+        CASE 
+            -- Si el concepto es de noviembre (03) a julio (26) Y tiene beca SEP, usar monto prorrateado directamente
+            WHEN ('$concepto' >= '03' AND '$concepto' <= '26')
+                 AND sep.id IS NOT NULL 
+                 AND sep.estatus = 1 
+                 AND sep.ciclo_escolar = 22
+            THEN sep.monto_prorrateado
+            
+            -- Si no tiene beca SEP, usar cálculo normal con beca Winston (porcentaje)
+            ELSE (
+                CASE 
            WHEN a.alumno_nivel = 1 AND a.mes = 1 THEN 3550
            WHEN a.alumno_nivel = 1 AND a.mes = 2 THEN 3225
            WHEN a.alumno_nivel = 2 AND a.mes = 1 THEN 3150
@@ -104,13 +125,9 @@ SELECT
            WHEN a.alumno_nivel = 3 AND a.mes = 2 THEN 4400
            WHEN a.alumno_nivel = 4 AND a.mes = 1 THEN 5200
            WHEN a.alumno_nivel = 4 AND a.mes = 2 THEN 4780
-        END)
-        * (1 - IFNULL(b.beca_porcentaje,0)/100)
-        * (CASE WHEN EXISTS (
-             SELECT 1 FROM pago_detalle pd
-             WHERE pd.pago_referencia LIKE CONCAT(a.alumno_ref, '%$concepto%22%')
-             AND pd.alumno_id = a.alumno_id
-           ) THEN 1 ELSE 0 END)
+                END
+            ) * (1 - IFNULL(b.beca_porcentaje,0)/100)
+        END
     ) AS ingreso_neto
 
 FROM alumno a
@@ -118,6 +135,10 @@ LEFT JOIN alumno_beca b
        ON a.alumno_id = b.alumno_id
       AND b.beca_ciclo_escolar = 22
       AND b.beca_estatus = 1
+LEFT JOIN alumno_beca_sep sep
+       ON a.alumno_ref = sep.alumno_ref
+      AND sep.ciclo_escolar = 22
+      AND sep.estatus = 1
 
 WHERE a.alumno_ciclo_escolar = 22
   AND a.alumno_status = 1
@@ -131,6 +152,36 @@ if (!$result) {
     die('Error en la consulta: ' . mysql_error());
 }
 
+// Query para obtener totales reales pagados desde pago_detalle
+$query_reales = "
+SELECT 
+    CASE 
+        WHEN a.alumno_nivel IN (1,2) THEN 'Educativo'
+        WHEN a.alumno_nivel IN (3,4) THEN 'Winston Churchill'
+    END AS plantel,
+    
+    SUM(pd.pago_importe + pd.pago_recargo) AS total_real_pagado
+
+FROM pago_detalle pd
+INNER JOIN alumno a ON pd.alumno_id = a.alumno_id
+WHERE SUBSTR(pd.pago_referencia, 6, 2) = '$concepto'
+  AND SUBSTR(pd.pago_referencia, 8, 2) = '22'
+  AND pd.pago_cancelado = 0
+  AND a.alumno_ciclo_escolar = 22
+  AND a.alumno_status = 1
+
+GROUP BY plantel
+";
+
+$result_reales = mysql_query($query_reales, $conn);
+$totales_reales = array();
+
+if ($result_reales) {
+    while ($row_real = mysql_fetch_assoc($result_reales)) {
+        $totales_reales[$row_real['plantel']] = $row_real['total_real_pagado'];
+    }
+}
+
 // Crear PDF
 $pdf = new PDF();
 $pdf->setConceptoNombre($nombre_concepto);
@@ -138,31 +189,17 @@ $pdf->SetMargins(15, 20, 15);
 $pdf->AddPage();
 $pdf->SetAutoPageBreak(true, 20);
 
-// Inicializar totales
-$total_general_alumnos = 0;
-$total_general_becados = 0;
-$total_general_plan10 = 0;
-$total_general_plan12 = 0;
-$total_general_bruto = 0;
-$total_general_neto = 0;
-
 // Procesar cada plantel
 while ($row = mysql_fetch_assoc($result)) {
     $plantel = $row['plantel'];
     $total_alumnos = $row['total_alumnos'];
     $alumnos_becados = $row['alumnos_becados'];
+    $alumnos_beca_winston = $row['alumnos_beca_winston'];
+    $alumnos_beca_sep = $row['alumnos_beca_sep'];
     $plan_10_meses = $row['plan_10_meses'];
     $plan_12_meses = $row['plan_12_meses'];
     $ingreso_bruto = $row['ingreso_bruto'];
     $ingreso_neto = $row['ingreso_neto'];
-    
-    // Acumular totales
-    $total_general_alumnos += $total_alumnos;
-    $total_general_becados += $alumnos_becados;
-    $total_general_plan10 += $plan_10_meses;
-    $total_general_plan12 += $plan_12_meses;
-    $total_general_bruto += $ingreso_bruto;
-    $total_general_neto += $ingreso_neto;
     
     // Color segun plantel
     if ($plantel == 'Educativo') {
@@ -185,7 +222,16 @@ while ($row = mysql_fetch_assoc($result)) {
     $pdf->Cell(95, 7, number_format($total_alumnos), 1, 1, 'C');
     
     $pdf->Cell(95, 7, 'Alumnos Becados', 1, 0, 'L', true);
-    $pdf->Cell(95, 7, number_format($alumnos_becados), 1, 1, 'C');
+    // Mostrar desglose de becas: Winston / SEP
+    $texto_becas = number_format($alumnos_becados);
+    if ($alumnos_beca_winston > 0 || $alumnos_beca_sep > 0) {
+        $texto_becas .= ' (' . number_format($alumnos_beca_winston) . ' Winston';
+        if ($alumnos_beca_sep > 0) {
+            $texto_becas .= ' / ' . number_format($alumnos_beca_sep) . ' Sep';
+        }
+        $texto_becas .= ')';
+    }
+    $pdf->Cell(95, 7, $texto_becas, 1, 1, 'C');
     
     $pdf->Cell(95, 7, 'Plan 10 Meses', 1, 0, 'L', true);
     $pdf->Cell(95, 7, number_format($plan_10_meses), 1, 1, 'C');
@@ -207,49 +253,15 @@ while ($row = mysql_fetch_assoc($result)) {
     $pdf->Cell(95, 7, 'Diferencia por Becas', 1, 0, 'L', true);
     $pdf->Cell(95, 7, '$' . number_format($diferencia, 2), 1, 1, 'C');
     
+    // Total real pagado desde pago_detalle
+    $total_real = isset($totales_reales[$plantel]) ? $totales_reales[$plantel] : 0;
+    $pdf->SetFillColor(200, 255, 255);
+    $pdf->SetFont('Arial', 'B', 10);
+    $pdf->Cell(95, 7, utf8_decode('Total Real Pagado'), 1, 0, 'L', true);
+    $pdf->Cell(95, 7, '$' . number_format($total_real, 2), 1, 1, 'C');
+    
     $pdf->Ln(8);
 }
-
-// TOTALES GENERALES
-$pdf->SetFillColor(100, 100, 100);
-$pdf->SetTextColor(255, 255, 255);
-$pdf->SetFont('Arial', 'B', 14);
-$pdf->Cell(0, 10, 'TOTALES GENERALES', 1, 1, 'C', true);
-$pdf->SetTextColor(0, 0, 0);
-$pdf->Ln(2);
-
-$pdf->SetFont('Arial', 'B', 11);
-$pdf->SetFillColor(220, 220, 220);
-
-$pdf->Cell(95, 8, 'Total Alumnos', 1, 0, 'L', true);
-$pdf->Cell(95, 8, number_format($total_general_alumnos), 1, 1, 'C');
-
-$pdf->Cell(95, 8, 'Total Becados', 1, 0, 'L', true);
-$pdf->Cell(95, 8, number_format($total_general_becados), 1, 1, 'C');
-
-$pdf->Cell(95, 8, 'Total Plan 10 Meses', 1, 0, 'L', true);
-$pdf->Cell(95, 8, number_format($total_general_plan10), 1, 1, 'C');
-
-$pdf->Cell(95, 8, 'Total Plan 12 Meses', 1, 0, 'L', true);
-$pdf->Cell(95, 8, number_format($total_general_plan12), 1, 1, 'C');
-
-$pdf->SetFillColor(200, 255, 200);
-$pdf->Cell(95, 8, 'Ingreso Bruto Total', 1, 0, 'L', true);
-$pdf->Cell(95, 8, '$' . number_format($total_general_bruto, 2), 1, 1, 'C');
-
-$pdf->SetFillColor(255, 255, 200);
-$pdf->Cell(95, 8, 'Ingreso Neto Total', 1, 0, 'L', true);
-$pdf->Cell(95, 8, '$' . number_format($total_general_neto, 2), 1, 1, 'C');
-
-$diferencia_total = $total_general_bruto - $total_general_neto;
-$pdf->SetFillColor(255, 200, 200);
-$pdf->Cell(95, 8, 'Diferencia Total por Becas', 1, 0, 'L', true);
-$pdf->Cell(95, 8, '$' . number_format($diferencia_total, 2), 1, 1, 'C');
-
-$porcentaje_becas = $total_general_alumnos > 0 ? ($total_general_becados / $total_general_alumnos * 100) : 0;
-$pdf->SetFillColor(200, 200, 255);
-$pdf->Cell(95, 8, 'Porcentaje de Becados', 1, 0, 'L', true);
-$pdf->Cell(95, 8, number_format($porcentaje_becas, 1) . '%', 1, 1, 'C');
 
 mysql_close($conn);
 

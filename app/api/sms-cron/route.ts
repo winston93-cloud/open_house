@@ -163,7 +163,7 @@ async function checkAndSendSMS24h(logId: string) {
         const emailSuccess = await sendEmail(
           lead.email,
           lead.nombre,
-          getEmailTemplate24h(lead.nombre),
+          getEmailTemplate24h(lead.nombre, lead.plantel),
           '👋 Admisiones Winston - Estamos aquí para ayudarte',
           logId
         );
@@ -259,7 +259,7 @@ async function checkAndSendSMS72h(logId: string) {
         const emailSuccess = await sendEmail(
           lead.email,
           lead.nombre,
-          getEmailTemplate72h(lead.nombre),
+          getEmailTemplate72h(lead.nombre, lead.plantel),
           '📅 Agenda tu recorrido - Winston Churchill',
           logId
         );
@@ -351,7 +351,7 @@ async function checkAndSendSMS5d(logId: string) {
         const emailSuccess = await sendEmail(
           lead.email,
           lead.nombre,
-          getEmailTemplate5d(lead.nombre),
+          getEmailTemplate5d(lead.nombre, lead.plantel),
           '🎁 ¡Última oportunidad! Promoción especial - Winston',
           logId
         );
@@ -469,7 +469,13 @@ async function addTagToKommo(leadId: number, tagName: string, logId: string): Pr
 // TEMPLATES DE EMAIL
 // =============================================================================
 
-function getEmailTemplate24h(nombre: string): string {
+function getEmailTemplate24h(nombre: string, plantel: string = 'winston'): string {
+  // Configuración dinámica según plantel
+  const isWinston = plantel === 'winston';
+  const institucion = isWinston ? 'INSTITUTO WINSTON CHURCHILL' : 'INSTITUTO EDUCATIVO WINSTON';
+  const whatsappNumber = isWinston ? '528334378743' : '528333474507';
+  const whatsappDisplay = isWinston ? '833 437 87 43' : '833 347 45 07';
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -514,7 +520,7 @@ function getEmailTemplate24h(nombre: string): string {
                   </p>
                   
                   <p style="color: #00A8E1; font-size: 18px; font-weight: 900; margin: 0 0 30px 0; letter-spacing: 0.5px;">
-                    INSTITUTO WINSTON CHURCHILL
+                    ${institucion}
                   </p>
                   
                   <!-- Escríbenos al -->
@@ -524,8 +530,8 @@ function getEmailTemplate24h(nombre: string): string {
                   
                   <!-- Número WhatsApp -->
                   <div style="margin-bottom: 25px;">
-                    <a href="https://wa.me/528334378743" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                      <span style="font-size: 24px;">💬</span> 833 437 87 43
+                    <a href="https://wa.me/${whatsappNumber}" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 24px;">💬</span> ${whatsappDisplay}
                     </a>
                   </div>
                   
@@ -539,7 +545,7 @@ function getEmailTemplate24h(nombre: string): string {
                   
                   <!-- Botón CONTÁCTANOS -->
                   <div style="text-align: center;">
-                    <a href="https://wa.me/528334378743" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
+                    <a href="https://wa.me/${whatsappNumber}" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
                       ➜ CONTÁCTANOS
                     </a>
                   </div>
@@ -556,7 +562,13 @@ function getEmailTemplate24h(nombre: string): string {
   `;
 }
 
-function getEmailTemplate72h(nombre: string): string {
+function getEmailTemplate72h(nombre: string, plantel: string = 'winston'): string {
+  // Configuración dinámica según plantel
+  const isWinston = plantel === 'winston';
+  const institucion = isWinston ? 'INSTITUTO WINSTON<br>CHURCHILL' : 'INSTITUTO EDUCATIVO<br>WINSTON';
+  const whatsappNumber = isWinston ? '528334378743' : '528333474507';
+  const whatsappDisplay = isWinston ? '833 437 87 43' : '833 347 45 07';
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -594,7 +606,7 @@ function getEmailTemplate72h(nombre: string): string {
                     nuestro
                   </p>
                   <p style="color: #0066CC; font-size: 18px; font-weight: 900; margin: 0 0 30px 0; letter-spacing: 0.5px;">
-                    INSTITUTO WINSTON<br>CHURCHILL
+                    ${institucion}
                   </p>
                   
                   <!-- ¿Le gustaría agendar un recorrido? -->
@@ -609,8 +621,8 @@ function getEmailTemplate72h(nombre: string): string {
                   
                   <!-- Número WhatsApp -->
                   <div style="margin-bottom: 25px;">
-                    <a href="https://wa.me/528334378743" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                      <span style="font-size: 24px;">💬</span> 833 437 87 43
+                    <a href="https://wa.me/${whatsappNumber}" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 24px;">💬</span> ${whatsappDisplay}
                     </a>
                   </div>
                   
@@ -624,7 +636,7 @@ function getEmailTemplate72h(nombre: string): string {
                   
                   <!-- Botón CONTÁCTANOS -->
                   <div style="text-align: center;">
-                    <a href="https://wa.me/528334378743" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
+                    <a href="https://wa.me/${whatsappNumber}" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
                       ➜ CONTÁCTANOS
                     </a>
                   </div>
@@ -641,7 +653,13 @@ function getEmailTemplate72h(nombre: string): string {
   `;
 }
 
-function getEmailTemplate5d(nombre: string): string {
+function getEmailTemplate5d(nombre: string, plantel: string = 'winston'): string {
+  // Configuración dinámica según plantel
+  const isWinston = plantel === 'winston';
+  const institucion = isWinston ? 'Instituto<br>Winston Churchill' : 'Instituto<br>Educativo Winston';
+  const whatsappNumber = isWinston ? '528334378743' : '528333474507';
+  const whatsappDisplay = isWinston ? '833 437 87 43' : '833 347 45 07';
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -692,8 +710,8 @@ function getEmailTemplate5d(nombre: string): string {
                   
                   <!-- Número WhatsApp -->
                   <div style="margin-bottom: 30px;">
-                    <a href="https://wa.me/528334378743" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                      <span style="font-size: 24px;">💬</span> 833 437 87 43
+                    <a href="https://wa.me/${whatsappNumber}" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 24px;">💬</span> ${whatsappDisplay}
                     </a>
                   </div>
                   
@@ -702,12 +720,12 @@ function getEmailTemplate5d(nombre: string): string {
                     DA EL PRIMER PASO
                   </p>
                   <p style="color: #00A8E1; font-size: 15px; font-weight: 400; margin: 0 0 35px 0; line-height: 1.4;">
-                    para formar parte del Instituto<br>Winston Churchill.
+                    para formar parte del ${institucion}.
                   </p>
                   
                   <!-- Botón CONTÁCTANOS -->
                   <div style="text-align: center;">
-                    <a href="https://wa.me/528334378743" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
+                    <a href="https://wa.me/${whatsappNumber}" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
                       ➜ CONTÁCTANOS
                     </a>
                   </div>

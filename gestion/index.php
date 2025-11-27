@@ -67,70 +67,7 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN 2: Reportes de Ingresos / Adeudos -->
-            <div class="seccion-reportes seccion-ingresos">
-                <h3 class="seccion-titulo">💰 Proyección de Ingresos por Concepto / Adeudos</h3>
-                
-                <!-- Subsección: Ingresos -->
-                <div class="subseccion-header">
-                    <h4 class="subseccion-titulo">✅ Ingresos Cobrados</h4>
-                </div>
-                <div class="ingresos-form">
-                    <form action="reporte-ingresos.php" method="POST" target="_blank" class="form-concepto">
-                        <label for="concepto" class="form-label">Selecciona el concepto de pago:</label>
-                        <select name="concepto" id="concepto" class="form-select" required>
-                            <option value="">-- Selecciona un concepto --</option>
-                            <option value="00">00 - Cuota de inicio de ciclo y seguro</option>
-                            <option value="01">01 - Colegiatura de Septiembre</option>
-                            <option value="02">02 - Colegiatura de Octubre</option>
-                            <option value="03">03 - Colegiatura de Noviembre</option>
-                            <option value="04">04 - Colegiatura de Diciembre</option>
-                            <option value="05">05 - Colegiatura de Enero</option>
-                            <option value="06">06 - Colegiatura de Febrero</option>
-                            <option value="07">07 - Colegiatura de Marzo</option>
-                            <option value="08">08 - Colegiatura de Abril</option>
-                            <option value="09">09 - Colegiatura de Mayo</option>
-                            <option value="10">10 - Colegiatura de Junio</option>
-                            <option value="26">26 - Colegiatura de Julio</option>
-                        </select>
-                        <button type="submit" class="btn-generar btn-ingresos">
-                            <span class="btn-icon">📊</span>
-                            Ver Ingresos Cobrados
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Subsección: Adeudos -->
-                <div class="subseccion-header">
-                    <h4 class="subseccion-titulo">❌ Adeudos Pendientes</h4>
-                </div>
-                <div class="ingresos-form">
-                    <form action="reporte-adeudos.php" method="POST" target="_blank" class="form-concepto">
-                        <label for="concepto_adeudo" class="form-label">Selecciona el concepto a revisar:</label>
-                        <select name="concepto" id="concepto_adeudo" class="form-select" required>
-                            <option value="">-- Selecciona un concepto --</option>
-                            <option value="00">00 - Cuota de inicio de ciclo y seguro</option>
-                            <option value="01">01 - Colegiatura de Septiembre</option>
-                            <option value="02">02 - Colegiatura de Octubre</option>
-                            <option value="03">03 - Colegiatura de Noviembre</option>
-                            <option value="04">04 - Colegiatura de Diciembre</option>
-                            <option value="05">05 - Colegiatura de Enero</option>
-                            <option value="06">06 - Colegiatura de Febrero</option>
-                            <option value="07">07 - Colegiatura de Marzo</option>
-                            <option value="08">08 - Colegiatura de Abril</option>
-                            <option value="09">09 - Colegiatura de Mayo</option>
-                            <option value="10">10 - Colegiatura de Junio</option>
-                            <option value="26">26 - Colegiatura de Julio</option>
-                        </select>
-                        <button type="submit" class="btn-generar btn-adeudos">
-                            <span class="btn-icon">💸</span>
-                            Ver Adeudos Pendientes
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- SECCIÓN 3: Reportes Detallados -->
+            <!-- SECCIÓN 2: Reportes Detallados -->
             <div class="seccion-reportes seccion-detalle">
                 <h3 class="seccion-titulo">📋 Reportes Detallados con Nombres</h3>
                 <div class="cards-grid">
@@ -169,6 +106,65 @@
                             <span class="card-action">Generar PDF →</span>
                         </div>
                     </a>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: Reportes de Ingresos / Adeudos -->
+            <div class="seccion-reportes seccion-ingresos">
+                <h3 class="seccion-titulo">💰 Proyección de Ingresos por Concepto / Adeudos</h3>
+                
+                <div class="forms-container">
+                    <!-- Formulario Ingresos -->
+                    <form action="reporte-ingresos.php" method="POST" target="_blank" class="form-inline">
+                        <div class="form-group">
+                            <label for="concepto" class="form-label-inline">✅ Ingresos Cobrados</label>
+                            <select name="concepto" id="concepto" class="form-select-inline" required>
+                                <option value="">-- Selecciona --</option>
+                                <option value="00">00 - Cuota de inicio</option>
+                                <option value="01">01 - Septiembre</option>
+                                <option value="02">02 - Octubre</option>
+                                <option value="03">03 - Noviembre</option>
+                                <option value="04">04 - Diciembre</option>
+                                <option value="05">05 - Enero</option>
+                                <option value="06">06 - Febrero</option>
+                                <option value="07">07 - Marzo</option>
+                                <option value="08">08 - Abril</option>
+                                <option value="09">09 - Mayo</option>
+                                <option value="10">10 - Junio</option>
+                                <option value="26">26 - Julio</option>
+                            </select>
+                            <button type="submit" class="btn-inline btn-ingresos">
+                                <span class="btn-icon">📊</span>
+                                Ver PDF
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Formulario Adeudos -->
+                    <form action="reporte-adeudos.php" method="POST" target="_blank" class="form-inline">
+                        <div class="form-group">
+                            <label for="concepto_adeudo" class="form-label-inline">❌ Adeudos Pendientes</label>
+                            <select name="concepto" id="concepto_adeudo" class="form-select-inline" required>
+                                <option value="">-- Selecciona --</option>
+                                <option value="00">00 - Cuota de inicio</option>
+                                <option value="01">01 - Septiembre</option>
+                                <option value="02">02 - Octubre</option>
+                                <option value="03">03 - Noviembre</option>
+                                <option value="04">04 - Diciembre</option>
+                                <option value="05">05 - Enero</option>
+                                <option value="06">06 - Febrero</option>
+                                <option value="07">07 - Marzo</option>
+                                <option value="08">08 - Abril</option>
+                                <option value="09">09 - Mayo</option>
+                                <option value="10">10 - Junio</option>
+                                <option value="26">26 - Julio</option>
+                            </select>
+                            <button type="submit" class="btn-inline btn-adeudos">
+                                <span class="btn-icon">💸</span>
+                                Ver PDF
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 
