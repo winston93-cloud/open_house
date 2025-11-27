@@ -565,81 +565,70 @@ function getEmailTemplate72h(nombre: string): string {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Agenda tu recorrido - Winston</title>
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f7fa; padding: 20px 0;">
+    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%);">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%); padding: 40px 20px;">
         <tr>
           <td align="center">
-            <table width="600" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; max-width: 100%;">
+            <table width="500" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; max-width: 100%;">
               
-              <!-- Header -->
+              <!-- Logo Winston -->
               <tr>
-                <td style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 40px 30px; text-align: center;">
-                  <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700;">😊 ${nombre}</h1>
-                  <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">¿Te gustaría conocer nuestro campus?</p>
+                <td style="padding: 30px 40px 0 40px; text-align: right;">
+                  <div style="font-size: 28px; font-weight: 900; color: #0066CC; letter-spacing: -1px;">
+                    <span style="color: #0066CC;">W</span><span style="color: #00A8E1;">inston</span>
+                  </div>
                 </td>
               </tr>
               
               <!-- Content -->
               <tr>
-                <td style="padding: 40px 30px;">
-                  <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
-                    ¡Nos encantaría mostrarte nuestras instalaciones! 🏫
+                <td style="padding: 20px 40px 50px 40px;">
+                  
+                  <!-- NOS ENCANTARÍA QUE CONOCIERA -->
+                  <h1 style="color: #00A8E1; font-size: 34px; font-weight: 900; margin: 0 0 20px 0; line-height: 1.2; letter-spacing: -0.5px;">
+                    NOS ENCANTARÍA<br>QUE CONOCIERA
+                  </h1>
+                  
+                  <!-- nuestro INSTITUTO -->
+                  <p style="color: #00A8E1; font-size: 15px; font-weight: 400; margin: 0 0 5px 0;">
+                    nuestro
+                  </p>
+                  <p style="color: #0066CC; font-size: 18px; font-weight: 900; margin: 0 0 30px 0; letter-spacing: 0.5px;">
+                    INSTITUTO WINSTON<br>CHURCHILL
                   </p>
                   
-                  <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
-                    <p style="color: #8b4513; font-size: 18px; font-weight: 600; margin: 0 0 15px 0; text-align: center;">
-                      📅 Agenda tu recorrido personalizado
-                    </p>
-                    <p style="color: #8b4513; font-size: 15px; margin: 0; text-align: center; line-height: 1.6;">
-                      Conoce nuestras aulas, laboratorios, áreas deportivas y todo lo que Winston tiene para ofrecer a tu familia
-                    </p>
+                  <!-- ¿Le gustaría agendar un recorrido? -->
+                  <p style="color: #00A8E1; font-size: 15px; font-weight: 600; margin: 0 0 30px 0; line-height: 1.5;">
+                    ¿Le gustaría agendar un recorrido<br>por nuestras instalaciones?
+                  </p>
+                  
+                  <!-- Escríbenos al -->
+                  <p style="color: #0066CC; font-size: 15px; font-weight: 700; margin: 0 0 10px 0;">
+                    Escríbenos al
+                  </p>
+                  
+                  <!-- Número WhatsApp -->
+                  <div style="margin-bottom: 25px;">
+                    <a href="https://wa.me/528334378743" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 24px;">💬</span> 833 437 87 43
+                    </a>
                   </div>
                   
-                  <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 20px 0;">
-                    Durante el recorrido podrás:
+                  <!-- CON GUSTO -->
+                  <p style="color: #0066CC; font-size: 16px; font-weight: 900; margin: 0 0 30px 0;">
+                    CON GUSTO
+                  </p>
+                  <p style="color: #00A8E1; font-size: 15px; font-weight: 600; margin: 0 0 35px 0;">
+                    te ayudamos a reservar tu visita
                   </p>
                   
-                  <table width="100%" cellpadding="0" cellspacing="0">
-                    <tr>
-                      <td style="padding: 12px; background-color: #fff5f5; border-left: 4px solid #f5576c; margin-bottom: 10px;">
-                        <p style="margin: 0; color: #333; font-size: 15px;">🎯 Conocer nuestro modelo educativo</p>
-                      </td>
-                    </tr>
-                    <tr><td style="height: 8px;"></td></tr>
-                    <tr>
-                      <td style="padding: 12px; background-color: #fff5f5; border-left: 4px solid #f5576c;">
-                        <p style="margin: 0; color: #333; font-size: 15px;">👥 Hablar con nuestro equipo académico</p>
-                      </td>
-                    </tr>
-                    <tr><td style="height: 8px;"></td></tr>
-                    <tr>
-                      <td style="padding: 12px; background-color: #fff5f5; border-left: 4px solid #f5576c;">
-                        <p style="margin: 0; color: #333; font-size: 15px;">💡 Resolver todas tus dudas</p>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; text-align: center;">
-                    <p style="color: white; font-size: 18px; font-weight: 600; margin: 0 0 15px 0;">📱 Agenda ahora por WhatsApp</p>
-                    <p style="color: rgba(255,255,255,0.95); margin: 0 0 5px 0; font-size: 15px;">
-                      <strong>Winston Churchill:</strong> 833 437 8743
-                    </p>
-                    <p style="color: rgba(255,255,255,0.95); margin: 0; font-size: 15px;">
-                      <strong>Educativo Winston:</strong> 833 347 4507
-                    </p>
+                  <!-- Botón CONTÁCTANOS -->
+                  <div style="text-align: center;">
+                    <a href="https://wa.me/528334378743" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
+                      ➜ CONTÁCTANOS
+                    </a>
                   </div>
-                </td>
-              </tr>
-              
-              <!-- Footer -->
-              <tr>
-                <td style="background-color: #fff5f5; padding: 30px; text-align: center;">
-                  <p style="color: #666; font-size: 14px; margin: 0;">
-                    Instituto Winston Churchill | Admisiones
-                  </p>
-                  <p style="color: #999; font-size: 12px; margin: 10px 0 0 0;">
-                    📅 Tu futuro comienza aquí
-                  </p>
+                  
                 </td>
               </tr>
               
