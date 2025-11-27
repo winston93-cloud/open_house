@@ -1091,8 +1091,14 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     await transporter.sendMail(mailOptions);
     console.log(`✅ Recordatorio enviado exitosamente a ${sesion.email}`);
     
-    // Enviar SMS de recordatorio
-    const smsMessage = `📚 Recordatorio Winston - Sesión Informativa\n\nMañana ${eventInfo.fechaEvento} a las ${eventInfo.horaEvento}\n\n${eventInfo.institucionNombre}\n\nConfirma tu asistencia aquí:\nhttps://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confirmado\n\n¡Te esperamos!`;
+    // Enviar SMS de recordatorio con formato actualizado
+    const smsMessage = `📚 Recordatorio Winston – Sesión Informativa
+📅 Mañana ${eventInfo.fechaEvento}
+🕘 ${eventInfo.horaEvento}
+📍 ${eventInfo.institucionNombre}
+Confirma tu asistencia aquí:
+https://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confirmado
+¡Te esperamos!`;
     await sendReminderSMS(sesion.telefono, smsMessage);
     
     return { success: true };
