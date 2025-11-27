@@ -1,37 +1,11 @@
 import { NextResponse } from 'next/server';
+import { sendSMS } from '../../../../lib/sms';
 
 // =============================================================================
 // ENDPOINT: Enviar SMS via SMS Mobile API (Android Gateway)
 // =============================================================================
 
 export async function POST(request: Request) {
-  // Obtener variables de entorno
-  const SMS_GATEWAY_URL = process.env.SMS_GATEWAY_URL;
-  const SMS_GATEWAY_TOKEN = process.env.SMS_GATEWAY_TOKEN;
-
-  console.log('🔍 Verificando variables de SMS Mobile API:', {
-    hasURL: !!SMS_GATEWAY_URL,
-    hasToken: !!SMS_GATEWAY_TOKEN,
-  });
-
-  if (!SMS_GATEWAY_URL || !SMS_GATEWAY_TOKEN) {
-    console.error('❌ SMS Mobile API no configurado. Variables faltantes:', {
-      SMS_GATEWAY_URL: !!SMS_GATEWAY_URL,
-      SMS_GATEWAY_TOKEN: !!SMS_GATEWAY_TOKEN,
-    });
-    return NextResponse.json(
-      {
-        error: 'SMS Mobile API no configurado',
-        details: 'Verifica SMS_GATEWAY_URL y SMS_GATEWAY_TOKEN en Vercel',
-        missing: {
-          url: !SMS_GATEWAY_URL,
-          token: !SMS_GATEWAY_TOKEN,
-        }
-      },
-      { status: 500 }
-    );
-  }
-
   try {
     const { phone, message } = await request.json();
 
@@ -42,60 +16,23 @@ export async function POST(request: Request) {
       );
     }
 
-    // Formatear número - SMS Mobile API necesita formato: 528331234567 (52 + 10 dígitos)
-    let formattedPhone = phone.toString().trim();
-    
-    // Remover espacios, guiones, paréntesis
-    formattedPhone = formattedPhone.replace(/[\s\-\(\)]/g, '');
-    
-    // Remover el + si existe
-    if (formattedPhone.startsWith('+')) {
-      formattedPhone = formattedPhone.substring(1);
-    }
-    
-    // Si NO empieza con 52, agregarlo
-    if (!formattedPhone.startsWith('52')) {
-      formattedPhone = '52' + formattedPhone;
-    }
+    // Usar la función helper de SMS
+    const result = await sendSMS(phone, message);
 
-    console.log('📤 Enviando SMS via Mobile API a:', formattedPhone);
-
-    // Construir URL con query parameters para SMS Mobile API
-    const smsUrl = `${SMS_GATEWAY_URL}?recipients=${encodeURIComponent(formattedPhone)}&message=${encodeURIComponent(message)}&apikey=${SMS_GATEWAY_TOKEN}`;
-    
-    console.log('🔗 URL construida:', smsUrl.replace(SMS_GATEWAY_TOKEN, '***TOKEN***'));
-
-    // Enviar SMS usando SMS Mobile API (método GET)
-    const smsResponse = await fetch(smsUrl, {
-      method: 'GET',
-    });
-
-    const responseData = await smsResponse.json();
-
-    console.log('📥 Respuesta de SMS Mobile API:', responseData);
-
-    // SMS Mobile API devuelve { result: { error, sent, guid } }
-    if (responseData.result && responseData.result.error) {
-      console.error('❌ Error de SMS Mobile API:', responseData);
+    if (!result.success) {
       return NextResponse.json(
         {
-          error: 'SMS Mobile API respondió con error',
-          status: smsResponse.status,
-          details: responseData,
+          error: 'No se pudo enviar el SMS',
+          details: result.error,
         },
         { status: 502 }
       );
     }
 
-    console.log('✅ SMS enviado exitosamente via Mobile API:', {
-      to: formattedPhone,
-      guid: responseData.result?.guid,
-    });
-
     return NextResponse.json({
       success: true,
-      messageId: responseData.result?.guid,
-      to: formattedPhone,
+      messageId: result.messageId,
+      to: result.to,
     });
   } catch (error) {
     console.error('❌ Error enviando SMS:', error);
@@ -106,51 +43,5 @@ export async function POST(request: Request) {
       },
       { status: 500 }
     );
-  }
-}
-
-// Función helper exportable para usar desde otros endpoints
-export async function sendSMS(phone: string, message: string) {
-  const SMS_GATEWAY_URL = process.env.SMS_GATEWAY_URL;
-  const SMS_GATEWAY_TOKEN = process.env.SMS_GATEWAY_TOKEN;
-
-  if (!SMS_GATEWAY_URL || !SMS_GATEWAY_TOKEN) {
-    console.error('❌ SMS Mobile API no configurado');
-    return { success: false, error: 'SMS Mobile API no configurado' };
-  }
-
-  try {
-    // Formatear número
-    let formattedPhone = phone.toString().trim();
-    formattedPhone = formattedPhone.replace(/[\s\-\(\)]/g, '');
-    if (formattedPhone.startsWith('+')) {
-      formattedPhone = formattedPhone.substring(1);
-    }
-    if (!formattedPhone.startsWith('52')) {
-      formattedPhone = '52' + formattedPhone;
-    }
-
-    // Construir URL con query parameters
-    const smsUrl = `${SMS_GATEWAY_URL}?recipients=${encodeURIComponent(formattedPhone)}&message=${encodeURIComponent(message)}&apikey=${SMS_GATEWAY_TOKEN}`;
-
-    const smsResponse = await fetch(smsUrl, {
-      method: 'GET',
-    });
-
-    const responseData = await smsResponse.json();
-
-    if (responseData.result && responseData.result.error) {
-      console.error('❌ Error de SMS Mobile API:', responseData);
-      return { success: false, error: responseData };
-    }
-
-    return { 
-      success: true, 
-      messageId: responseData.result?.id,
-      to: formattedPhone 
-    };
-  } catch (error) {
-    console.error('❌ Error enviando SMS:', error);
-    return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' };
   }
 }
