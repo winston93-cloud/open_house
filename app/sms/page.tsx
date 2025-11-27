@@ -54,19 +54,19 @@ export default function SmsSenderPage() {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-          setStatus({
-            state: 'error',
-            message:
-              result.error ||
-              result.details?.message ||
-              'Error al enviar SMS via Twilio.',
-          });
+      setStatus({
+        state: 'error',
+        message:
+          result.error ||
+          result.details?.message ||
+          'Error al enviar SMS via SMS Mobile.',
+      });
         return;
       }
 
       setStatus({
         state: 'success',
-        message: 'SMS enviado correctamente via Twilio 🎉',
+        message: 'SMS enviado correctamente via SMS Mobile 🎉',
       });
       setPhone('');
       setMessage('');
@@ -191,7 +191,7 @@ export default function SmsSenderPage() {
         <header>
           <h1>Enviar SMS</h1>
           <p>
-            Los mensajes se envían a través de Twilio.
+            Los mensajes se envían a través de SMS Mobile desde tu celular Android.
           </p>
         </header>
 
@@ -233,8 +233,8 @@ export default function SmsSenderPage() {
 
         <footer>
           <p>
-            Los SMS se envían desde el número <strong>+1 (608) 429-6260</strong> de Twilio.
-            Costo aproximado: <strong>$0.90 MXN</strong> por SMS.
+            Los SMS se envían desde tu celular Android con SMS Mobile.
+            Sin costos adicionales, usa el paquete SMS de tu chip celular.
           </p>
         </footer>
       </div>
