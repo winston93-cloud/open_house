@@ -648,78 +648,70 @@ function getEmailTemplate5d(nombre: string): string {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Promoción especial - Winston</title>
+      <title>Descuento Especial - Winston</title>
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7fa;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f7fa; padding: 20px 0;">
+    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%);">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #e8e8e8 0%, #f5f5f5 100%); padding: 40px 20px;">
         <tr>
           <td align="center">
-            <table width="600" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); overflow: hidden; max-width: 100%;">
+            <table width="500" cellpadding="0" cellspacing="0" style="background-color: white; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden; max-width: 100%;">
               
-              <!-- Header -->
+              <!-- Logo Winston -->
               <tr>
-                <td style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); padding: 40px 30px; text-align: center;">
-                  <h1 style="color: #8b4513; margin: 0; font-size: 32px; font-weight: 700;">⏰ ${nombre}</h1>
-                  <p style="color: #8b4513; margin: 10px 0 0 0; font-size: 18px; font-weight: 600;">¡Última oportunidad!</p>
+                <td style="padding: 30px 40px 0 40px; text-align: right;">
+                  <div style="font-size: 28px; font-weight: 900; color: #0066CC; letter-spacing: -1px;">
+                    <span style="color: #0066CC;">W</span><span style="color: #00A8E1;">inston</span>
+                  </div>
                 </td>
               </tr>
               
               <!-- Content -->
               <tr>
-                <td style="padding: 40px 30px;">
-                  <div style="background: linear-gradient(135deg, #fff5ba 0%, #ffeaa7 100%); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 30px; border: 3px dashed #fdcb6e;">
-                    <p style="color: #d63031; font-size: 24px; font-weight: 700; margin: 0 0 10px 0;">
-                      🎁 PROMOCIÓN ESPECIAL
-                    </p>
-                    <p style="color: #8b4513; font-size: 16px; margin: 0; font-weight: 600;">
-                      Esta semana únicamente
-                    </p>
+                <td style="padding: 20px 40px 50px 40px;">
+                  
+                  <!-- DESCUENTO ESPECIAL -->
+                  <h1 style="color: #FF0000; font-size: 40px; font-weight: 900; margin: 0 0 25px 0; line-height: 1.1; letter-spacing: -0.5px; text-align: center;">
+                    DESCUENTO<br>ESPECIAL
+                  </h1>
+                  
+                  <!-- AL INICIAR TU PROCESO DE ADMISIÓN HOY! -->
+                  <p style="color: #0066CC; font-size: 16px; font-weight: 900; margin: 0 0 5px 0; letter-spacing: 0.5px;">
+                    AL INICIAR TU PROCESO
+                  </p>
+                  <p style="color: #00A8E1; font-size: 20px; font-weight: 900; margin: 0 0 5px 0; letter-spacing: 0.5px;">
+                    DE ADMISIÓN
+                  </p>
+                  <p style="color: #00A8E1; font-size: 36px; font-weight: 900; margin: 0 0 35px 0; letter-spacing: 0px;">
+                    HOY!
+                  </p>
+                  
+                  <!-- Escríbenos al -->
+                  <p style="color: #0066CC; font-size: 15px; font-weight: 700; margin: 0 0 10px 0;">
+                    Escríbenos al
+                  </p>
+                  
+                  <!-- Número WhatsApp -->
+                  <div style="margin-bottom: 30px;">
+                    <a href="https://wa.me/528334378743" style="color: #0066CC; font-size: 28px; font-weight: 900; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 24px;">💬</span> 833 437 87 43
+                    </a>
                   </div>
                   
-                  <p style="color: #333; font-size: 16px; line-height: 1.8; margin: 0 0 25px 0;">
-                    Hola ${nombre}, no queremos que pierdas esta oportunidad especial que tenemos preparada para ti y tu familia.
+                  <!-- DA EL PRIMER PASO -->
+                  <p style="color: #00A8E1; font-size: 18px; font-weight: 900; margin: 0 0 10px 0;">
+                    DA EL PRIMER PASO
+                  </p>
+                  <p style="color: #00A8E1; font-size: 15px; font-weight: 400; margin: 0 0 35px 0; line-height: 1.4;">
+                    para formar parte del Instituto<br>Winston Churchill.
                   </p>
                   
-                  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 25px;">
-                    <tr>
-                      <td style="padding: 20px; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 12px; text-align: center;">
-                        <p style="color: #8b4513; font-size: 18px; font-weight: 600; margin: 0 0 15px 0;">
-                          Beneficios exclusivos al inscribirte esta semana:
-                        </p>
-                        <p style="color: #8b4513; font-size: 15px; margin: 0; line-height: 1.8;">
-                          ✨ Descuento especial en inscripción<br>
-                          ✨ Asesoría personalizada sin costo<br>
-                          ✨ Kit de bienvenida para tu hijo/a
-                        </p>
-                      </td>
-                    </tr>
-                  </table>
-                  
-                  <p style="color: #d63031; font-size: 16px; font-weight: 600; text-align: center; margin: 0 0 25px 0;">
-                    ⏰ ¡No dejes pasar esta oportunidad!
-                  </p>
-                  
-                  <div style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 12px; text-align: center;">
-                    <p style="color: #8b4513; font-size: 18px; font-weight: 700; margin: 0 0 15px 0;">📱 Contacta ahora por WhatsApp</p>
-                    <p style="color: #8b4513; margin: 0 0 5px 0; font-size: 15px; font-weight: 600;">
-                      Winston Churchill: 833 437 8743
-                    </p>
-                    <p style="color: #8b4513; margin: 0; font-size: 15px; font-weight: 600;">
-                      Educativo Winston: 833 347 4507
-                    </p>
+                  <!-- Botón CONTÁCTANOS -->
+                  <div style="text-align: center;">
+                    <a href="https://wa.me/528334378743" style="display: inline-block; background: linear-gradient(135deg, #7CC344 0%, #6BB236 100%); color: white; text-decoration: none; padding: 16px 50px; border-radius: 50px; font-size: 16px; font-weight: 700; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(124,195,68,0.4);">
+                      ➜ CONTÁCTANOS
+                    </a>
                   </div>
-                </td>
-              </tr>
-              
-              <!-- Footer -->
-              <tr>
-                <td style="background-color: #fff5f5; padding: 30px; text-align: center;">
-                  <p style="color: #666; font-size: 14px; margin: 0;">
-                    Instituto Winston Churchill | Admisiones
-                  </p>
-                  <p style="color: #999; font-size: 12px; margin: 10px 0 0 0;">
-                    🎁 Educación de excelencia al alcance de tu familia
-                  </p>
+                  
                 </td>
               </tr>
               
