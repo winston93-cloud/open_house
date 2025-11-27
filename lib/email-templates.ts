@@ -18,17 +18,17 @@ export function getEmailTemplate24h(nombre: string, plantel: string = 'winston')
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Recordatorio Winston</title>
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: #e5e5e5;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background: #e5e5e5; padding: 40px 20px;">
+    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: linear-gradient(to bottom, #d5d5d5, #e8e8e8);">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(to bottom, #d5d5d5, #e8e8e8); padding: 50px 20px;">
         <tr>
           <td align="center">
-            <table width="500" cellpadding="0" cellspacing="0" style="position: relative; background-color: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1); overflow: visible; max-width: 100%;">
+            <table width="500" cellpadding="0" cellspacing="0" style="position: relative; background-color: #ffffff; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.15); overflow: visible; max-width: 100%;">
               
-              <!-- Efecto de hoja doblada -->
+              <!-- Efecto de hoja doblada (esquina superior IZQUIERDA) -->
               <tr>
                 <td style="position: relative; height: 0; padding: 0;">
-                  <div style="position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 60px 60px 0; border-color: transparent #d0d0d0 transparent transparent; z-index: 1;"></div>
-                  <div style="position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 58px 58px 0; border-color: transparent #f8f8f8 transparent transparent; z-index: 2;"></div>
+                  <div style="position: absolute; top: 0; left: 0; width: 0; height: 0; border-style: solid; border-width: 70px 0 0 70px; border-color: #c8c8c8 transparent transparent #c8c8c8; border-top-left-radius: 25px; z-index: 1;"></div>
+                  <div style="position: absolute; top: 2px; left: 2px; width: 0; height: 0; border-style: solid; border-width: 68px 0 0 68px; border-color: #f0f0f0 transparent transparent #f0f0f0; border-top-left-radius: 25px; z-index: 2;"></div>
                 </td>
               </tr>
               
@@ -119,17 +119,17 @@ export function getEmailTemplate72h(nombre: string, plantel: string = 'winston')
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Agenda tu recorrido - Winston</title>
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: #e5e5e5;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background: #e5e5e5; padding: 40px 20px;">
+    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: linear-gradient(to bottom, #d5d5d5, #e8e8e8);">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(to bottom, #d5d5d5, #e8e8e8); padding: 50px 20px;">
         <tr>
           <td align="center">
-            <table width="500" cellpadding="0" cellspacing="0" style="position: relative; background-color: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1); overflow: visible; max-width: 100%;">
+            <table width="500" cellpadding="0" cellspacing="0" style="position: relative; background-color: #ffffff; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.15); overflow: visible; max-width: 100%;">
               
-              <!-- Efecto de hoja doblada -->
+              <!-- Efecto de hoja doblada (esquina superior IZQUIERDA) -->
               <tr>
                 <td style="position: relative; height: 0; padding: 0;">
-                  <div style="position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 60px 60px 0; border-color: transparent #d0d0d0 transparent transparent; z-index: 1;"></div>
-                  <div style="position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 58px 58px 0; border-color: transparent #f8f8f8 transparent transparent; z-index: 2;"></div>
+                  <div style="position: absolute; top: 0; left: 0; width: 0; height: 0; border-style: solid; border-width: 70px 0 0 70px; border-color: #c8c8c8 transparent transparent #c8c8c8; border-top-left-radius: 25px; z-index: 1;"></div>
+                  <div style="position: absolute; top: 2px; left: 2px; width: 0; height: 0; border-style: solid; border-width: 68px 0 0 68px; border-color: #f0f0f0 transparent transparent #f0f0f0; border-top-left-radius: 25px; z-index: 2;"></div>
                 </td>
               </tr>
               
@@ -218,17 +218,17 @@ export function getEmailTemplate5d(nombre: string, plantel: string = 'winston'):
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Descuento Especial - Winston</title>
     </head>
-    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: #e5e5e5;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="background: #e5e5e5; padding: 40px 20px;">
+    <body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: linear-gradient(to bottom, #d5d5d5, #e8e8e8);">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(to bottom, #d5d5d5, #e8e8e8); padding: 50px 20px;">
         <tr>
           <td align="center">
-            <table width="500" cellpadding="0" cellspacing="0" style="position: relative; background-color: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1); overflow: visible; max-width: 100%;">
+            <table width="500" cellpadding="0" cellspacing="0" style="position: relative; background-color: #ffffff; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.15); overflow: visible; max-width: 100%;">
               
-              <!-- Efecto de hoja doblada -->
+              <!-- Efecto de hoja doblada (esquina superior IZQUIERDA) -->
               <tr>
                 <td style="position: relative; height: 0; padding: 0;">
-                  <div style="position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 60px 60px 0; border-color: transparent #d0d0d0 transparent transparent; z-index: 1;"></div>
-                  <div style="position: absolute; top: 0; right: 0; width: 0; height: 0; border-style: solid; border-width: 0 58px 58px 0; border-color: transparent #f8f8f8 transparent transparent; z-index: 2;"></div>
+                  <div style="position: absolute; top: 0; left: 0; width: 0; height: 0; border-style: solid; border-width: 70px 0 0 70px; border-color: #c8c8c8 transparent transparent #c8c8c8; border-top-left-radius: 25px; z-index: 1;"></div>
+                  <div style="position: absolute; top: 2px; left: 2px; width: 0; height: 0; border-style: solid; border-width: 68px 0 0 68px; border-color: #f0f0f0 transparent transparent #f0f0f0; border-top-left-radius: 25px; z-index: 2;"></div>
                 </td>
               </tr>
               
