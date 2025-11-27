@@ -60,17 +60,14 @@ export async function POST(request: Request) {
 
     console.log('📤 Enviando SMS via Mobile API a:', formattedPhone);
 
-    // Enviar SMS usando SMS Mobile API
-    const smsResponse = await fetch(SMS_GATEWAY_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        apikey: SMS_GATEWAY_TOKEN,
-        recipients: formattedPhone,
-        message: message,
-      }),
+    // Construir URL con query parameters para SMS Mobile API
+    const smsUrl = `${SMS_GATEWAY_URL}?recipients=${encodeURIComponent(formattedPhone)}&message=${encodeURIComponent(message)}&apikey=${SMS_GATEWAY_TOKEN}`;
+    
+    console.log('🔗 URL construida:', smsUrl.replace(SMS_GATEWAY_TOKEN, '***TOKEN***'));
+
+    // Enviar SMS usando SMS Mobile API (método GET)
+    const smsResponse = await fetch(smsUrl, {
+      method: 'GET',
     });
 
     const responseData = await smsResponse.json();
@@ -112,4 +109,48 @@ export async function POST(request: Request) {
   }
 }
 
+// Función helper exportable para usar desde otros endpoints
+export async function sendSMS(phone: string, message: string) {
+  const SMS_GATEWAY_URL = process.env.SMS_GATEWAY_URL;
+  const SMS_GATEWAY_TOKEN = process.env.SMS_GATEWAY_TOKEN;
 
+  if (!SMS_GATEWAY_URL || !SMS_GATEWAY_TOKEN) {
+    console.error('❌ SMS Mobile API no configurado');
+    return { success: false, error: 'SMS Mobile API no configurado' };
+  }
+
+  try {
+    // Formatear número
+    let formattedPhone = phone.toString().trim();
+    formattedPhone = formattedPhone.replace(/[\s\-\(\)]/g, '');
+    if (formattedPhone.startsWith('+')) {
+      formattedPhone = formattedPhone.substring(1);
+    }
+    if (!formattedPhone.startsWith('52')) {
+      formattedPhone = '52' + formattedPhone;
+    }
+
+    // Construir URL con query parameters
+    const smsUrl = `${SMS_GATEWAY_URL}?recipients=${encodeURIComponent(formattedPhone)}&message=${encodeURIComponent(message)}&apikey=${SMS_GATEWAY_TOKEN}`;
+
+    const smsResponse = await fetch(smsUrl, {
+      method: 'GET',
+    });
+
+    const responseData = await smsResponse.json();
+
+    if (responseData.result && responseData.result.error) {
+      console.error('❌ Error de SMS Mobile API:', responseData);
+      return { success: false, error: responseData };
+    }
+
+    return { 
+      success: true, 
+      messageId: responseData.result?.id,
+      to: formattedPhone 
+    };
+  } catch (error) {
+    console.error('❌ Error enviando SMS:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' };
+  }
+}
