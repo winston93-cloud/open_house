@@ -96,8 +96,8 @@ Escríbenos y da el primer paso para formar parte del Instituto Winston Churchil
           });
         }
 
-        // Esperar 2 segundos entre mensajes para no saturar
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Esperar 3 minutos entre mensajes para evitar bloqueos de operador
+        await new Promise(resolve => setTimeout(resolve, 180000));
 
       } catch (error) {
         console.error(`❌ Error procesando SMS "${mensaje.tipo}" para ${telefono}:`, error);

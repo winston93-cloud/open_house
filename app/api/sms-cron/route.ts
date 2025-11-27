@@ -181,6 +181,13 @@ async function checkAndSendSMS24h(logId: string) {
           
           result.success++;
           console.log(`   ✅ Notificación 24h enviada (SMS: ${smsSuccess ? '✓' : '✗'}, Email: ${emailSuccess ? '✓' : '✗'})`);
+          
+          // Esperar 3 minutos antes del siguiente envío para evitar bloqueos de operador
+          const currentIndex = pendingLeads.indexOf(lead);
+          if (currentIndex < pendingLeads.length - 1) {
+            console.log(`   ⏳ Esperando 3 minutos antes del siguiente envío...`);
+            await new Promise(resolve => setTimeout(resolve, 180000));
+          }
         } else {
           result.errors++;
         }
@@ -269,6 +276,13 @@ async function checkAndSendSMS72h(logId: string) {
           
           result.success++;
           console.log(`   ✅ Notificación 72h enviada (SMS: ${smsSuccess ? '✓' : '✗'}, Email: ${emailSuccess ? '✓' : '✗'})`);
+          
+          // Esperar 3 minutos antes del siguiente envío para evitar bloqueos de operador
+          const currentIndex = pendingLeads.indexOf(lead);
+          if (currentIndex < pendingLeads.length - 1) {
+            console.log(`   ⏳ Esperando 3 minutos antes del siguiente envío...`);
+            await new Promise(resolve => setTimeout(resolve, 180000));
+          }
         } else {
           result.errors++;
         }
@@ -354,6 +368,13 @@ async function checkAndSendSMS5d(logId: string) {
           
           result.success++;
           console.log(`   ✅ Notificación 5 días enviada (SMS: ${smsSuccess ? '✓' : '✗'}, Email: ${emailSuccess ? '✓' : '✗'})`);
+          
+          // Esperar 3 minutos antes del siguiente envío para evitar bloqueos de operador
+          const currentIndex = pendingLeads.indexOf(lead);
+          if (currentIndex < pendingLeads.length - 1) {
+            console.log(`   ⏳ Esperando 3 minutos antes del siguiente envío...`);
+            await new Promise(resolve => setTimeout(resolve, 180000));
+          }
         } else {
           result.errors++;
         }

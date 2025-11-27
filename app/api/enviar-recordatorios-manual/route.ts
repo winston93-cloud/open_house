@@ -1284,6 +1284,12 @@ async function processReminders() {
               message: 'Recordatorio enviado exitosamente'
             });
           }
+          
+          // Esperar 3 minutos antes del siguiente envío para evitar bloqueos
+          if (index < inscripciones.length - 1) {
+            console.log(`⏳ [${logId}] Esperando 3 minutos antes del siguiente envío...`);
+            await new Promise(resolve => setTimeout(resolve, 180000));
+          }
         } else {
           console.error(`❌ [${logId}] Error al enviar email a ${inscripcion.email}:`, result.error);
           errorCount++;
@@ -1370,6 +1376,12 @@ async function processReminders() {
                 status: 'success',
                 message: 'Recordatorio de sesión enviado exitosamente'
               });
+            }
+            
+            // Esperar 3 minutos antes del siguiente envío para evitar bloqueos
+            if (index < sesiones.length - 1) {
+              console.log(`⏳ [${logId}] Esperando 3 minutos antes del siguiente envío...`);
+              await new Promise(resolve => setTimeout(resolve, 180000));
             }
           } else {
             console.error(`❌ [${logId}] Error al enviar email a ${sesion.email}:`, result.error);
