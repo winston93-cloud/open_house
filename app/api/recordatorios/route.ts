@@ -1206,8 +1206,23 @@ https://open-house-chi.vercel.app/asistencia?id=${inscripcion.id}&confirmacion=c
   }
 };
 
+// =============================================================================
+// ⛔ ENDPOINT DESACTIVADO - 28 noviembre 2025
+// =============================================================================
+// Este endpoint automático está DESACTIVADO
+// Todos los recordatorios se envían manualmente desde:
+// /api/enviar-recordatorios-manual
+// =============================================================================
+
 // Endpoint POST para procesar recordatorios (llamado por el cron job)
 export async function POST(request: NextRequest) {
+  return NextResponse.json({
+    success: false,
+    message: '⛔ Endpoint desactivado - Usar /api/enviar-recordatorios-manual',
+    timestamp: new Date().toISOString()
+  }, { status: 403 });
+  
+  /* CÓDIGO DESACTIVADO
   const startTime = new Date();
   const logId = `REMINDER_${startTime.getTime()}`;
   
@@ -1462,9 +1477,10 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+  */
 }
 
-// Endpoint GET para verificar el estado del sistema de recordatorios
+// Endpoint GET para verificar el estado del sistema de recordatorios  
 export async function GET() {
   try {
     const { data: pendingReminders, error } = await supabase
