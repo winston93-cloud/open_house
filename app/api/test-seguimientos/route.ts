@@ -87,8 +87,12 @@ export async function GET(request: NextRequest) {
         status: 'success'
       });
       
-      // Esperar 3 segundos antes del siguiente destinatario
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Esperar 3 minutos antes del siguiente destinatario (excepto el último)
+      const esUltimo = destinatarios.indexOf(dest) === destinatarios.length - 1;
+      if (!esUltimo) {
+        console.log(`⏳ Esperando 3 minutos antes del siguiente destinatario...`);
+        await new Promise(resolve => setTimeout(resolve, 180000)); // 3 minutos = 180000ms
+      }
     }
     
     return NextResponse.json({
