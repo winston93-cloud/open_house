@@ -29,15 +29,10 @@ export async function GET(request: NextRequest) {
       console.log(`\n📧 Enviando seguimientos a ${dest.email}...`);
       
       // Datos de prueba del lead
-      const leadData = {
-        nombre: dest.nombre,
-        telefono: dest.telefono,
-        nivel_academico: 'Primaria',
-        plantel: 'winston'
-      };
+      const plantel = 'winston';
       
       // 1. Email de 24 horas
-      const email24h = getEmailTemplate24h(leadData.nombre, leadData.telefono, leadData.nivel_academico, leadData.plantel);
+      const email24h = getEmailTemplate24h(dest.nombre, plantel);
       
       await transporter.sendMail({
         from: {
@@ -55,7 +50,7 @@ export async function GET(request: NextRequest) {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // 2. Email de 72 horas
-      const email72h = getEmailTemplate72h(leadData.nombre, leadData.telefono, leadData.nivel_academico, leadData.plantel);
+      const email72h = getEmailTemplate72h(dest.nombre, plantel);
       
       await transporter.sendMail({
         from: {
@@ -72,7 +67,7 @@ export async function GET(request: NextRequest) {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // 3. Email de 5 días
-      const email5d = getEmailTemplate5d(leadData.nombre, leadData.telefono, leadData.nivel_academico, leadData.plantel);
+      const email5d = getEmailTemplate5d(dest.nombre, plantel);
       
       await transporter.sendMail({
         from: {
