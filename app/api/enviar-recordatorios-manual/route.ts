@@ -1489,7 +1489,6 @@ https://open-house-chi.vercel.app/asistencia?id=${item.id}&confirmacion=confirma
     
     console.log(`\n✅ [${logId}] Fase 3 completada: SMS enviados con delay de 3 minutos`);
     */
-  }
 
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
