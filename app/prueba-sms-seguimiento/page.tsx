@@ -75,8 +75,8 @@ export default function PruebaSMSSeguimiento() {
           borderRadius: '5px',
           border: '1px solid #ffc107'
         }}>
-          ⏱️ <strong>Tiempo estimado:</strong> ~6-7 minutos<br/>
-          (3 minutos de espera entre cada destinatario)
+          ⏱️ <strong>Tiempo estimado:</strong> ~2-3 minutos<br/>
+          (1 minuto de espera entre cada destinatario)
         </p>
       </div>
 
