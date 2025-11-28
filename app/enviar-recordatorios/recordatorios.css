@@ -1,0 +1,576 @@
+/* ============================================
+   SISTEMA DE RECORDATORIOS - ESTILOS ÚNICOS
+   ============================================ */
+
+.recordatorios-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 50%, #fff0f8 100%);
+  padding: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.recordatorios-wrapper {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+.recordatorios-header {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-top: 4px solid #2563eb;
+}
+
+.recordatorios-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.recordatorios-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem 0;
+}
+
+.recordatorios-subtitle {
+  color: #666;
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+.recordatorios-fecha {
+  text-align: right;
+}
+
+.recordatorios-fecha-label {
+  font-size: 0.875rem;
+  color: #999;
+  margin: 0;
+}
+
+.recordatorios-fecha-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin: 0.25rem 0 0 0;
+  text-transform: capitalize;
+}
+
+/* GRID */
+.recordatorios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* CARDS */
+.recordatorios-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.recordatorios-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.recordatorios-card-pendientes {
+  border-left: 4px solid #f59e0b;
+}
+
+.recordatorios-card-estadisticas {
+  border-left: 4px solid #10b981;
+}
+
+.recordatorios-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.recordatorios-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.recordatorios-badge {
+  background: #f59e0b;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+}
+
+/* EMPTY STATE */
+.recordatorios-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.recordatorios-empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.recordatorios-empty-text {
+  color: #666;
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+
+.recordatorios-empty-subtext {
+  color: #999;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* LISTA DE PENDIENTES */
+.recordatorios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recordatorios-item {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 1rem;
+  transition: background 0.2s;
+}
+
+.recordatorios-item:hover {
+  background: #fef3c7;
+}
+
+.recordatorios-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.recordatorios-item-info h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+}
+
+.recordatorios-item-info p {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0.125rem 0;
+}
+
+.recordatorios-item-badge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.recordatorios-badge-openhouse {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.recordatorios-badge-sesion {
+  background: #e9d5ff;
+  color: #6b21a8;
+}
+
+.recordatorios-item-status {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #fbbf24;
+  font-size: 0.875rem;
+}
+
+.recordatorios-status-pending { color: #6b7280; }
+.recordatorios-status-sending { color: #2563eb; font-weight: 600; }
+.recordatorios-status-success { color: #10b981; font-weight: 600; }
+.recordatorios-status-error { color: #ef4444; font-weight: 600; }
+
+/* ESTADÍSTICAS */
+.recordatorios-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recordatorios-stat-item {
+  padding: 1.25rem;
+  border-radius: 12px;
+  transition: transform 0.2s;
+}
+
+.recordatorios-stat-item:hover {
+  transform: scale(1.02);
+}
+
+.recordatorios-stat-openhouse {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.recordatorios-stat-sesiones {
+  background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%);
+}
+
+.recordatorios-stat-exito {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+}
+
+.recordatorios-stat-label {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0 0 0.5rem 0;
+}
+
+.recordatorios-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.recordatorios-stat-openhouse .recordatorios-stat-value { color: #1e40af; }
+.recordatorios-stat-sesiones .recordatorios-stat-value { color: #6b21a8; }
+.recordatorios-stat-exito .recordatorios-stat-value { color: #047857; }
+
+.recordatorios-stat-description {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* BOTÓN DE ENVÍO */
+.recordatorios-send-cta {
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: white;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
+}
+
+.recordatorios-send-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.recordatorios-send-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.recordatorios-send-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-size: 1rem;
+}
+
+.recordatorios-send-button {
+  background: white;
+  color: #f97316;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.recordatorios-send-button:hover {
+  background: #fff7ed;
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.recordatorios-send-button:active {
+  transform: scale(0.98);
+}
+
+/* PRÓXIMOS ENVÍOS */
+.recordatorios-proximos {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+  border-left: 4px solid #3b82f6;
+}
+
+.recordatorios-proximos-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 1.5rem 0;
+}
+
+.recordatorios-proximos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recordatorios-proximo-item {
+  background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 1.25rem;
+  transition: all 0.2s;
+}
+
+.recordatorios-proximo-item:hover {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  transform: translateY(-2px);
+}
+
+.recordatorios-proximo-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.recordatorios-proximo-tipo {
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.recordatorios-proximo-tipo-openhouse {
+  background: #3b82f6;
+}
+
+.recordatorios-proximo-tipo-sesion {
+  background: #8b5cf6;
+}
+
+.recordatorios-proximo-niveles {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.recordatorios-proximo-fecha {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+}
+
+.recordatorios-proximo-hora {
+  color: #4b5563;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+}
+
+.recordatorios-proximo-lugar {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0 0 0.75rem 0;
+}
+
+.recordatorios-proximo-recordatorio {
+  padding-top: 0.75rem;
+  border-top: 1px solid #c7d2fe;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #3b82f6;
+  margin: 0;
+}
+
+/* MODAL */
+.recordatorios-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.recordatorios-modal {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 100%;
+  padding: 2rem;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recordatorios-modal-icon {
+  font-size: 4rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.recordatorios-modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.recordatorios-modal-text {
+  color: #666;
+  text-align: center;
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+}
+
+.recordatorios-modal-count {
+  font-weight: 700;
+  color: #f97316;
+}
+
+.recordatorios-modal-warning {
+  font-size: 0.875rem;
+  color: #999;
+  text-align: center;
+  margin: 0 0 2rem 0;
+}
+
+.recordatorios-modal-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.recordatorios-modal-button {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.recordatorios-modal-button-cancel {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.recordatorios-modal-button-cancel:hover {
+  background: #d1d5db;
+}
+
+.recordatorios-modal-button-confirm {
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
+.recordatorios-modal-button-confirm:hover {
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
+
+/* LOADING */
+.recordatorios-loading {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.recordatorios-spinner {
+  width: 64px;
+  height: 64px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.recordatorios-loading-text {
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .recordatorios-container {
+    padding: 1rem;
+  }
+
+  .recordatorios-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .recordatorios-fecha {
+    text-align: left;
+  }
+
+  .recordatorios-title {
+    font-size: 1.875rem;
+  }
+
+  .recordatorios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recordatorios-send-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .recordatorios-send-button {
+    width: 100%;
+  }
+}
+
