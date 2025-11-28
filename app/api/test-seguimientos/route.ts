@@ -4,12 +4,10 @@ import { getEmailTemplate24h, getEmailTemplate72h, getEmailTemplate5d } from '@/
 
 // Configurar el transportador de Nodemailer
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
+  service: 'gmail',
   auth: {
     user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: process.env.EMAIL_PASSWORD
+    pass: 'ckxc xdfg oxqx jtmm'
   }
 });
 
