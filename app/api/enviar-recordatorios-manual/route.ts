@@ -1060,7 +1060,7 @@ const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
   };
 };
 
-// Función para enviar email de recordatorio de Sesiones Informativas
+// Función para enviar email de recordatorio de Sesiones Informativas (SOLO EMAIL)
 const sendSesionesReminderEmail = async (sesion: any) => {
   try {
     const eventInfo = getEventInfo(sesion.nivel_academico, false); // false = Sesiones Informativas
@@ -1091,17 +1091,9 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     await transporter.sendMail(mailOptions);
     console.log(`✅ Recordatorio enviado exitosamente a ${sesion.email}`);
     
-    // Enviar SMS de recordatorio con formato actualizado
-    const smsMessage = `📚 Recordatorio Winston – Sesión Informativa
-📅 Mañana ${eventInfo.fechaEvento}
-🕘 ${eventInfo.horaEvento}
-📍 ${eventInfo.institucionNombre}
-Confirma tu asistencia aquí:
-https://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confirmado
-¡Te esperamos!`;
-    await sendReminderSMS(sesion.telefono, smsMessage);
+    // Ya NO se envía SMS aquí - se enviará después en un batch separado
     
-    return { success: true };
+    return { success: true, eventInfo };
   } catch (error) {
     console.error(`❌ Error al enviar recordatorio a ${sesion.email}:`, error);
     return { success: false, error };
@@ -1147,7 +1139,7 @@ async function sendReminderSMS(telefono: string, mensaje: string): Promise<boole
   }
 }
 
-// Función para enviar email de recordatorio de Open House
+// Función para enviar email de recordatorio de Open House (SOLO EMAIL)
 const sendReminderEmail = async (inscripcion: any) => {
   try {
     const eventInfo = getEventInfo(inscripcion.nivel_academico, true); // true = Open House
@@ -1178,17 +1170,9 @@ const sendReminderEmail = async (inscripcion: any) => {
     await transporter.sendMail(mailOptions);
     console.log(`✅ Email de recordatorio enviado a: ${inscripcion.email}`);
     
-    // Enviar SMS de recordatorio con formato actualizado
-    const smsMessage = `🏠 Recordatorio Winston – Open House
-📅 Mañana ${eventInfo.fechaEvento}
-🕘 ${eventInfo.horaEvento}
-📍 ${eventInfo.institucionNombre}
-Confirma tu asistencia aquí:
-https://open-house-chi.vercel.app/asistencia?id=${inscripcion.id}&confirmacion=confirmado
-¡Te esperamos!`;
-    await sendReminderSMS(inscripcion.telefono, smsMessage);
+    // Ya NO se envía SMS aquí - se enviará después en un batch separado
     
-    return { success: true };
+    return { success: true, eventInfo };
   } catch (error) {
     console.error(`❌ Error al enviar recordatorio a ${inscripcion.email}:`, error);
     return { success: false, error };
@@ -1247,6 +1231,10 @@ async function processReminders() {
     let successCount = 0;
     let errorCount = 0;
     const results = [];
+    
+    // Variables para almacenar info de inscripciones y sesiones para envío de SMS posterior
+    let inscripcionesConInfo: any[] = [];
+    let sesionesConInfo: any[] = [];
 
     if (!inscripciones || inscripciones.length === 0) {
       console.log(`✅ [${logId}] No hay inscripciones de Open House pendientes para hoy`);
@@ -1263,64 +1251,71 @@ async function processReminders() {
         console.log(`   - Recordatorio enviado: ${inscripcion.reminder_sent}`);
       });
 
-      // Procesar cada inscripción
-      for (let index = 0; index < inscripciones.length; index++) {
-      const inscripcion = inscripciones[index];
-      console.log(`\n📤 [${logId}] Procesando inscripción ${index + 1}/${inscripciones.length}: ${inscripcion.email}`);
+      // ===== FASE 1: ENVIAR TODOS LOS EMAILS (SIN DELAY) =====
+      console.log(`\n📧 [${logId}] ===== FASE 1: ENVIANDO EMAILS DE OPEN HOUSE =====`);
       
-      try {
-        console.log(`🔄 [${logId}] Enviando email a ${inscripcion.email}...`);
-        const result = await sendReminderEmail(inscripcion);
+      for (let index = 0; index < inscripciones.length; index++) {
+        const inscripcion = inscripciones[index];
+        console.log(`\n📤 [${logId}] Enviando EMAIL ${index + 1}/${inscripciones.length}: ${inscripcion.email}`);
         
-        if (result.success) {
-          console.log(`✅ [${logId}] Email enviado exitosamente a ${inscripcion.email}`);
+        try {
+          const result = await sendReminderEmail(inscripcion);
           
-          // Marcar como enviado en la base de datos
-          console.log(`💾 [${logId}] Actualizando base de datos para ${inscripcion.email}...`);
-          const { error: updateError } = await supabase
-            .from('inscripciones')
-            .update({
-              reminder_sent: true,
-              reminder_sent_at: new Date().toISOString()
-            })
-            .eq('id', inscripcion.id);
+          if (result.success) {
+            console.log(`✅ [${logId}] Email enviado exitosamente a ${inscripcion.email}`);
+            
+            // Marcar como enviado en la base de datos
+            const { error: updateError } = await supabase
+              .from('inscripciones')
+              .update({
+                reminder_sent: true,
+                reminder_sent_at: new Date().toISOString()
+              })
+              .eq('id', inscripcion.id);
 
-          if (updateError) {
-            console.error(`❌ [${logId}] Error al actualizar BD para ${inscripcion.email}:`, updateError);
+            if (updateError) {
+              console.error(`❌ [${logId}] Error al actualizar BD para ${inscripcion.email}:`, updateError);
+            } else {
+              console.log(`✅ [${logId}] Base de datos actualizada para ${inscripcion.email}`);
+              successCount++;
+              results.push({
+                email: inscripcion.email,
+                status: 'success',
+                message: 'Email enviado exitosamente'
+              });
+              
+              // Guardar para enviar SMS después
+              inscripcionesConInfo.push({
+                inscripcion,
+                eventInfo: result.eventInfo
+              });
+            }
+            
+            // Pequeño delay de 2 segundos entre emails para no saturar
+            if (index < inscripciones.length - 1) {
+              await new Promise(resolve => setTimeout(resolve, 2000));
+            }
           } else {
-            console.log(`✅ [${logId}] Base de datos actualizada para ${inscripcion.email}`);
-            successCount++;
+            console.error(`❌ [${logId}] Error al enviar email a ${inscripcion.email}:`, result.error);
+            errorCount++;
             results.push({
               email: inscripcion.email,
-              status: 'success',
-              message: 'Recordatorio enviado exitosamente'
+              status: 'error',
+              message: 'Error al enviar email'
             });
           }
-          
-          // Esperar 3 minutos antes del siguiente envío para evitar bloqueos
-          if (index < inscripciones.length - 1) {
-            console.log(`⏳ [${logId}] Esperando 3 minutos antes del siguiente envío...`);
-            await new Promise(resolve => setTimeout(resolve, 180000));
-          }
-        } else {
-          console.error(`❌ [${logId}] Error al enviar email a ${inscripcion.email}:`, result.error);
+        } catch (error) {
+          console.error(`❌ [${logId}] Error inesperado procesando ${inscripcion.email}:`, error);
           errorCount++;
           results.push({
             email: inscripcion.email,
             status: 'error',
-            message: 'Error al enviar recordatorio'
+            message: 'Error inesperado'
           });
         }
-      } catch (error) {
-        console.error(`❌ [${logId}] Error inesperado procesando ${inscripcion.email}:`, error);
-        errorCount++;
-        results.push({
-          email: inscripcion.email,
-          status: 'error',
-          message: 'Error inesperado'
-        });
       }
-      }
+      
+      console.log(`\n✅ [${logId}] Fase 1 completada: ${inscripcionesConInfo.length} emails de Open House enviados`);
     }
 
     // ===== PROCESAR SESIONES INFORMATIVAS =====
@@ -1356,20 +1351,20 @@ async function processReminders() {
         console.log(`   - Recordatorio enviado: ${sesion.reminder_sent}`);
       });
       
-      // Procesar cada sesión
+      // ===== FASE 2: ENVIAR TODOS LOS EMAILS DE SESIONES (SIN DELAY) =====
+      console.log(`\n📧 [${logId}] ===== FASE 2: ENVIANDO EMAILS DE SESIONES =====`);
+      
       for (let index = 0; index < sesiones.length; index++) {
         const sesion = sesiones[index];
-        console.log(`\n📤 [${logId}] Procesando sesión ${index + 1}/${sesiones.length}: ${sesion.email}`);
+        console.log(`\n📤 [${logId}] Enviando EMAIL ${index + 1}/${sesiones.length}: ${sesion.email}`);
         
         try {
-          console.log(`🔄 [${logId}] Enviando email a ${sesion.email}...`);
           const result = await sendSesionesReminderEmail(sesion);
           
           if (result.success) {
             console.log(`✅ [${logId}] Email enviado exitosamente a ${sesion.email}`);
             
             // Marcar como enviado en la base de datos
-            console.log(`💾 [${logId}] Actualizando base de datos para ${sesion.email}...`);
             const { error: updateError } = await supabase
               .from('sesiones')
               .update({
@@ -1386,14 +1381,19 @@ async function processReminders() {
               results.push({
                 email: sesion.email,
                 status: 'success',
-                message: 'Recordatorio de sesión enviado exitosamente'
+                message: 'Email de sesión enviado exitosamente'
+              });
+              
+              // Guardar para enviar SMS después
+              sesionesConInfo.push({
+                sesion,
+                eventInfo: result.eventInfo
               });
             }
             
-            // Esperar 3 minutos antes del siguiente envío para evitar bloqueos
+            // Pequeño delay de 2 segundos entre emails para no saturar
             if (index < sesiones.length - 1) {
-              console.log(`⏳ [${logId}] Esperando 3 minutos antes del siguiente envío...`);
-              await new Promise(resolve => setTimeout(resolve, 180000));
+              await new Promise(resolve => setTimeout(resolve, 2000));
             }
           } else {
             console.error(`❌ [${logId}] Error al enviar email a ${sesion.email}:`, result.error);
@@ -1401,7 +1401,7 @@ async function processReminders() {
             results.push({
               email: sesion.email,
               status: 'error',
-              message: 'Error al enviar recordatorio de sesión'
+              message: 'Error al enviar email de sesión'
             });
           }
         } catch (error) {
@@ -1414,9 +1414,82 @@ async function processReminders() {
           });
         }
       }
+      
+      console.log(`\n✅ [${logId}] Fase 2 completada: ${sesionesConInfo.length} emails de Sesiones enviados`);
     } else {
       console.log(`✅ [${logId}] No hay recordatorios de sesiones pendientes`);
     }
+    
+    // ===== FASE 3: ENVIAR TODOS LOS SMS CON DELAY DE 3 MINUTOS =====
+    // ⛔ TEMPORALMENTE DESACTIVADO - 28 nov 2025
+    // Los SMS no se enviarán para evitar bloqueos del operador
+    console.log(`\n⛔ [${logId}] ===== FASE 3: SMS DESACTIVADOS TEMPORALMENTE =====`);
+    console.log(`📱 [${logId}] Los SMS NO se enviarán en este momento`);
+    console.log(`💡 [${logId}] Motivo: Prevención de bloqueos del operador`);
+    
+    /*
+    // Combinar inscripciones y sesiones para envío de SMS
+    const todosParaSMS = [
+      ...inscripcionesConInfo.map(item => ({
+        tipo: 'open_house',
+        id: item.inscripcion.id,
+        telefono: item.inscripcion.telefono,
+        eventInfo: item.eventInfo,
+        nombre: item.inscripcion.nombre_aspirante
+      })),
+      ...sesionesConInfo.map(item => ({
+        tipo: 'sesion',
+        id: item.sesion.id,
+        telefono: item.sesion.telefono,
+        eventInfo: item.eventInfo,
+        nombre: item.sesion.nombre_aspirante
+      }))
+    ];
+    
+    console.log(`📲 [${logId}] Total de SMS a enviar: ${todosParaSMS.length}`);
+    
+    for (let index = 0; index < todosParaSMS.length; index++) {
+      const item = todosParaSMS[index];
+      console.log(`\n📤 [${logId}] Enviando SMS ${index + 1}/${todosParaSMS.length} a ${item.nombre}`);
+      
+      try {
+        const smsMessage = item.tipo === 'open_house' 
+          ? `🏠 Recordatorio Winston – Open House
+📅 Mañana ${item.eventInfo.fechaEvento}
+🕘 ${item.eventInfo.horaEvento}
+📍 ${item.eventInfo.institucionNombre}
+Confirma tu asistencia aquí:
+https://open-house-chi.vercel.app/asistencia?id=${item.id}&confirmacion=confirmado
+¡Te esperamos!`
+          : `📚 Recordatorio Winston – Sesión Informativa
+📅 Mañana ${item.eventInfo.fechaEvento}
+🕘 ${item.eventInfo.horaEvento}
+📍 ${item.eventInfo.institucionNombre}
+Confirma tu asistencia aquí:
+https://open-house-chi.vercel.app/asistencia?id=${item.id}&confirmacion=confirmado
+¡Te esperamos!`;
+        
+        const smsResult = await sendReminderSMS(item.telefono, smsMessage);
+        
+        if (smsResult) {
+          console.log(`✅ [${logId}] SMS enviado exitosamente a ${item.telefono}`);
+        } else {
+          console.log(`⚠️ [${logId}] SMS no pudo ser enviado a ${item.telefono}`);
+        }
+        
+        // Esperar 3 minutos antes del siguiente SMS (excepto en el último)
+        if (index < todosParaSMS.length - 1) {
+          console.log(`⏳ [${logId}] Esperando 3 minutos antes del siguiente SMS...`);
+          await new Promise(resolve => setTimeout(resolve, 180000));
+        }
+      } catch (error) {
+        console.error(`❌ [${logId}] Error enviando SMS a ${item.telefono}:`, error);
+      }
+    }
+    
+    console.log(`\n✅ [${logId}] Fase 3 completada: SMS enviados con delay de 3 minutos`);
+    */
+  }
 
     const endTime = new Date();
     const duration = endTime.getTime() - startTime.getTime();
