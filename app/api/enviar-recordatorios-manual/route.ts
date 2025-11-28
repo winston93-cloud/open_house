@@ -1535,8 +1535,78 @@ export async function POST(request: NextRequest) {
   return processReminders();
 }
 
-// Endpoint GET: También envía recordatorios (para poder usar desde navegador)
+// Endpoint GET: Obtener pendientes SIN enviar (para preview en UI)
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const preview = searchParams.get('preview');
+  
+  // Si tiene ?preview=true, solo mostrar pendientes sin enviar
+  if (preview === 'true') {
+    try {
+      const now = new Date();
+      const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
+      const tomorrow = new Date(today);
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+      
+      // Buscar inscripciones pendientes (Open House)
+      const { data: inscripciones, error: inscripcionesError } = await supabase
+        .from('inscripciones')
+        .select('*')
+        .eq('reminder_sent', false)
+        .gte('reminder_scheduled_for', today.toISOString())
+        .lt('reminder_scheduled_for', tomorrow.toISOString());
+      
+      // Buscar sesiones pendientes
+      const { data: sesiones, error: sesionesError } = await supabase
+        .from('sesiones')
+        .select('*')
+        .eq('reminder_sent', false)
+        .gte('reminder_scheduled_for', today.toISOString())
+        .lt('reminder_scheduled_for', tomorrow.toISOString());
+      
+      const pendientes = [
+        ...(inscripciones || []).map(i => ({
+          id: i.id,
+          nombre_aspirante: i.nombre_aspirante,
+          email: i.email,
+          telefono: i.telefono,
+          nivel_academico: i.nivel_academico,
+          grado_escolar: i.grado_escolar,
+          tipo_evento: 'open_house' as const,
+          fecha_evento: getEventInfo(i.nivel_academico, true).fechaEvento,
+          hora_evento: getEventInfo(i.nivel_academico, true).horaEvento,
+          institucion: getEventInfo(i.nivel_academico, true).institucionNombre
+        })),
+        ...(sesiones || []).map(s => ({
+          id: s.id,
+          nombre_aspirante: s.nombre_aspirante,
+          email: s.email,
+          telefono: s.telefono,
+          nivel_academico: s.nivel_academico,
+          grado_escolar: s.grado_escolar,
+          tipo_evento: 'sesion' as const,
+          fecha_evento: getEventInfo(s.nivel_academico, false).fechaEvento,
+          hora_evento: getEventInfo(s.nivel_academico, false).horaEvento,
+          institucion: getEventInfo(s.nivel_academico, false).institucionNombre
+        }))
+      ];
+      
+      return NextResponse.json({
+        success: true,
+        pendientes,
+        count: pendientes.length,
+        fecha_consulta: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error obteniendo pendientes:', error);
+      return NextResponse.json(
+        { error: 'Error al obtener pendientes' },
+        { status: 500 }
+      );
+    }
+  }
+  
+  // Si no tiene ?preview=true, enviar recordatorios (comportamiento original)
   return processReminders();
 }
 // Force rebuild lun 18 nov 2025 09:31 CST - UTC fix
