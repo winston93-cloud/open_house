@@ -57,9 +57,9 @@ export default function PruebaSMSSeguimiento() {
       }}>
         <h3>📱 Números que recibirán SMS:</h3>
         <ul>
-          <li><strong>8333246904</strong> - Mario Escobedo</li>
-          <li><strong>8331491483</strong> - Sistemas</li>
-          <li><strong>8331078297</strong> - Test User</li>
+          <li><strong>333246904</strong> - Mario Escobedo</li>
+          <li><strong>331491483</strong> - Sistemas</li>
+          <li><strong>331078297</strong> - Test User</li>
         </ul>
 
         <h3>📨 SMS que se enviarán a cada uno:</h3>

@@ -46,9 +46,9 @@ export async function POST(request: NextRequest) {
     console.log('🧪 [PRUEBA SMS] Iniciando envío de SMS de seguimiento...');
     
     const destinatarios = [
-      { telefono: '8333246904', nombre: 'Mario Escobedo' },
-      { telefono: '8331491483', nombre: 'Sistemas' },
-      { telefono: '8331078297', nombre: 'Test User' }
+      { telefono: '333246904', nombre: 'Mario Escobedo' },
+      { telefono: '331491483', nombre: 'Sistemas' },
+      { telefono: '331078297', nombre: 'Test User' }
     ];
     
     const results = [];
