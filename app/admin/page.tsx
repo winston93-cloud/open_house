@@ -320,10 +320,10 @@ export default function AdminDashboard() {
       const sesionesOrdenadas = ordenarPorNivelYNombre(sesiones);
       
       const datosSesiones = [
-        ['', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
+        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', ''],
+        ['', '', '', '', '', '', ''],
         ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN']
       ];
       
