@@ -180,6 +180,40 @@ export default function AdminDashboard() {
     }
   };
 
+  // Función auxiliar para formatear el nombre del nivel
+  const formatNivelAcademico = (nivel: string): string => {
+    const niveles: { [key: string]: string } = {
+      'maternal': 'Maternal',
+      'kinder': 'Kinder',
+      'primaria': 'Primaria',
+      'secundaria': 'Secundaria'
+    };
+    return niveles[nivel] || nivel.charAt(0).toUpperCase() + nivel.slice(1);
+  };
+
+  // Función auxiliar para ordenar por nivel y nombre
+  const ordenarPorNivelYNombre = <T extends { nivel_academico: string; nombre_aspirante: string }>(items: T[]): T[] => {
+    const ordenNiveles: { [key: string]: number } = {
+      'maternal': 1,
+      'kinder': 2,
+      'primaria': 3,
+      'secundaria': 4
+    };
+
+    return [...items].sort((a, b) => {
+      // Primero ordenar por nivel
+      const nivelA = ordenNiveles[a.nivel_academico] || 999;
+      const nivelB = ordenNiveles[b.nivel_academico] || 999;
+      
+      if (nivelA !== nivelB) {
+        return nivelA - nivelB;
+      }
+      
+      // Si el nivel es el mismo, ordenar por nombre ascendente
+      return a.nombre_aspirante.localeCompare(b.nombre_aspirante, 'es', { sensitivity: 'base' });
+    });
+  };
+
   const exportToExcel = async () => {
     try {
       const XLSX = await import('xlsx');
@@ -233,6 +267,9 @@ export default function AdminDashboard() {
       XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen Ejecutivo');
       
       // === HOJA 2: DATOS DETALLADOS OPEN HOUSE ===
+      // Ordenar y agrupar por nivel
+      const openHouseOrdenados = ordenarPorNivelYNombre(openHouse);
+      
       const datosOpenHouse = [
         ['', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', ''],
@@ -241,11 +278,17 @@ export default function AdminDashboard() {
         ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
       ];
       
-      openHouse.forEach(item => {
+      let nivelAnterior = '';
+      openHouseOrdenados.forEach(item => {
+        // Agregar separador de nivel si cambió el nivel
+        if (nivelAnterior !== item.nivel_academico && nivelAnterior !== '') {
+          datosOpenHouse.push(['', '', '', '', '', '', '', '']); // Línea en blanco para separar
+        }
+        
         datosOpenHouse.push([
           '',
           item.nombre_aspirante,
-          item.nivel_academico,
+          formatNivelAcademico(item.nivel_academico),
           item.grado_escolar,
           item.email,
           item.telefono || '',
@@ -254,6 +297,8 @@ export default function AdminDashboard() {
           item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
           '⏳ PENDIENTE'
         ]);
+        
+        nivelAnterior = item.nivel_academico;
       });
       
       const openHouseSheet = XLSX.utils.aoa_to_sheet(datosOpenHouse);
@@ -271,6 +316,9 @@ export default function AdminDashboard() {
       XLSX.utils.book_append_sheet(workbook, openHouseSheet, 'Open House');
       
       // === HOJA 3: DATOS DETALLADOS SESIONES INFORMATIVAS ===
+      // Ordenar y agrupar por nivel
+      const sesionesOrdenadas = ordenarPorNivelYNombre(sesiones);
+      
       const datosSesiones = [
         ['', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', ''],
@@ -279,16 +327,24 @@ export default function AdminDashboard() {
         ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN']
       ];
       
-      sesiones.forEach(item => {
+      nivelAnterior = '';
+      sesionesOrdenadas.forEach(item => {
+        // Agregar separador de nivel si cambió el nivel
+        if (nivelAnterior !== item.nivel_academico && nivelAnterior !== '') {
+          datosSesiones.push(['', '', '', '', '', '', '']); // Línea en blanco para separar
+        }
+        
         datosSesiones.push([
           '',
           item.nombre_aspirante,
-          item.nivel_academico,
+          formatNivelAcademico(item.nivel_academico),
           item.grado_escolar,
           item.email,
           item.telefono || '',
           new Date(item.created_at).toLocaleDateString('es-MX')
         ]);
+        
+        nivelAnterior = item.nivel_academico;
       });
       
       const sesionesSheet = XLSX.utils.aoa_to_sheet(datosSesiones);
