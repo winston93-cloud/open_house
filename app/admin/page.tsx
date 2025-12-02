@@ -9,6 +9,7 @@ interface Inscripcion {
   nivel_academico: string;
   grado_escolar: string;
   email: string;
+  telefono: string;
   fecha_inscripcion: string;
   created_at: string;
   confirmacion_asistencia: string;
@@ -21,6 +22,7 @@ interface Sesion {
   nivel_academico: string;
   grado_escolar: string;
   email: string;
+  telefono: string;
   fecha_inscripcion: string;
   created_at: string;
   reminder_sent: boolean;
@@ -232,11 +234,11 @@ export default function AdminDashboard() {
       
       // === HOJA 2: DATOS DETALLADOS OPEN HOUSE ===
       const datosOpenHouse = [
-        ['', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', ''],
-        ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', ''],
-        ['', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
+        ['', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
       ];
       
       openHouse.forEach(item => {
@@ -246,6 +248,7 @@ export default function AdminDashboard() {
           item.nivel_academico,
           item.grado_escolar,
           item.email,
+          item.telefono || '',
           new Date(item.created_at).toLocaleDateString('es-MX'),
           item.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
           item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
@@ -260,6 +263,7 @@ export default function AdminDashboard() {
         { width: 15 },
         { width: 15 },
         { width: 35 },
+        { width: 20 },
         { width: 25 },
         { width: 15 }
       ];
@@ -268,11 +272,11 @@ export default function AdminDashboard() {
       
       // === HOJA 3: DATOS DETALLADOS SESIONES INFORMATIVAS ===
       const datosSesiones = [
-        ['', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', ''],
-        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', ''],
-        ['', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'FECHA DE INSCRIPCIÓN']
+        ['', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN']
       ];
       
       sesiones.forEach(item => {
@@ -282,6 +286,7 @@ export default function AdminDashboard() {
           item.nivel_academico,
           item.grado_escolar,
           item.email,
+          item.telefono || '',
           new Date(item.created_at).toLocaleDateString('es-MX')
         ]);
       });
@@ -293,6 +298,7 @@ export default function AdminDashboard() {
         { width: 15 },
         { width: 15 },
         { width: 35 },
+        { width: 20 },
         { width: 25 }
       ];
       
