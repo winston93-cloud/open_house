@@ -162,11 +162,11 @@ export async function POST(request: NextRequest) {
       
       results.push(smsResults);
       
-      // Esperar 1 minuto antes del siguiente destinatario (excepto el último)
+      // Esperar 3 minutos antes del siguiente destinatario (excepto el último)
       const esUltimo = destinatarios.indexOf(dest) === destinatarios.length - 1;
       if (!esUltimo) {
-        console.log(`⏳ [PRUEBA SMS] Esperando 1 minuto antes del siguiente destinatario...`);
-        await new Promise(resolve => setTimeout(resolve, 60000)); // 1 minuto = 60000ms
+        console.log(`⏳ [PRUEBA SMS] Esperando 3 minutos antes del siguiente destinatario...`);
+        await new Promise(resolve => setTimeout(resolve, 180000)); // 3 minutos = 180000ms
       }
     }
     
