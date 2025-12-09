@@ -673,7 +673,7 @@ export async function POST(request: NextRequest) {
           fecha_inscripcion: new Date().toISOString(),
           reminder_sent: false,
           reminder_scheduled_for: reminderDate.toISOString(),
-          ciclo_escolar: '2025-2026' // Ciclo escolar para eventos de enero 2026
+          ciclo_escolar: '2026' // Año para eventos de enero 2026
         }
       ])
       .select();

@@ -1212,7 +1212,7 @@ async function processReminders() {
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
-      .eq('ciclo_escolar', '2025-2026')
+      .eq('ciclo_escolar', '2026')
       .gte('reminder_scheduled_for', today.toISOString())
       .lt('reminder_scheduled_for', tomorrow.toISOString());
       
@@ -1329,7 +1329,7 @@ async function processReminders() {
       .from('sesiones')
       .select('*')
       .eq('reminder_sent', false)
-      .eq('ciclo_escolar', '2025-2026')
+      .eq('ciclo_escolar', '2026')
       .gte('reminder_scheduled_for', today.toISOString())
       .lt('reminder_scheduled_for', tomorrow.toISOString());
       
@@ -1555,7 +1555,7 @@ export async function GET(request: NextRequest) {
         .from('inscripciones')
         .select('*')
         .eq('reminder_sent', false)
-        .eq('ciclo_escolar', '2025-2026')
+        .eq('ciclo_escolar', '2026')
         .gte('reminder_scheduled_for', today.toISOString())
         .lt('reminder_scheduled_for', tomorrow.toISOString());
       
@@ -1564,7 +1564,7 @@ export async function GET(request: NextRequest) {
         .from('sesiones')
         .select('*')
         .eq('reminder_sent', false)
-        .eq('ciclo_escolar', '2025-2026')
+        .eq('ciclo_escolar', '2026')
         .gte('reminder_scheduled_for', today.toISOString())
         .lt('reminder_scheduled_for', tomorrow.toISOString());
       

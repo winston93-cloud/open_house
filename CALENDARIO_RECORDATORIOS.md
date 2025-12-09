@@ -1,6 +1,6 @@
 # CALENDARIO DE ENVÍOS DE RECORDATORIOS
 ## Sistema de Open House y Sesiones Informativas
-## CICLO ESCOLAR 2025-2026
+## AÑO 2026
 
 ---
 
@@ -55,21 +55,21 @@ https://open-house-chi.vercel.app/api/enviar-recordatorios-manual
 
 ---
 
-## 🔄 FILTROS POR CICLO ESCOLAR
+## 🔄 FILTROS POR AÑO
 
-El sistema ahora incluye filtros por **ciclo escolar** para diferenciar eventos:
+El sistema ahora incluye filtros por **año** para diferenciar eventos:
 
-- **Ciclo 2024-2025:** Eventos de Nov-Dic 2025 (ya realizados)
-- **Ciclo 2025-2026:** Eventos de Enero 2026 (actuales)
+- **2025:** Eventos de Nov-Dic 2025 (ya realizados)
+- **2026:** Eventos de Enero 2026 (actuales)
 
 ### En el Admin Dashboard:
-- Selector de ciclo escolar en la esquina superior derecha
-- Los reportes Excel incluyen columna de ciclo escolar
-- Las estadísticas se calculan por ciclo seleccionado
+- Selector de año en la esquina superior derecha
+- Los reportes Excel incluyen columna de año
+- Las estadísticas se calculan por año seleccionado
 
 ### En los Recordatorios:
-- Solo se envían recordatorios del ciclo activo (2025-2026)
-- Los eventos anteriores (2024-2025) se mantienen como histórico
+- Solo se envían recordatorios del año activo (2026)
+- Los eventos anteriores (2025) se mantienen como histórico
 
 ---
 
@@ -78,12 +78,12 @@ El sistema ahora incluye filtros por **ciclo escolar** para diferenciar eventos:
 1. Los recordatorios se envían **1 día antes** del evento
 2. **Solo se envían EMAILS** (SMS desactivados hasta implementar Bridge API)
 3. Los recordatorios se envían a las **9:00 AM hora de México** (UTC-6)
-4. El sistema filtra automáticamente por `ciclo_escolar = '2025-2026'`
-5. Los datos históricos del ciclo 2024-2025 se mantienen intactos en la base de datos
+4. El sistema filtra automáticamente por `ciclo_escolar = '2026'`
+5. Los datos históricos del año 2025 se mantienen intactos en la base de datos
 
 ---
 
-## 🗓️ HISTÓRICO - CICLO 2024-2025
+## 🗓️ HISTÓRICO - AÑO 2025
 
 **OPEN HOUSE 2025 (Realizados):**
 - Viernes 28 de Noviembre 2025: Maternal/Kinder (29 Nov)

@@ -39,7 +39,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
-  const [cicloEscolar, setCicloEscolar] = useState<string>('2025-2026'); // Ciclo activo por defecto
+  const [cicloEscolar, setCicloEscolar] = useState<string>('2026'); // Año activo por defecto
   const [stats, setStats] = useState({
     totalOpenHouse: 0,
     totalSesiones: 0,
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
         ['', '', '', '', '', '', '', '', ''],
         ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN', 'CICLO ESCOLAR']
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN', 'AÑO']
       ];
       
       let nivelAnterior = '';
@@ -301,7 +301,7 @@ export default function AdminDashboard() {
           item.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
           item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
           '⏳ PENDIENTE',
-          item.ciclo_escolar || '2024-2025'
+          item.ciclo_escolar || '2025'
         ]);
         
         nivelAnterior = item.nivel_academico;
@@ -331,7 +331,7 @@ export default function AdminDashboard() {
         ['', '', '', '', '', '', '', '', ''],
         ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CICLO ESCOLAR']
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'AÑO']
       ];
       
       nivelAnterior = '';
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
           item.email,
           item.telefono || '',
           new Date(item.created_at).toLocaleDateString('es-MX'),
-          item.ciclo_escolar || '2024-2025'
+          item.ciclo_escolar || '2025'
         ]);
         
         nivelAnterior = item.nivel_academico;
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
           <div className="admin-header-actions">
             <div className="admin-ciclo-selector" style={{ marginRight: '15px' }}>
               <label htmlFor="cicloSelect" style={{ marginRight: '8px', fontWeight: '600', color: '#1e3a8a' }}>
-                Ciclo Escolar:
+                Año:
               </label>
               <select 
                 id="cicloSelect"
@@ -473,8 +473,8 @@ export default function AdminDashboard() {
                   fontSize: '14px'
                 }}
               >
-                <option value="2025-2026">2025-2026</option>
-                <option value="2024-2025">2024-2025</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
               </select>
             </div>
             <button onClick={() => { fetchOpenHouse(); fetchSesiones(); }} className="admin-refresh-button">

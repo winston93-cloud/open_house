@@ -4,19 +4,19 @@
 
 -- 1. Agregar columna a tabla inscripciones
 ALTER TABLE inscripciones 
-ADD COLUMN IF NOT EXISTS ciclo_escolar VARCHAR(20) DEFAULT '2024-2025';
+ADD COLUMN IF NOT EXISTS ciclo_escolar VARCHAR(20) DEFAULT '2025';
 
 -- 2. Agregar columna a tabla sesiones
 ALTER TABLE sesiones 
-ADD COLUMN IF NOT EXISTS ciclo_escolar VARCHAR(20) DEFAULT '2024-2025';
+ADD COLUMN IF NOT EXISTS ciclo_escolar VARCHAR(20) DEFAULT '2025';
 
--- 3. Actualizar registros existentes con el ciclo 2024-2025
+-- 3. Actualizar registros existentes con el año 2025
 UPDATE inscripciones 
-SET ciclo_escolar = '2024-2025' 
+SET ciclo_escolar = '2025' 
 WHERE ciclo_escolar IS NULL;
 
 UPDATE sesiones 
-SET ciclo_escolar = '2024-2025' 
+SET ciclo_escolar = '2025' 
 WHERE ciclo_escolar IS NULL;
 
 -- 4. Crear índices para mejorar consultas por ciclo
