@@ -80,8 +80,8 @@ Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admi
 
 Escribenos por WhatsApp y con gusto te brindamos toda la informacion necesaria:
 
-- Winston Churchill: 833 437 8743
-- Educativo Winston: 833 347 4507`;
+Winston Churchill: https://wa.me/528334378743
+Educativo Winston: https://wa.me/528333474507`;
 }
 
 function getMensaje72h(): string {
@@ -93,8 +93,8 @@ Le gustaria agendar un recorrido por nuestras instalaciones?
 
 Envia un mensaje y te ayudamos a reservar tu visita:
 
-- Winston Churchill: 833 437 8743
-- Educativo Winston: 833 347 4507`;
+Winston Churchill: https://wa.me/528334378743
+Educativo Winston: https://wa.me/528333474507`;
 }
 
 function getMensaje5d(): string {
@@ -104,8 +104,8 @@ Aproveche nuestro descuento especial al iniciar su proceso de admision hoy!
 
 Escribenos y da el primer paso para formar parte del Instituto Winston Churchill.
 
-- Winston Churchill: 833 437 8743
-- Educativo Winston: 833 347 4507`;
+Winston Churchill: https://wa.me/528334378743
+Educativo Winston: https://wa.me/528333474507`;
 }
 
 // GET y POST permitidos
