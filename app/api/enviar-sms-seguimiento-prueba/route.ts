@@ -114,7 +114,11 @@ Escríbenos y da el primer paso para formar parte del Instituto Winston Churchil
 https://wa.link/jqgp8z`;
 }
 
-// Solo POST - NO GET para evitar ejecución automática
+// GET y POST permitidos
+export async function GET(request: NextRequest) {
+  return POST(request);
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🧪 [PRUEBA SMS] Iniciando envío de SMS de seguimiento...');
