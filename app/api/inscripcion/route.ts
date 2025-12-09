@@ -600,17 +600,17 @@ const createEmailTemplate = (formData: any) => {
   let fechaEvento, horaEvento, institucionNombre;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Sábado 29 de noviembre de 2025';
+    fechaEvento = 'Viernes 24 de enero de 2025';
     horaEvento = '9:00 AM';
     institucionNombre = 'Instituto Educativo Winston';
     return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Sábado 6 de diciembre de 2025';
+    fechaEvento = 'Viernes 17 de enero de 2025';
     horaEvento = '9:00 AM a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Sábado 6 de diciembre de 2025';
+    fechaEvento = 'Viernes 17 de enero de 2025';
     horaEvento = '11:30 AM a 2:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
@@ -642,11 +642,11 @@ export async function POST(request: NextRequest) {
     let reminderDate: Date;
     
     if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-      // Open House Maternal/Kinder: 29 nov, recordatorio 28 nov
-      reminderDate = new Date('2025-11-28');
+      // Open House Maternal/Kinder: 24 ene, recordatorio 23 ene
+      reminderDate = new Date('2026-01-23');
     } else if (formData.nivelAcademico === 'primaria' || formData.nivelAcademico === 'secundaria') {
-      // Open House Primaria/Secundaria: 6 dic, recordatorio 5 dic
-      reminderDate = new Date('2025-12-05');
+      // Open House Primaria/Secundaria: 17 ene, recordatorio 16 ene
+      reminderDate = new Date('2026-01-16');
     } else {
       // Seguridad: rechazar niveles académicos no válidos
       console.error('❌ Nivel académico no válido:', formData.nivelAcademico);
@@ -673,7 +673,8 @@ export async function POST(request: NextRequest) {
           direccion: formData.direccion || '',
           fecha_inscripcion: new Date().toISOString(),
           reminder_sent: false,
-          reminder_scheduled_for: reminderDate.toISOString()
+          reminder_scheduled_for: reminderDate.toISOString(),
+          ciclo_escolar: '2025-2026' // Ciclo escolar para eventos de enero 2026
         }
       ])
       .select();

@@ -24,19 +24,19 @@ interface FormErrors {
 const SESIONES_EVENT_INFO: Record<string, { title: string; subtitle: string }> = {
   maternal: {
     title: 'Sesión Informativa Maternal y Kinder',
-    subtitle: 'Lunes 1 de diciembre · 6:00 p.m.'
+    subtitle: 'Domingo 26 de enero · 6:00 p.m.'
   },
   kinder: {
     title: 'Sesión Informativa Maternal y Kinder',
-    subtitle: 'Lunes 1 de diciembre · 6:00 p.m.'
+    subtitle: 'Domingo 26 de enero · 6:00 p.m.'
   },
   primaria: {
     title: 'Sesión Informativa Primaria',
-    subtitle: 'Lunes 8 de diciembre · 6:00 p.m.'
+    subtitle: 'Domingo 19 de enero · 6:00 p.m.'
   },
   secundaria: {
     title: 'Sesión Informativa Secundaria',
-    subtitle: 'Martes 9 de diciembre · 6:00 p.m.'
+    subtitle: 'Lunes 20 de enero · 6:00 p.m.'
   }
 }
 

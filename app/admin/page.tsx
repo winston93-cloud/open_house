@@ -14,6 +14,7 @@ interface Inscripcion {
   created_at: string;
   confirmacion_asistencia: string;
   fecha_confirmacion?: string;
+  ciclo_escolar: string;
 }
 
 interface Sesion {
@@ -28,6 +29,7 @@ interface Sesion {
   reminder_sent: boolean;
   confirmacion_asistencia: string;
   fecha_confirmacion?: string;
+  ciclo_escolar: string;
 }
 
 export default function AdminDashboard() {
@@ -37,6 +39,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
+  const [cicloEscolar, setCicloEscolar] = useState<string>('2025-2026'); // Ciclo activo por defecto
   const [stats, setStats] = useState({
     totalOpenHouse: 0,
     totalSesiones: 0,
@@ -73,7 +76,7 @@ export default function AdminDashboard() {
       fetchSesiones();
       fetchRestoreFiles();
     }
-  }, [authenticated]);
+  }, [authenticated, cicloEscolar]); // Recargar cuando cambie el ciclo
 
   // Obtener archivos de backup disponibles
   const fetchRestoreFiles = async () => {
@@ -130,7 +133,8 @@ export default function AdminDashboard() {
       const { data, error } = await supabase
         .from('inscripciones')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('ciclo_escolar', cicloEscolar)
+        .order('created_at', { ascending: false});
 
       if (error) throw error;
 
@@ -160,7 +164,8 @@ export default function AdminDashboard() {
       const { data, error } = await supabase
         .from('sesiones')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('ciclo_escolar', cicloEscolar)
+        .order('created_at', { ascending: false});
 
       if (error) throw error;
 
@@ -272,17 +277,17 @@ export default function AdminDashboard() {
       
       const datosOpenHouse = [
         ['', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN']
+        ['', '', '', '', '', '', '', '', ''],
+        ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', ''],
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONFIRMACIÓN', 'CICLO ESCOLAR']
       ];
       
       let nivelAnterior = '';
       openHouseOrdenados.forEach(item => {
         // Agregar separador de nivel si cambió el nivel
         if (nivelAnterior !== item.nivel_academico && nivelAnterior !== '') {
-          datosOpenHouse.push(['', '', '', '', '', '', '', '']); // Línea en blanco para separar
+          datosOpenHouse.push(['', '', '', '', '', '', '', '', '']); // Línea en blanco para separar
         }
         
         datosOpenHouse.push([
@@ -295,7 +300,8 @@ export default function AdminDashboard() {
           new Date(item.created_at).toLocaleDateString('es-MX'),
           item.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
           item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
-          '⏳ PENDIENTE'
+          '⏳ PENDIENTE',
+          item.ciclo_escolar || '2024-2025'
         ]);
         
         nivelAnterior = item.nivel_academico;
@@ -310,6 +316,7 @@ export default function AdminDashboard() {
         { width: 35 },
         { width: 20 },
         { width: 25 },
+        { width: 15 },
         { width: 15 }
       ];
       
@@ -320,18 +327,18 @@ export default function AdminDashboard() {
       const sesionesOrdenadas = ordenarPorNivelYNombre(sesiones);
       
       const datosSesiones = [
-        ['', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', ''],
-        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', ''],
-        ['', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN']
+        ['', '', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', ''],
+        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', '', ''],
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CICLO ESCOLAR']
       ];
       
       nivelAnterior = '';
       sesionesOrdenadas.forEach(item => {
         // Agregar separador de nivel si cambió el nivel
         if (nivelAnterior !== item.nivel_academico && nivelAnterior !== '') {
-          datosSesiones.push(['', '', '', '', '', '', '']); // Línea en blanco para separar
+          datosSesiones.push(['', '', '', '', '', '', '', '']); // Línea en blanco para separar
         }
         
         datosSesiones.push([
@@ -341,7 +348,8 @@ export default function AdminDashboard() {
           item.grado_escolar,
           item.email,
           item.telefono || '',
-          new Date(item.created_at).toLocaleDateString('es-MX')
+          new Date(item.created_at).toLocaleDateString('es-MX'),
+          item.ciclo_escolar || '2024-2025'
         ]);
         
         nivelAnterior = item.nivel_academico;
@@ -355,7 +363,8 @@ export default function AdminDashboard() {
         { width: 15 },
         { width: 35 },
         { width: 20 },
-        { width: 25 }
+        { width: 25 },
+        { width: 15 }
       ];
       
       XLSX.utils.book_append_sheet(workbook, sesionesSheet, 'Sesiones Informativas');
@@ -445,6 +454,29 @@ export default function AdminDashboard() {
             </div>
           
           <div className="admin-header-actions">
+            <div className="admin-ciclo-selector" style={{ marginRight: '15px' }}>
+              <label htmlFor="cicloSelect" style={{ marginRight: '8px', fontWeight: '600', color: '#1e3a8a' }}>
+                Ciclo Escolar:
+              </label>
+              <select 
+                id="cicloSelect"
+                value={cicloEscolar} 
+                onChange={(e) => setCicloEscolar(e.target.value)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: '2px solid #1e3a8a',
+                  backgroundColor: 'white',
+                  color: '#1e3a8a',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="2025-2026">2025-2026</option>
+                <option value="2024-2025">2024-2025</option>
+              </select>
+            </div>
             <button onClick={() => { fetchOpenHouse(); fetchSesiones(); }} className="admin-refresh-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />

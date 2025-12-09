@@ -1009,43 +1009,43 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
 // Función para obtener la información del evento según el nivel y tipo de formulario
 const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
   if (isOpenHouse) {
-    // OPEN HOUSE
+    // OPEN HOUSE 2026
     if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
       return {
-        fechaEvento: '29 de Noviembre',
+        fechaEvento: '24 de Enero',
         horaEvento: '9:00 AM',
         institucionNombre: 'Instituto Educativo Winston'
       };
     } else if (nivelAcademico === 'primaria') {
       return {
-        fechaEvento: '6 de Diciembre',
+        fechaEvento: '17 de Enero',
         horaEvento: '9:00 AM - 11:30 AM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     } else if (nivelAcademico === 'secundaria') {
       return {
-        fechaEvento: '6 de Diciembre',
+        fechaEvento: '17 de Enero',
         horaEvento: '11:30 AM - 2:00 PM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     }
   } else {
-    // SESIONES INFORMATIVAS
+    // SESIONES INFORMATIVAS 2026
     if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
       return {
-        fechaEvento: '1 de Diciembre',
+        fechaEvento: '26 de Enero',
         horaEvento: '6:00 PM',
         institucionNombre: 'Instituto Educativo Winston'
       };
     } else if (nivelAcademico === 'primaria') {
       return {
-        fechaEvento: '8 de Diciembre',
+        fechaEvento: '19 de Enero',
         horaEvento: '6:00 PM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     } else if (nivelAcademico === 'secundaria') {
       return {
-        fechaEvento: '9 de Diciembre',
+        fechaEvento: '20 de Enero',
         horaEvento: '6:00 PM',
         institucionNombre: 'Instituto Winston Churchill'
       };
@@ -1254,6 +1254,7 @@ export async function POST(request: NextRequest) {
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
+      .eq('ciclo_escolar', '2025-2026')
       .gte('reminder_scheduled_for', today.toISOString())
       .lt('reminder_scheduled_for', tomorrow.toISOString());
       
@@ -1360,6 +1361,7 @@ export async function POST(request: NextRequest) {
       .from('sesiones')
       .select('*')
       .eq('reminder_sent', false)
+      .eq('ciclo_escolar', '2025-2026')
       .gte('reminder_scheduled_for', today.toISOString())
       .lt('reminder_scheduled_for', tomorrow.toISOString());
       
@@ -1487,6 +1489,7 @@ export async function GET() {
       .from('inscripciones')
       .select('id, email, nombre_aspirante, nivel_academico, created_at, reminder_sent')
       .eq('reminder_sent', false)
+      .eq('ciclo_escolar', '2025-2026')
       .order('created_at', { ascending: false });
 
     if (error) {
