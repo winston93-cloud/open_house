@@ -126,11 +126,11 @@ export async function createKommoLead(leadData: {
     let tagName: string | null = null;
     if (tipoEvento === 'sesiones') {
       // Sesiones Informativas:
-      // Winston -> Sesiones Informativas Winston, Educativo -> Sesiones Informativas Educativo
-      tagName = leadData.plantel === 'winston' ? 'Sesiones Informativas Winston' : 'Sesiones Informativas Educativo';
+      // Winston -> Sesiones Informativas Winston 2026, Educativo -> Sesiones Informativas Educativo 2026
+      tagName = leadData.plantel === 'winston' ? 'Sesiones Informativas Winston 2026' : 'Sesiones Informativas Educativo 2026';
     } else {
-      // Open House se mantiene igual
-      tagName = leadData.plantel === 'winston' ? 'Open House Winston' : 'Open House Educativo';
+      // Open House
+      tagName = leadData.plantel === 'winston' ? 'Open House Winston 2026' : 'Open House Educativo 2026';
     }
     if (tagName) {
       console.log(`🏷️ Etiqueta a incluir: ${tagName} (Evento: ${tipoEvento}, Plantel: ${leadData.plantel})`);
