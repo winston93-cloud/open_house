@@ -76,36 +76,42 @@ async function sendSMSSinPrefijo(phone: string, message: string) {
 function getMensaje24h(): string {
   return `RECORDATORIO
 
-¡Hola! Te recordamos que estamos disponibles para apoyarte con el proceso de admisión al Instituto Winston Churchill.
+¡Hola! 👋 Te recordamos que estamos disponibles para apoyarte con el proceso de admisión al Instituto Winston Churchill. 🦁
 
-Escríbenos por WhatsApp y con gusto te brindamos toda la información necesaria:
+📲 Escríbenos por WhatsApp y con gusto te brindamos toda la información necesaria:
 
-• Winston Churchill: https://wa.me/528334378743
-• Educativo Winston: https://wa.me/528333474507`;
+• Winston Churchill: 833 437 8743
+• Educativo Winston: 833 347 4507
+
+https://wa.link/jqgp8z`;
 }
 
 function getMensaje72h(): string {
-  return `¿AGENDAMOS UN RECORRIDO?
+  return `¿AGENDAMOS UN RECORRIDO? 👀
 
-¡Nos encantaría que conociera nuestro Instituto Winston Churchill!
+¡Nos encantaría que conociera nuestro Instituto Winston Churchill! ✨🦁
 
 ¿Le gustaría agendar un recorrido por nuestras instalaciones?
 
 Envía un mensaje y te ayudamos a reservar tu visita:
 
-• Winston Churchill: https://wa.me/528334378743
-• Educativo Winston: https://wa.me/528333474507`;
+• Winston Churchill: 833 437 8743
+• Educativo Winston: 833 347 4507
+
+https://wa.link/jqgp8z`;
 }
 
 function getMensaje5d(): string {
-  return `DESCUENTO ESPECIAL AL INICIAR TU PROCESO DE ADMISIÓN HOY
+  return `DESCUENTO ESPECIAL AL INICIAR TU PROCESO DE ADMISIÓN HOY 🔖
 
 ¡Aproveche nuestro descuento especial al iniciar su proceso de admisión hoy!
 
-Escríbenos y da el primer paso para formar parte del Instituto Winston Churchill:
+Escríbenos y da el primer paso para formar parte del Instituto Winston Churchill. 🦁
 
-• Winston Churchill: https://wa.me/528334378743
-• Educativo Winston: https://wa.me/528333474507`;
+• Winston Churchill: 833 437 8743
+• Educativo Winston: 833 347 4507
+
+https://wa.link/jqgp8z`;
 }
 
 // Solo POST - NO GET para evitar ejecución automática
@@ -115,7 +121,6 @@ export async function POST(request: NextRequest) {
     
     const destinatarios = [
       { telefono: '8333246904', nombre: 'Mario Escobedo' },
-      { telefono: '8331491483', nombre: 'Sistemas' },
       { telefono: '8331078297', nombre: 'Test User' }
     ];
     
