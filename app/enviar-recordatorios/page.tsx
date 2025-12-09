@@ -113,44 +113,52 @@ export default function EnviarRecordatoriosPage() {
 
   const proximosEnvios = [
     {
-      fecha: 'Domingo 1 de Diciembre',
-      hora: '6:00 PM',
-      tipo: 'Sesión Informativa',
-      niveles: ['Maternal', 'Kinder'],
-      institucion: 'Instituto Educativo Winston',
-      recordatorio: 'Domingo 30 de Noviembre, 9:00 AM'
-    },
-    {
-      fecha: 'Viernes 6 de Diciembre',
+      fecha: 'Viernes 17 de Enero 2026',
       hora: '9:00 AM - 11:30 AM',
       tipo: 'Open House',
       niveles: ['Primaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Viernes 5 de Diciembre, 9:00 AM'
+      recordatorio: 'Jueves 16 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Viernes 6 de Diciembre',
+      fecha: 'Viernes 17 de Enero 2026',
       hora: '11:30 AM - 2:00 PM',
       tipo: 'Open House',
       niveles: ['Secundaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Viernes 5 de Diciembre, 9:00 AM'
+      recordatorio: 'Jueves 16 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Domingo 8 de Diciembre',
+      fecha: 'Domingo 19 de Enero 2026',
       hora: '6:00 PM',
       tipo: 'Sesión Informativa',
       niveles: ['Primaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Domingo 7 de Diciembre, 9:00 AM'
+      recordatorio: 'Sábado 18 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Lunes 9 de Diciembre',
+      fecha: 'Lunes 20 de Enero 2026',
       hora: '6:00 PM',
       tipo: 'Sesión Informativa',
       niveles: ['Secundaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Lunes 8 de Diciembre, 9:00 AM'
+      recordatorio: 'Domingo 19 de Enero, 9:00 AM'
+    },
+    {
+      fecha: 'Viernes 24 de Enero 2026',
+      hora: '9:00 AM',
+      tipo: 'Open House',
+      niveles: ['Maternal', 'Kinder'],
+      institucion: 'Instituto Educativo Winston',
+      recordatorio: 'Jueves 23 de Enero, 9:00 AM'
+    },
+    {
+      fecha: 'Domingo 26 de Enero 2026',
+      hora: '6:00 PM',
+      tipo: 'Sesión Informativa',
+      niveles: ['Maternal', 'Kinder'],
+      institucion: 'Instituto Educativo Winston',
+      recordatorio: 'Sábado 25 de Enero, 9:00 AM'
     }
   ];
 
@@ -261,18 +269,18 @@ export default function EnviarRecordatoriosPage() {
             <div className="recordatorios-stats">
               <div className="recordatorios-stat-item recordatorios-stat-openhouse">
                 <p className="recordatorios-stat-label">Total Open House</p>
-                <p className="recordatorios-stat-value">34</p>
-                <p className="recordatorios-stat-description">Maternal/Kinder enviados el 28 nov</p>
+                <p className="recordatorios-stat-value">116</p>
+                <p className="recordatorios-stat-description">Eventos año 2025 completados</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-sesiones">
                 <p className="recordatorios-stat-label">Sesiones Informativas</p>
-                <p className="recordatorios-stat-value">0</p>
-                <p className="recordatorios-stat-description">Primera sesión: 30 nov</p>
+                <p className="recordatorios-stat-value">46</p>
+                <p className="recordatorios-stat-description">Eventos año 2025 completados</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-exito">
-                <p className="recordatorios-stat-label">Tasa de éxito</p>
-                <p className="recordatorios-stat-value">100%</p>
-                <p className="recordatorios-stat-description">34/34 enviados exitosamente</p>
+                <p className="recordatorios-stat-label">Nuevos eventos</p>
+                <p className="recordatorios-stat-value">2026</p>
+                <p className="recordatorios-stat-description">Inician 17 de enero</p>
               </div>
             </div>
           </div>
