@@ -265,22 +265,22 @@ export default function EnviarRecordatoriosPage() {
 
           {/* Estadísticas */}
           <div className="recordatorios-card recordatorios-card-estadisticas">
-            <h2 className="recordatorios-card-title">📊 Estadísticas</h2>
+            <h2 className="recordatorios-card-title">📊 Calendario de Recordatorios 2026</h2>
             <div className="recordatorios-stats">
               <div className="recordatorios-stat-item recordatorios-stat-openhouse">
-                <p className="recordatorios-stat-label">Total Open House</p>
-                <p className="recordatorios-stat-value">116</p>
-                <p className="recordatorios-stat-description">Eventos año 2025 completados</p>
+                <p className="recordatorios-stat-label">🏠 Open House</p>
+                <p className="recordatorios-stat-value">4 eventos</p>
+                <p className="recordatorios-stat-description">Viernes 16 y 23 enero, 9:00 AM</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-sesiones">
-                <p className="recordatorios-stat-label">Sesiones Informativas</p>
-                <p className="recordatorios-stat-value">46</p>
-                <p className="recordatorios-stat-description">Eventos año 2025 completados</p>
+                <p className="recordatorios-stat-label">📚 Sesiones Informativas</p>
+                <p className="recordatorios-stat-value">4 eventos</p>
+                <p className="recordatorios-stat-description">Dom 18, Lun 19, Dom 25 enero</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-exito">
-                <p className="recordatorios-stat-label">Nuevos eventos</p>
-                <p className="recordatorios-stat-value">2026</p>
-                <p className="recordatorios-stat-description">Inician 17 de enero</p>
+                <p className="recordatorios-stat-label">📅 Primer recordatorio</p>
+                <p className="recordatorios-stat-value">16 Ene</p>
+                <p className="recordatorios-stat-description">Viernes 9:00 AM</p>
               </div>
             </div>
           </div>
