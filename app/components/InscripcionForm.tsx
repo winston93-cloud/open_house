@@ -32,11 +32,11 @@ const OPEN_HOUSE_EVENT_INFO: Record<string, { title: string; subtitle: string }>
   },
   primaria: {
     title: 'Open House Primaria',
-    subtitle: 'Sábado 17 de enero · 9:00 a 11:30 a.m.'
+    subtitle: 'Sábado 17 de enero · 11:30 a.m. a 2:00 p.m.'
   },
   secundaria: {
     title: 'Open House Secundaria',
-    subtitle: 'Sábado 17 de enero · 11:30 a.m. a 2:00 p.m.'
+    subtitle: 'Sábado 17 de enero · 9:00 a 11:30 a.m.'
   }
 }
 
