@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Migración WhatsApp Business API a WhatsApp Lite</title>
+    <style>
+        body {
+            font-family: 'Liberation Sans', Arial, sans-serif;
+            margin: 40px;
+            font-size: 11pt;
+            line-height: 1.4;
+        }
+        
+        h1 {
+            color: #1a5490;
+            text-align: center;
+            border-bottom: 3px solid #1a5490;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .header-info {
+            background: #f0f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1a5490;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+        
+        th {
+            background: #1a5490;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #0d3a6f;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        tr:hover {
+            background: #e8f4f8;
+        }
+        
+        .phase-header {
+            background: #34495e !important;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 12px;
+            font-size: 11pt;
+        }
+        
+        .step-number {
+            background: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            min-width: 25px;
+            text-align: center;
+        }
+        
+        .time-badge {
+            background: #27ae60;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 9pt;
+            display: inline-block;
+        }
+        
+        .checkbox {
+            font-size: 14pt;
+            text-align: center;
+        }
+        
+        .critical {
+            background: #ffebee !important;
+            border-left: 4px solid #e74c3c !important;
+        }
+        
+        .description {
+            line-height: 1.6;
+        }
+        
+        .verification-table {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        
+        .verification-table th {
+            background: #4caf50;
+        }
+        
+        .dont-do-table {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+        
+        .dont-do-table th {
+            background: #f44336;
+        }
+        
+        .benefits-table {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+        }
+        
+        .benefits-table th {
+            background: #2196f3;
+        }
+        
+        .signature-section {
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px solid #333;
+            background: #f9f9f9;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #333;
+            display: inline-block;
+            min-width: 300px;
+            margin: 0 10px;
+        }
+        
+        ul {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        
+        li {
+            margin: 3px 0;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📋 MIGRACIÓN DE WHATSAPP BUSINESS API A WHATSAPP LITE</h1>
+
+<div class="header-info">
+    <strong>Instituto Winston Churchill</strong><br>
+    <strong>Fecha:</strong> 5 de enero de 2026<br>
+    <strong>Objetivo:</strong> Eliminar costos de WhatsApp Business API ($19-25 USD/mes) y migrar a WhatsApp Lite (gratis)<br>
+    <strong>Tiempo estimado:</strong> 20-30 minutos
+</div>
+
+<div class="warning-box">
+    <h3>⚠️ IMPORTANTE - LEER ANTES DE COMENZAR</h3>
+    <ul>
+        <li>✅ El historial de conversaciones en Kommo <strong>SE MANTIENE</strong></li>
+        <li>✅ Las apps de WhatsApp en los celulares <strong>NO SE TOCAN</strong></li>
+        <li>✅ Los números de teléfono <strong>SIGUEN FUNCIONANDO</strong></li>
+        <li>🔄 Habrá una interrupción de <strong>10-15 minutos</strong> durante la migración</li>
+    </ul>
+</div>
+
+<h2 style="color: #1a5490; border-bottom: 2px solid #1a5490; padding-bottom: 5px;">TABLA DE PASOS - MIGRACIÓN COMPLETA</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 5%;">#</th>
+            <th style="width: 20%;">PASO</th>
+            <th style="width: 45%;">DESCRIPCIÓN DETALLADA</th>
+            <th style="width: 15%;">RESPONSABLE</th>
+            <th style="width: 10%;">TIEMPO</th>
+            <th style="width: 5%;">✓</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- FASE 1 -->
+        <tr>
+            <td colspan="6" class="phase-header">FASE 1: PREPARACIÓN</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">1</span></td>
+            <td><strong>Verificar números actuales</strong></td>
+            <td class="description">
+                Anota cuáles son los 2 números de WhatsApp que tienes conectados a la API:<br>
+                • Número 1: _______________________<br>
+                • Número 2: _______________________
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">2</span></td>
+            <td><strong>Backup preventivo</strong></td>
+            <td class="description">
+                En Kommo, ve a cada lead importante y toma screenshots de conversaciones críticas (opcional pero recomendado)
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">5 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">3</span></td>
+            <td><strong>Avisar al equipo</strong></td>
+            <td class="description">
+                Notifica que habrá 10-15 minutos sin servicio de WhatsApp en Kommo
+            </td>
+            <td>Admin</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        
+        <!-- FASE 2 -->
+        <tr>
+            <td colspan="6" class="phase-header">FASE 2: DESCONEXIÓN DE API</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">4</span></td>
+            <td><strong>Abrir Facebook Business Manager</strong></td>
+            <td class="description">
+                Ve a: <strong>https://business.facebook.com</strong>
+            </td>
+            <td>Admin</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">5</span></td>
+            <td><strong>Navegar a cuentas</strong></td>
+            <td class="description">
+                Click en el menú lateral:<br>
+                • <strong>Configuración de empresa</strong><br>
+                • <strong>Cuentas</strong><br>
+                • <strong>WhatsApp Business</strong>
+            </td>
+            <td>Admin</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">6</span></td>
+            <td><strong>Eliminar número 1 de API</strong></td>
+            <td class="description">
+                • Selecciona tu cuenta de WhatsApp<br>
+                • Click en <strong>Números de teléfono</strong><br>
+                • Busca el primer número<br>
+                • Click en <strong>⋮</strong> (tres puntos)<br>
+                • <strong>Eliminar número</strong><br>
+                • Confirma la eliminación
+            </td>
+            <td>Admin</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">7</span></td>
+            <td><strong>Eliminar número 2 de API</strong></td>
+            <td class="description">
+                Repite el paso anterior para el segundo número
+            </td>
+            <td>Admin</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr class="critical">
+            <td><span class="step-number">8</span></td>
+            <td><strong>⏰ ESPERAR LIBERACIÓN</strong></td>
+            <td class="description">
+                <strong>CRÍTICO:</strong> Espera <strong>10 minutos completos</strong> para que Meta libere los números del sistema API.<br>
+                <strong style="color: #e74c3c;">⚠️ No continúes antes de tiempo o fallará</strong>
+            </td>
+            <td>-</td>
+            <td><span class="time-badge" style="background: #e74c3c;">10 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        
+        <!-- FASE 3 -->
+        <tr>
+            <td colspan="6" class="phase-header">FASE 3: DESCONEXIÓN EN KOMMO</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">9</span></td>
+            <td><strong>Abrir Kommo Settings</strong></td>
+            <td class="description">
+                Ve a: <strong>https://winstonchurchill.kommo.com/settings/widgets/</strong>
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">10</span></td>
+            <td><strong>Localizar WhatsApp Business API</strong></td>
+            <td class="description">
+                En el menú izquierdo:<br>
+                • <strong>Integraciones</strong><br>
+                • Busca "WhatsApp" (no Lite)<br>
+                • La que dice "Instalado"
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">11</span></td>
+            <td><strong>Desconectar API</strong></td>
+            <td class="description">
+                • Click en la integración de WhatsApp Business<br>
+                • Click en <strong>Desinstalar</strong> o <strong>Desconectar</strong><br>
+                • Confirma la acción
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        
+        <!-- FASE 4 -->
+        <tr>
+            <td colspan="6" class="phase-header">FASE 4: CONEXIÓN DE WHATSAPP LITE</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">12</span></td>
+            <td><strong>Localizar WhatsApp Lite</strong></td>
+            <td class="description">
+                En la misma sección de Integraciones:<br>
+                • Busca "<strong>WhatsApp Lite</strong>"<br>
+                • Debe decir "Instalado" (ya lo tienes)
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">13</span></td>
+            <td><strong>Conectar número 1</strong></td>
+            <td class="description">
+                • Click en WhatsApp Lite<br>
+                • Click en <strong>Conectar</strong><br>
+                • Te mostrará un código QR
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">14</span></td>
+            <td><strong>Escanear QR - Número 1</strong></td>
+            <td class="description">
+                📱 <strong>En el celular 1:</strong><br>
+                • Abre WhatsApp (la app que usas normalmente)<br>
+                • Ve a <strong>⋮</strong> → <strong>Dispositivos vinculados</strong><br>
+                • <strong>Vincular un dispositivo</strong><br>
+                • Escanea el QR de Kommo<br>
+                • Acepta permisos
+            </td>
+            <td>Usuario celular 1</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">15</span></td>
+            <td><strong>Verificar conexión - Número 1</strong></td>
+            <td class="description">
+                En Kommo debe aparecer "Conectado" con el nombre del número
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">30 seg</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">16</span></td>
+            <td><strong>Conectar número 2</strong></td>
+            <td class="description">
+                Si tienes un segundo número, repite pasos 13-15
+            </td>
+            <td>Admin Kommo + Usuario</td>
+            <td><span class="time-badge">3 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        
+        <!-- FASE 5 -->
+        <tr>
+            <td colspan="6" class="phase-header">FASE 5: PRUEBAS Y VERIFICACIÓN</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">17</span></td>
+            <td><strong>Enviar mensaje de prueba</strong></td>
+            <td class="description">
+                Desde Kommo, envía un mensaje de prueba a tu propio número
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">18</span></td>
+            <td><strong>Verificar recepción</strong></td>
+            <td class="description">
+                Confirma que el mensaje llega correctamente
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">19</span></td>
+            <td><strong>Responder desde Kommo</strong></td>
+            <td class="description">
+                Responde el mensaje desde Kommo y verifica que llega al celular
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">20</span></td>
+            <td><strong>Verificar historial</strong></td>
+            <td class="description">
+                Abre un lead anterior y confirma que las conversaciones viejas siguen ahí
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        
+        <!-- FASE 6 -->
+        <tr>
+            <td colspan="6" class="phase-header">FASE 6: CONFIGURACIÓN FINAL</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">21</span></td>
+            <td><strong>Renombrar canales (opcional)</strong></td>
+            <td class="description">
+                En Kommo, renombra los canales de WhatsApp Lite si es necesario:<br>
+                • "WhatsApp Lite - Open House"<br>
+                • "WhatsApp Lite - Sesiones"
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">22</span></td>
+            <td><strong>Verificar plantillas</strong></td>
+            <td class="description">
+                Las plantillas de mensaje en Kommo deben seguir funcionando (no son plantillas de Meta)
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">2 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">23</span></td>
+            <td><strong>Notificar al equipo</strong></td>
+            <td class="description">
+                Avisa que el servicio ya está restaurado y funcionando
+            </td>
+            <td>Admin</td>
+            <td><span class="time-badge">1 min</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td><span class="step-number">24</span></td>
+            <td><strong>Monitorear próximas 24hrs</strong></td>
+            <td class="description">
+                Vigila que todos los mensajes entrantes y salientes funcionen correctamente
+            </td>
+            <td>Admin Kommo</td>
+            <td><span class="time-badge">-</span></td>
+            <td class="checkbox">☐</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2 style="color: #4caf50; border-bottom: 2px solid #4caf50; padding-bottom: 5px;">✅ VERIFICACIÓN FINAL - CHECKLIST</h2>
+
+<table class="verification-table">
+    <thead>
+        <tr>
+            <th style="width: 80%;">VERIFICACIÓN</th>
+            <th style="width: 20%;">ESTADO</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Los 2 números fueron eliminados de Facebook Business Manager</td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td>La integración "WhatsApp Business API" fue desconectada en Kommo</td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td>WhatsApp Lite está conectado y muestra "Conectado"</td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td>Los 2 números aparecen como dispositivos vinculados en los celulares</td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td>El mensaje de prueba se envió y recibió correctamente</td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td>El historial de conversaciones anteriores se mantiene en los leads</td>
+            <td class="checkbox">☐</td>
+        </tr>
+        <tr>
+            <td>El equipo fue notificado del cambio</td>
+            <td class="checkbox">☐</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 style="color: #f44336; border-bottom: 2px solid #f44336; padding-bottom: 5px;">🚫 LO QUE NO DEBES HACER</h2>
+
+<table class="dont-do-table">
+    <thead>
+        <tr>
+            <th style="width: 40%;">❌ NUNCA HAGAS ESTO</th>
+            <th style="width: 60%;">¿POR QUÉ?</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Desinstalar WhatsApp del celular</strong></td>
+            <td>La app del celular NO tiene nada que ver con la API</td>
+        </tr>
+        <tr>
+            <td><strong>Cambiar de WhatsApp Business App a WhatsApp normal</strong></td>
+            <td>No es necesario, ambos funcionan igual con Lite</td>
+        </tr>
+        <tr>
+            <td><strong>Hacer respaldo y restaurar WhatsApp</strong></td>
+            <td>No se pierde nada en el celular</td>
+        </tr>
+        <tr>
+            <td><strong>Conectar Lite ANTES de eliminar de Facebook</strong></td>
+            <td>Dará error de "número ya en uso"</td>
+        </tr>
+        <tr>
+            <td><strong>Saltarte los 10 minutos de espera</strong></td>
+            <td>El número no estará liberado y fallará</td>
+        </tr>
+        <tr>
+            <td><strong>Borrar conversaciones del CRM</strong></td>
+            <td>El historial en Kommo se mantiene automáticamente</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 5px;">💰 BENEFICIOS ESPERADOS</h2>
+
+<table class="benefits-table">
+    <thead>
+        <tr>
+            <th style="width: 50%;">ANTES (Business API)</th>
+            <th style="width: 50%;">DESPUÉS (WhatsApp Lite)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>$19.47 - $25.00 USD/mes</td>
+            <td style="font-weight: bold; color: #4caf50;">$0 USD/mes ✅</td>
+        </tr>
+        <tr>
+            <td>Cobros por mensajes de spam</td>
+            <td style="font-weight: bold; color: #4caf50;">Sin cobros ✅</td>
+        </tr>
+        <tr>
+            <td>Configuración compleja</td>
+            <td style="font-weight: bold; color: #4caf50;">Simple y directo ✅</td>
+        </tr>
+        <tr>
+            <td>Requiere plantillas aprobadas</td>
+            <td style="font-weight: bold; color: #4caf50;">Mensajes libres ✅</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center; background: #fff3cd; font-weight: bold; color: #856404;">
+                <strong>💵 Ahorro anual estimado: $234 - $300 USD</strong>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="signature-section">
+    <h3 style="margin-top: 0;">📅 REGISTRO DE MIGRACIÓN</h3>
+    
+    <p>
+        <strong>Fecha de inicio:</strong> <span class="signature-line"></span> 
+        <strong>Hora:</strong> <span class="signature-line" style="min-width: 100px;"></span>
+    </p>
+    
+    <p>
+        <strong>Fecha de finalización:</strong> <span class="signature-line"></span> 
+        <strong>Hora:</strong> <span class="signature-line" style="min-width: 100px;"></span>
+    </p>
+    
+    <p>
+        <strong>Responsable:</strong> <span class="signature-line"></span>
+    </p>
+    
+    <p>
+        <strong>Firma:</strong> <span class="signature-line"></span>
+    </p>
+    
+    <p><strong>Estado final:</strong></p>
+    <p style="margin-left: 20px;">
+        ☐ Exitoso &nbsp;&nbsp;&nbsp; ☐ Con observaciones &nbsp;&nbsp;&nbsp; ☐ Fallido
+    </p>
+</div>
+
+<div style="text-align: center; margin-top: 40px; padding: 20px; background: #f9f9f9; border-top: 2px solid #1a5490;">
+    <p><strong>Documento creado:</strong> 5 de enero de 2026</p>
+    <p><strong>Instituto Winston Churchill</strong></p>
+    <p style="font-size: 9pt; color: #666;">Versión 1.0</p>
+</div>
+
+</body>
+</html>
+
