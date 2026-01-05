@@ -245,7 +245,7 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
     <div class="email-container">
         <div class="header">
             <h1>${institucionNombre}</h1>
-            <p>Sesión Informativa 2025 - Confirmación de Inscripción</p>
+            <p>Sesión Informativa 2026 - Confirmación de Inscripción</p>
         </div>
         
         <div class="content">
@@ -536,7 +536,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
     <div class="email-container">
         <div class="header">
             <h1>${institucionNombre}</h1>
-            <p>Sesión Informativa 2025 - Confirmación de Inscripción</p>
+            <p>Sesión Informativa 2026 - Confirmación de Inscripción</p>
         </div>
         
         <div class="content">
@@ -721,9 +721,9 @@ export async function POST(request: NextRequest) {
         // Determinar mensaje según nivel académico (acortado para 1 segmento)
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `✅ Sesión Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528333474507 📚`;
+          mensaje = `✅ Sesión Informativa 2026 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528333474507 📚`;
         } else {
-          mensaje = `✅ Sesión Informativa 2025 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528334378743 📚`;
+          mensaje = `✅ Sesión Informativa 2026 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528334378743 📚`;
         }
         
         // Formatear teléfono
@@ -765,7 +765,7 @@ export async function POST(request: NextRequest) {
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: formData.correo,
-      subject: 'Confirmación de Inscripción - Sesión Informativa 2025',
+      subject: 'Confirmación de Inscripción - Sesión Informativa 2026',
       html: emailHtml
     };
 
@@ -775,7 +775,7 @@ export async function POST(request: NextRequest) {
     // Enviar copia a sistemas.desarrollo@winston93.edu.mx
     const copyMailOptions = {
       from: {
-        name: 'Sistema de Inscripciones - Sesión Informativa 2025',
+        name: 'Sistema de Inscripciones - Sesión Informativa 2026',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: 'sistemas.desarrollo@winston93.edu.mx',
@@ -784,7 +784,7 @@ export async function POST(request: NextRequest) {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc;">
           <div style="background: linear-gradient(135deg, #FA9D00 0%, #E88D00 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">📋 Nueva Inscripción a Sesión Informativa</h2>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Sesión Informativa 2025</p>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Sesión Informativa 2026</p>
           </div>
           
           <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">

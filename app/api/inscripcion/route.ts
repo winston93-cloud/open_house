@@ -245,7 +245,7 @@ const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento:
     <div class="email-container">
         <div class="header">
             <h1>${institucionNombre}</h1>
-            <p>Open House 2025 - Confirmación de Inscripción</p>
+            <p>Open House 2026 - Confirmación de Inscripción</p>
         </div>
         
         <div class="content">
@@ -536,7 +536,7 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
     <div class="email-container">
         <div class="header">
             <h1>${institucionNombre}</h1>
-            <p>Open House 2025 - Confirmación de Inscripción</p>
+            <p>Open House 2026 - Confirmación de Inscripción</p>
         </div>
         
         <div class="content">
@@ -600,18 +600,18 @@ const createEmailTemplate = (formData: any) => {
   let fechaEvento, horaEvento, institucionNombre;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Viernes 24 de enero de 2025';
+    fechaEvento = 'Sábado 24 de enero de 2026';
     horaEvento = '9:00 AM';
     institucionNombre = 'Instituto Educativo Winston';
     return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Viernes 17 de enero de 2025';
-    horaEvento = '9:00 AM a 11:30 AM';
+    fechaEvento = 'Sábado 17 de enero de 2026';
+    horaEvento = '11:30 AM a 2:00 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Viernes 17 de enero de 2025';
-    horaEvento = '11:30 AM a 2:00 PM';
+    fechaEvento = 'Sábado 17 de enero de 2026';
+    horaEvento = '9:00 AM a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   }
@@ -720,9 +720,9 @@ export async function POST(request: NextRequest) {
         // Determinar mensaje según nivel académico (acortado para 1 segmento)
         let mensaje = '';
         if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `✅ Open House 2025 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528333474507 🏫`;
+          mensaje = `✅ Open House 2026 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528333474507 🏫`;
         } else {
-          mensaje = `✅ Open House 2025 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528334378743 🏫`;
+          mensaje = `✅ Open House 2026 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528334378743 🏫`;
         }
         
         // Formatear teléfono
@@ -764,7 +764,7 @@ export async function POST(request: NextRequest) {
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: formData.correo,
-      subject: 'Confirmación de Inscripción - Open House 2025',
+      subject: 'Confirmación de Inscripción - Open House 2026',
       html: emailHtml
     };
 
@@ -774,7 +774,7 @@ export async function POST(request: NextRequest) {
     // Enviar copia a sistemas.desarrollo@winston93.edu.mx
     const copyMailOptions = {
       from: {
-        name: 'Sistema de Inscripciones - Open House 2025',
+        name: 'Sistema de Inscripciones - Open House 2026',
         address: 'sistemas.desarrollo@winston93.edu.mx'
       },
       to: 'sistemas.desarrollo@winston93.edu.mx',
@@ -783,7 +783,7 @@ export async function POST(request: NextRequest) {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc;">
           <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">📋 Nueva Inscripción Registrada</h2>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Open House 2025</p>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Open House 2026</p>
           </div>
           
           <div style="background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
