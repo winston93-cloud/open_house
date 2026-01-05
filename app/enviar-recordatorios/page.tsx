@@ -113,52 +113,52 @@ export default function EnviarRecordatoriosPage() {
 
   const proximosEnvios = [
     {
-      fecha: 'Viernes 17 de Enero 2026',
-      hora: '9:00 AM - 11:30 AM',
-      tipo: 'Open House',
-      niveles: ['Primaria'],
-      institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Jueves 16 de Enero, 9:00 AM'
-    },
-    {
-      fecha: 'Viernes 17 de Enero 2026',
+      fecha: 'Sábado 17 de Enero 2026',
       hora: '11:30 AM - 2:00 PM',
       tipo: 'Open House',
-      niveles: ['Secundaria'],
+      niveles: ['Primaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Jueves 16 de Enero, 9:00 AM'
+      recordatorio: 'Viernes 16 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Domingo 19 de Enero 2026',
+      fecha: 'Sábado 17 de Enero 2026',
+      hora: '9:00 AM - 11:30 AM',
+      tipo: 'Open House',
+      niveles: ['Secundaria'],
+      institucion: 'Instituto Winston Churchill',
+      recordatorio: 'Viernes 16 de Enero, 9:00 AM'
+    },
+    {
+      fecha: 'Lunes 19 de Enero 2026',
       hora: '6:00 PM',
       tipo: 'Sesión Informativa',
       niveles: ['Primaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Sábado 18 de Enero, 9:00 AM'
+      recordatorio: 'Domingo 18 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Lunes 20 de Enero 2026',
+      fecha: 'Martes 20 de Enero 2026',
       hora: '6:00 PM',
       tipo: 'Sesión Informativa',
       niveles: ['Secundaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Domingo 19 de Enero, 9:00 AM'
+      recordatorio: 'Lunes 19 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Viernes 24 de Enero 2026',
+      fecha: 'Sábado 24 de Enero 2026',
       hora: '9:00 AM',
       tipo: 'Open House',
       niveles: ['Maternal', 'Kinder'],
       institucion: 'Instituto Educativo Winston',
-      recordatorio: 'Jueves 23 de Enero, 9:00 AM'
+      recordatorio: 'Viernes 23 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Domingo 26 de Enero 2026',
+      fecha: 'Lunes 26 de Enero 2026',
       hora: '6:00 PM',
       tipo: 'Sesión Informativa',
       niveles: ['Maternal', 'Kinder'],
       institucion: 'Instituto Educativo Winston',
-      recordatorio: 'Sábado 25 de Enero, 9:00 AM'
+      recordatorio: 'Domingo 25 de Enero, 9:00 AM'
     }
   ];
 

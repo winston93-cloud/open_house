@@ -433,7 +433,7 @@ const createReminderEmailTemplate = (formData: any) => {
             <div class="header-gradient">
                 <div class="header">
                     <h1>${institucionNombre}</h1>
-                    <p class="subtitle">Open House 2025 - Recordatorio de Evento</p>
+                    <p class="subtitle">Open House 2026 - Recordatorio de Evento</p>
                 </div>
             </div>
             
@@ -912,7 +912,7 @@ const createSesionesReminderEmailTemplate = (formData: any) => {
             <div class="header-gradient">
                 <div class="header">
                     <h1>${institucionNombre}</h1>
-                    <p class="subtitle">Sesión Informativa 2025 - Recordatorio</p>
+                    <p class="subtitle">Sesión Informativa 2026 - Recordatorio</p>
                 </div>
             </div>
             
@@ -1019,13 +1019,13 @@ const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
     } else if (nivelAcademico === 'primaria') {
       return {
         fechaEvento: '17 de Enero',
-        horaEvento: '9:00 AM - 11:30 AM',
+        horaEvento: '11:30 AM - 2:00 PM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     } else if (nivelAcademico === 'secundaria') {
       return {
         fechaEvento: '17 de Enero',
-        horaEvento: '11:30 AM - 2:00 PM',
+        horaEvento: '9:00 AM - 11:30 AM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     }
