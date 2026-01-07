@@ -60,12 +60,19 @@ FASE 2: Preparación de Dispositivos Móviles
 --------------------------------------------
 En cada celular:
   1. Hacer un RESPALDO COMPLETO de WhatsApp (a Google Drive o iCloud)
+     ⚠️ CRÍTICO: Esperar a que termine completamente antes de continuar
   2. DESINSTALAR WhatsApp Business (app)
   3. INSTALAR WhatsApp normal/estándar desde Play Store/App Store
   4. REGISTRAR el mismo número telefónico
   5. RESTAURAR el respaldo (se recuperan todas las conversaciones)
 
 Resultado: WhatsApp funciona normal en el celular con todo el historial
+
+⚠️ ACLARACIÓN IMPORTANTE SOBRE CONVERSACIONES:
+• Conversaciones en el CELULAR: Se mantienen si haces el respaldo/restauración correctamente
+• Conversaciones en KOMMO CRM: NUNCA se borran, están en los servidores de Kommo
+• Si olvidas hacer el respaldo en el celular: Solo pierdes las conversaciones del CELULAR 
+  (pero las de Kommo siguen intactas)
 
 FASE 3: Conexión a WhatsApp Lite en Kommo
 ------------------------------------------
@@ -88,6 +95,16 @@ FASE 3: Conexión a WhatsApp Lite en Kommo
 • Ahorro anual: $528 USD/año (~$10,560 MXN/año)
 • Costo de migración: $0 USD (solo tiempo del personal)
 • ROI: Inmediato desde el primer mes
+
+
+⚠️ RIESGOS Y MITIGACIONES:
+
+RIESGO                                  | MITIGACIÓN
+----------------------------------------|----------------------------------------
+Perder conversaciones en el celular     | CRÍTICO: Hacer respaldo antes de desinstalar
+Perder historial en Kommo CRM           | BAJO: El historial está en servidores de Kommo
+Meta no libere los números en 48h       | BAJO: Contactar soporte de Meta si es necesario
+WhatsApp Lite no funcione igual         | NULO: Ya lo usamos antes, funcionaba perfecto
 
 
 📊 ¿QUÉ PERDEMOS vs QUÉ GANAMOS?
