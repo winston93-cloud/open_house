@@ -414,6 +414,162 @@
     <strong>Tiempo estimado:</strong> 20-30 minutos
 </div>
 
+<!-- ============================================ -->
+<!-- SECCIÓN PARA COMPARTIR CON GROK/AI -->
+<!-- ============================================ -->
+<div style="background: #fff3e0; border-left: 5px solid #ff9800; padding: 20px; margin: 25px 0; border-radius: 5px;">
+    <h2 style="color: #e65100; margin-top: 0;">🔍 DEFINICIÓN DEL PROBLEMA</h2>
+    
+    <h3 style="color: #f57c00; margin-top: 15px;">⚠️ Situación Actual:</h3>
+    <ul style="line-height: 1.8;">
+        <li><strong>Integración activa:</strong> WhatsApp Business API (oficial de Meta) integrada con Kommo CRM</li>
+        <li><strong>Números afectados:</strong> 2 líneas telefónicas
+            <ul>
+                <li>📞 Instituto Winston Churchill: <code>+52 833 437 8743</code></li>
+                <li>📞 Instituto Educativo Winston: <code>+52 833 347 4507</code></li>
+            </ul>
+        </li>
+        <li><strong>Problema económico:</strong> Cobros mensuales de <strong>$25 USD</strong> y <strong>$19 USD</strong> (total: <strong>$44 USD/mes = ~$880 MXN/mes</strong>)</li>
+        <li><strong>Causa del costo:</strong> 
+            <ul>
+                <li>En diciembre 2025 hubo un <strong>ataque de spam masivo</strong></li>
+                <li>Se dispararon los envíos de plantillas (templates) de WhatsApp Business API</li>
+                <li>Meta cobra por cada conversación iniciada y template enviado</li>
+            </ul>
+        </li>
+        <li><strong>Frustración:</strong> Los cobros de Meta no especifican <strong>QUÉ</strong> se está cobrando, solo montos genéricos</li>
+    </ul>
+
+    <h3 style="color: #f57c00; margin-top: 20px;">🎯 OBJETIVO DE LA MIGRACIÓN:</h3>
+    <ul style="line-height: 1.8;">
+        <li>✅ <strong>Eliminar costos mensuales</strong> de WhatsApp Business API ($44 USD/mes)</li>
+        <li>✅ <strong>Volver a WhatsApp Lite</strong> (versión gratuita integrada en Kommo)</li>
+        <li>✅ <strong>Mantener el historial</strong> de conversaciones en Kommo CRM</li>
+        <li>✅ <strong>Conservar los mismos números</strong> telefónicos</li>
+        <li>✅ <strong>Seguir gestionando</strong> todas las conversaciones desde Kommo CRM (no perder funcionalidad)</li>
+        <li>⚠️ <strong>Aceptar limitaciones:</strong> No poder enviar mensajes proactivos masivos ni usar templates aprobados</li>
+    </ul>
+
+    <h3 style="color: #f57c00; margin-top: 20px;">🔄 ¿POR QUÉ ESTA MIGRACIÓN ES NECESARIA?</h3>
+    <ul style="line-height: 1.8;">
+        <li><strong>Antes (hasta nov-dic 2025):</strong> Usábamos WhatsApp Lite (gratis) sin problemas</li>
+        <li><strong>Cambio problemático:</strong> Migramos a WhatsApp Business API pensando en mejoras</li>
+        <li><strong>Consecuencia negativa:</strong> El ataque de spam generó costos inesperados y recurrentes</li>
+        <li><strong>Decisión:</strong> Los costos NO justifican las funciones avanzadas (no las necesitamos)</li>
+        <li><strong>Solución:</strong> Volver a WhatsApp Lite (gratis) que cubría todas nuestras necesidades</li>
+    </ul>
+</div>
+
+<div style="background: #e8f5e9; border-left: 5px solid #4caf50; padding: 20px; margin: 25px 0; border-radius: 5px;">
+    <h2 style="color: #1b5e20; margin-top: 0;">📋 DESCRIPCIÓN DETALLADA DEL PROCESO</h2>
+
+    <h3 style="color: #2e7d32; margin-top: 15px;">🔧 PROCESO TÉCNICO COMPLETO:</h3>
+    
+    <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 5px;">
+        <h4 style="color: #388e3c; margin-top: 0;">FASE 1: Desconexión de WhatsApp Business API</h4>
+        <ul style="line-height: 1.8;">
+            <li><strong>En Kommo CRM:</strong> Desinstalar/desconectar la integración de WhatsApp Business (API)</li>
+            <li><strong>En Meta Business Suite:</strong> Eliminar ambos números de teléfono de las cuentas de WhatsApp Business</li>
+            <li><strong>Efecto inmediato:</strong> Los números quedan "liberados" y ya no generan cobros</li>
+            <li><strong>Tiempo de espera:</strong> Meta puede tardar hasta 24-48 horas en liberar completamente los números</li>
+        </ul>
+    </div>
+
+    <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 5px;">
+        <h4 style="color: #388e3c; margin-top: 0;">FASE 2: Preparación de Dispositivos Móviles</h4>
+        <ul style="line-height: 1.8;">
+            <li><strong>En cada celular:</strong>
+                <ol style="margin-top: 10px;">
+                    <li>Hacer un <strong>respaldo completo</strong> de WhatsApp (a Google Drive o iCloud)</li>
+                    <li><strong>Desinstalar</strong> WhatsApp Business (app)</li>
+                    <li><strong>Instalar</strong> WhatsApp normal/estándar desde Play Store/App Store</li>
+                    <li><strong>Registrar</strong> el mismo número telefónico</li>
+                    <li><strong>Restaurar</strong> el respaldo (se recuperan todas las conversaciones)</li>
+                </ol>
+            </li>
+            <li><strong>Resultado:</strong> WhatsApp funciona normal en el celular con todo el historial</li>
+        </ul>
+    </div>
+
+    <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 5px;">
+        <h4 style="color: #388e3c; margin-top: 0;">FASE 3: Conexión a WhatsApp Lite en Kommo</h4>
+        <ul style="line-height: 1.8;">
+            <li><strong>En Kommo CRM:</strong> Instalar la integración "WhatsApp Lite"</li>
+            <li><strong>Escanear código QR:</strong> Desde cada celular (WhatsApp → Dispositivos vinculados)</li>
+            <li><strong>Autorizar conexión:</strong> El CRM queda vinculado como "dispositivo adicional"</li>
+            <li><strong>Pruebas:</strong> Enviar y recibir mensajes de prueba desde Kommo</li>
+            <li><strong>Configuración:</strong> Ajustar notificaciones, respuestas automáticas, etc.</li>
+        </ul>
+    </div>
+
+    <h3 style="color: #2e7d32; margin-top: 20px;">⏱️ TIEMPO ESTIMADO TOTAL:</h3>
+    <ul style="line-height: 1.8;">
+        <li><strong>Fase 1:</strong> 10-15 minutos (Kommo + Meta)</li>
+        <li><strong>Fase 2:</strong> 30-40 minutos por celular (respaldo + reinstalación)</li>
+        <li><strong>Fase 3:</strong> 10-15 minutos (vinculación a Kommo)</li>
+        <li><strong>TOTAL:</strong> Aproximadamente <strong>2-3 horas</strong> para ambos números</li>
+    </ul>
+
+    <h3 style="color: #2e7d32; margin-top: 20px;">💰 IMPACTO FINANCIERO:</h3>
+    <ul style="line-height: 1.8;">
+        <li><strong>Ahorro inmediato:</strong> $44 USD/mes (~$880 MXN/mes)</li>
+        <li><strong>Ahorro anual:</strong> $528 USD/año (~$10,560 MXN/año)</li>
+        <li><strong>Costo de migración:</strong> $0 USD (solo tiempo del personal)</li>
+        <li><strong>ROI:</strong> Inmediato desde el primer mes</li>
+    </ul>
+
+    <h3 style="color: #2e7d32; margin-top: 20px;">📊 ¿QUÉ PERDEMOS vs QUÉ GANAMOS?</h3>
+    <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+        <thead>
+            <tr style="background: #ff9800; color: white;">
+                <th style="padding: 10px; text-align: left; border: 1px solid #f57c00;">❌ Perdemos (API)</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #1b5e20;">✅ Ganamos (Lite)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Templates aprobados por Meta</td>
+                <td style="padding: 10px; border: 1px solid #ddd; background: #e8f5e9;"><strong>$880 MXN/mes de ahorro</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Envíos masivos proactivos</td>
+                <td style="padding: 10px; border: 1px solid #ddd; background: #e8f5e9;"><strong>Cero estrés por spam</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Botones interactivos avanzados</td>
+                <td style="padding: 10px; border: 1px solid #ddd; background: #e8f5e9;"><strong>Sin cobros inesperados</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Webhooks automáticos</td>
+                <td style="padding: 10px; border: 1px solid #ddd; background: #e8f5e9;"><strong>Sistema más simple</strong></td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">(Funciones que NO usamos)</td>
+                <td style="padding: 10px; border: 1px solid #ddd; background: #e8f5e9;"><strong>Todo lo que SÍ necesitamos</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="background: #fff9c4; border: 2px solid #f9a825; padding: 15px; margin: 20px 0; border-radius: 5px;">
+        <h4 style="color: #f57f17; margin-top: 0;">💡 CONCLUSIÓN:</h4>
+        <p style="margin: 0; line-height: 1.8;">
+            <strong>Esta migración es un RETORNO a lo que funcionaba bien.</strong> WhatsApp Lite cubre el 100% de nuestras necesidades reales:
+            responder mensajes de padres, gestionar consultas, y mantener comunicación desde Kommo. Las funciones avanzadas de la API
+            no justifican el costo mensual, especialmente después del incidente de spam que evidenció los riesgos económicos.
+        </p>
+    </div>
+
+    <div style="background: #e1f5fe; border: 2px solid #0288d1; padding: 15px; margin: 20px 0; border-radius: 5px;">
+        <h4 style="color: #01579b; margin-top: 0;">❓ PREGUNTA PARA GROK (o cualquier AI):</h4>
+        <p style="margin: 0; line-height: 1.8;">
+            <strong>"Considerando la situación descrita (costos inesperados por spam, cobros de $44 USD/mes sin detalle, 
+            y que solo necesitamos responder mensajes de clientes desde el CRM), ¿ves algún RIESGO o PROBLEMA técnico 
+            en volver de WhatsApp Business API a WhatsApp Lite? ¿Hay algo que NO estemos considerando? 
+            ¿Recomiendas este cambio o sugieres una alternativa mejor?"</strong>
+        </p>
+    </div>
+</div>
+
 <div style="background: #e3f2fd; border: 2px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 5px;">
     <h3 style="color: #1565c0; margin-top: 0;">📝 INSTRUCCIONES DE USO</h3>
     <ul>
