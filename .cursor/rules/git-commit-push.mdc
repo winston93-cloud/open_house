@@ -1,0 +1,14 @@
+---
+description: Tras modificar código del repo, hacer commit y push a origin.
+alwaysApply: true
+---
+
+# Git: commit y push
+
+Cuando completes cambios de implementación en este repositorio (código, config de app, no borradores personales):
+
+1. Revisa `git status` y agrupa en el commit solo lo que corresponde al trabajo hecho.
+2. `git add` los archivos pertinentes y `git commit` con un mensaje claro en español o inglés (qué cambió y por qué).
+3. `git push` a la rama actual (p. ej. `main`) para subir a `origin`.
+
+Si el push falla por autenticación o conflictos, indícalo al usuario y no dejes el trabajo solo en local sin avisar.

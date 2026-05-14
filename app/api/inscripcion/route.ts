@@ -600,18 +600,18 @@ const createEmailTemplate = (formData: any) => {
   let fechaEvento, horaEvento, institucionNombre;
   
   if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Sábado 24 de enero de 2026';
-    horaEvento = '9:00 AM';
+    fechaEvento = 'Sábado 13 de junio de 2026';
+    horaEvento = '9:00 AM a 11:30 AM';
     institucionNombre = 'Instituto Educativo Winston';
     return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Sábado 17 de enero de 2026';
-    horaEvento = '11:30 AM a 2:00 PM';
+    fechaEvento = 'Sábado 6 de junio de 2026';
+    horaEvento = '9:00 AM a 11:30 AM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Sábado 17 de enero de 2026';
-    horaEvento = '9:00 AM a 11:30 AM';
+    fechaEvento = 'Sábado 6 de junio de 2026';
+    horaEvento = '12:00 PM a 1:30 PM';
     institucionNombre = 'Instituto Winston Churchill';
     return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
   }
@@ -642,11 +642,11 @@ export async function POST(request: NextRequest) {
     let reminderDate: Date;
     
     if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-      // Open House Maternal/Kinder: 24 ene, recordatorio 23 ene
-      reminderDate = new Date('2026-01-23');
+      // Open House Maternal/Kinder: 13 jun, recordatorio 12 jun
+      reminderDate = new Date('2026-06-12');
     } else if (formData.nivelAcademico === 'primaria' || formData.nivelAcademico === 'secundaria') {
-      // Open House Primaria/Secundaria: 17 ene, recordatorio 16 ene
-      reminderDate = new Date('2026-01-16');
+      // Open House Primaria/Secundaria: 6 jun, recordatorio 5 jun
+      reminderDate = new Date('2026-06-05');
     } else {
       // Seguridad: rechazar niveles académicos no válidos
       console.error('❌ Nivel académico no válido:', formData.nivelAcademico);
@@ -674,7 +674,7 @@ export async function POST(request: NextRequest) {
           fecha_inscripcion: new Date().toISOString(),
           reminder_sent: false,
           reminder_scheduled_for: reminderDate.toISOString(),
-          ciclo_escolar: '2026' // Año para eventos de enero 2026
+          ciclo_escolar: '2026' // Año para eventos de junio 2026
         }
       ])
       .select();

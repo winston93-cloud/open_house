@@ -113,20 +113,20 @@ export default function EnviarRecordatoriosPage() {
 
   const proximosEnvios = [
     {
-      fecha: 'Sábado 17 de Enero 2026',
-      hora: '11:30 AM - 2:00 PM',
+      fecha: 'Sábado 6 de Junio 2026',
+      hora: '9:00 AM - 11:30 AM',
       tipo: 'Open House',
       niveles: ['Primaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Viernes 16 de Enero, 9:00 AM'
+      recordatorio: 'Viernes 5 de Junio, 9:00 AM'
     },
     {
-      fecha: 'Sábado 17 de Enero 2026',
-      hora: '9:00 AM - 11:30 AM',
+      fecha: 'Sábado 6 de Junio 2026',
+      hora: '12:00 PM - 1:30 PM',
       tipo: 'Open House',
       niveles: ['Secundaria'],
       institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Viernes 16 de Enero, 9:00 AM'
+      recordatorio: 'Viernes 5 de Junio, 9:00 AM'
     },
     {
       fecha: 'Lunes 19 de Enero 2026',
@@ -145,12 +145,12 @@ export default function EnviarRecordatoriosPage() {
       recordatorio: 'Lunes 19 de Enero, 9:00 AM'
     },
     {
-      fecha: 'Sábado 24 de Enero 2026',
-      hora: '9:00 AM',
+      fecha: 'Sábado 13 de Junio 2026',
+      hora: '9:00 AM - 11:30 AM',
       tipo: 'Open House',
       niveles: ['Maternal', 'Kinder'],
       institucion: 'Instituto Educativo Winston',
-      recordatorio: 'Viernes 23 de Enero, 9:00 AM'
+      recordatorio: 'Viernes 12 de Junio, 9:00 AM'
     },
     {
       fecha: 'Lunes 26 de Enero 2026',
@@ -270,7 +270,7 @@ export default function EnviarRecordatoriosPage() {
               <div className="recordatorios-stat-item recordatorios-stat-openhouse">
                 <p className="recordatorios-stat-label">🏠 Open House</p>
                 <p className="recordatorios-stat-value">4 eventos</p>
-                <p className="recordatorios-stat-description">Viernes 16 y 23 enero, 9:00 AM</p>
+                <p className="recordatorios-stat-description">Viernes 5 y 12 de junio, 9:00 AM</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-sesiones">
                 <p className="recordatorios-stat-label">📚 Sesiones Informativas</p>
@@ -279,7 +279,7 @@ export default function EnviarRecordatoriosPage() {
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-exito">
                 <p className="recordatorios-stat-label">📅 Primer recordatorio</p>
-                <p className="recordatorios-stat-value">16 Ene</p>
+                <p className="recordatorios-stat-value">5 Jun</p>
                 <p className="recordatorios-stat-description">Viernes 9:00 AM</p>
               </div>
             </div>

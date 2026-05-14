@@ -1012,20 +1012,20 @@ const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
     // OPEN HOUSE 2026
     if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
       return {
-        fechaEvento: '24 de Enero',
-        horaEvento: '9:00 AM',
+        fechaEvento: '13 de Junio',
+        horaEvento: '9:00 AM - 11:30 AM',
         institucionNombre: 'Instituto Educativo Winston'
       };
     } else if (nivelAcademico === 'primaria') {
       return {
-        fechaEvento: '17 de Enero',
-        horaEvento: '11:30 AM - 2:00 PM',
+        fechaEvento: '6 de Junio',
+        horaEvento: '9:00 AM - 11:30 AM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     } else if (nivelAcademico === 'secundaria') {
       return {
-        fechaEvento: '17 de Enero',
-        horaEvento: '9:00 AM - 11:30 AM',
+        fechaEvento: '6 de Junio',
+        horaEvento: '12:00 PM - 1:30 PM',
         institucionNombre: 'Instituto Winston Churchill'
       };
     }
