@@ -714,12 +714,11 @@ body {
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   border: 1px solid #e9ecef;
   position: relative;
-  height: 160px;
+  height: auto;
+  line-height: 0;
   max-width: 900px;
   width: 100%;
   margin-left: auto;
@@ -728,12 +727,9 @@ body {
 
 .winston-banner-image {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
   border-radius: 8px;
-  object-fit: contain;
-  object-position: center;
-  background: #fff;
 }
 
 
@@ -1559,15 +1555,16 @@ body {
   .winston-banner {
     margin-bottom: 12px;
     border-radius: 8px;
-    height: 120px;
+    height: auto;
     max-width: 700px;
     width: 100%;
   }
   
   .winston-banner-image {
     border-radius: 8px;
-    object-fit: contain;
-    object-position: center;
+    width: 100%;
+    height: auto;
+    display: block;
   }
   
   .form-header-section {
@@ -1773,15 +1770,16 @@ body {
   }
   
   .winston-banner {
-    height: 100px;
+    height: auto;
     margin-bottom: 10px;
     max-width: 100%;
     width: 100%;
   }
   
   .winston-banner-image {
-    object-fit: contain;
-    object-position: center;
+    width: 100%;
+    height: auto;
+    display: block;
   }
   
   .form-header-section {
@@ -2466,12 +2464,14 @@ body.sesiones-page {
 
   /* Banner */
   .winston-banner {
-    height: 120px;
+    height: auto;
     margin: 1rem auto;
   }
 
   .winston-banner-image {
-    max-width: 100%;
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   /* Dates Info */
@@ -2555,18 +2555,17 @@ body.sesiones-page {
   /* Centrado del banner */
   .winston-banner {
     margin: 0 auto 12px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     max-width: 100%;
     width: 100%;
+    height: auto;
   }
   
   .winston-banner-image {
     max-width: 100%;
+    width: 100%;
     height: auto;
-    object-fit: contain;
-    object-position: center;
+    display: block;
   }
   
   /* Centrado del contenedor del formulario */
@@ -2706,7 +2705,7 @@ body.sesiones-page {
   }
   
   .winston-banner {
-    height: 100px;
+    height: auto;
   }
 }
 
@@ -2730,20 +2729,18 @@ body.sesiones-page {
   /* Banner para sesiones */
   .sesiones-form-container .winston-banner {
     margin: 0 auto 12px auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
+    line-height: 0;
     width: 100%;
     max-width: 100%;
     overflow: hidden;
     border-radius: 8px;
+    height: auto;
   }
   
   .sesiones-form-container .winston-banner-image {
     width: 100%;
     height: auto;
-    object-fit: cover;
-    object-position: center;
     display: block;
   }
   
@@ -2881,23 +2878,22 @@ body.sesiones-page {
   .winston-banner-image {
     width: 100%;
     height: auto;
-    object-fit: cover;
-    object-position: center;
     display: block;
   }
 }
 
 @media (max-width: 480px) {
   .winston-banner {
-    height: 120px;
+    height: auto;
     width: 100%;
     max-width: 100%;
   }
   
   .winston-banner-image {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
+    object-fit: initial;
     object-position: center;
   }
 }
