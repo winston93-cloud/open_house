@@ -5,7 +5,7 @@ ALTER TABLE public.inscripciones
   ADD COLUMN IF NOT EXISTS edicion_open_house VARCHAR(32);
 
 COMMENT ON COLUMN public.inscripciones.edicion_open_house IS
-  'Convocatoria Open House, ej. 2025-dic, 2026-enero, 2026-junio';
+  'Convocatoria Open House, ej. 2025-diciembre, 2026-enero, 2026-junio';
 
 CREATE INDEX IF NOT EXISTS idx_inscripciones_edicion_open_house
   ON public.inscripciones (edicion_open_house);

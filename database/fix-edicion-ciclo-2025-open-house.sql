@@ -1,8 +1,6 @@
--- Corrige datos ya migrados: ciclo_escolar '2025' = Open House diciembre 2025,
--- no deben llevar edicion_open_house '2026-enero' (eso era por el UPDATE sin filtrar ciclo).
--- Ejecutar en Supabase SQL Editor.
+-- Ciclo escolar 2025 = Open House diciembre 2025 (no enero 2026).
+-- Ejecuta en Supabase SQL Editor (una sola sentencia).
 
 UPDATE public.inscripciones
-SET edicion_open_house = '2025-dic'
-WHERE ciclo_escolar = '2025'
-  AND edicion_open_house = '2026-enero';
+SET edicion_open_house = '2025-diciembre'
+WHERE ciclo_escolar = '2025';
