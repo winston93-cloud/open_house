@@ -7,8 +7,12 @@ const KOMMO_CONFIG = {
   clientId: 'fd378cbf-e7a0-494a-bb98-303e15c621aa',
   clientSecret: 'p8n7DWLGmjOnTDqtPGjt1ydDr1F93aDMaAAa3Res3G9ZayP762p4RAm9LmuVvrPH',
   redirectUri: 'https://open-house-chi.vercel.app/api/auth/kommo/callback',
-  pipelineId: '5030645', // Pipeline "Embudo de ventas"
-  statusId: '56296556', // Status "comentarios"
+  pipelineId: process.env.KOMMO_PIPELINE_ID?.trim() || '5030645', // Pipeline "Embudo de ventas"
+  // Etapa "OPEN HOUSE 2026" en ese embudo (API Kommo). Override: KOMMO_OPEN_HOUSE_STATUS_ID o KOMMO_STATUS_ID
+  statusId:
+    process.env.KOMMO_OPEN_HOUSE_STATUS_ID?.trim() ||
+    process.env.KOMMO_STATUS_ID?.trim() ||
+    '106069819',
   responsibleUserId: '7882301', // Karla Garza
   whatsappNumber: '8334378743',
 };
