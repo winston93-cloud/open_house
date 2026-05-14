@@ -36,8 +36,12 @@ const WHATSAPP_NUMBERS = {
 export async function getKommoAccessToken(integration: 'open-house' | 'sesiones'): Promise<string> {
   try {
     // Preferir variables de entorno (Vercel) para rotar sin redeploy del string embebido
-    const envOpenHouse = process.env.KOMMO_OPEN_HOUSE_ACCESS_TOKEN?.trim();
-    const envSesiones = process.env.KOMMO_SESIONES_ACCESS_TOKEN?.trim();
+    const envOpenHouse =
+      process.env.KOMMO_OPEN_HOUSE_ACCESS_TOKEN?.trim() ||
+      process.env.KOMMO_ACCESS_TOKEN?.trim();
+    const envSesiones =
+      process.env.KOMMO_SESIONES_ACCESS_TOKEN?.trim() ||
+      process.env.KOMMO_SESIONES_LONG_TOKEN?.trim();
 
     // Fallback embebido (expira; renovar en Kommo y actualizar env o este string)
     const defaultToken =
@@ -48,7 +52,15 @@ export async function getKommoAccessToken(integration: 'open-house' | 'sesiones'
       'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6Ijg2NjVhZDRhMzJjYTI4YmU1YTQ4NmM1NmFlZDEyNjI1ZGFjNDY1ZjBiOTE2OGYxNmNmYTU1OGJkYjU0ZjA0NjQ4OGU5OWE4ZDdjMzFhMzUwIn0.eyJhdWQiOiI1MzMzZGFjNC02NjEwLTQ0NWQtOGM4Ni1jYzZjOWNmMDcwMzMiLCJqdGkiOiI4NjY1YWQ0YTMyY2EyOGJlNWE0ODZjNTZhZWQxMjYyNWRhYzQ2NWYwYjkxNjhmMTZjZmE1NThiZGI1NGYwNDY0ODhlOTlhOGQ3YzMxYTM1MCIsImlhdCI6MTc2NzYzMTg2MSwibmJmIjoxNzY3NjMxODYxLCJleHAiOjE3NzQ5MTUyMDAsInN1YiI6Ijc4ODIzMDEiLCJncmFudF90eXBlIjoiIiwiYWNjb3VudF9pZCI6Mjk5MzI2MDcsImJhc2VfZG9tYWluIjoia29tbW8uY29tIiwidmVyc2lvbiI6Miwic2NvcGVzIjpbImNybSIsImZpbGVzIiwiZmlsZXNfZGVsZXRlIiwibm90aWZpY2F0aW9ucyIsInB1c2hfbm90aWZpY2F0aW9ucyJdLCJoYXNoX3V1aWQiOiI4MWVlZWQwMy1iMDc2LTQ3MWQtODA1NC0yOTc2ZTQ3MWNjODQiLCJ1c2VyX2ZsYWdzIjoxLCJhcGlfZG9tYWluIjoiYXBpLWMua29tbW8uY29tIn0.lysVtdnW-inhqVg6lkikXz7Hhpiob2ho5BrZYd1LNTs9cNwky7d_DhOrbNpEgJ7p4vWXpzhWizHtMR6GiGPTQIfSF94kijZubRqn308Ke846hKAy7NspkYe74d08Ui9oodV88ETv0IU0E-EyHH6Beb1_PVeMKKqjDC_9PSVy9grxxcMPhI3I4ec14xJxutY3Tq9jxcaSiG_BbShJCF0h3eoMswn9sPeyBt_DfhDHOxu8Sljal3MGLzAMgKukRiwvShPOMLIYh1JaGlgeYwyyyCN7ZWP71NclIEpeDnof3qYjE1gR02LkTu8FwcpqQ6X9W4rnjgQNWbsEO1qFffTMXQ';
     const tokenToUse = integration === 'sesiones' ? sesionesToken : defaultToken;
     const fromEnv =
-      integration === 'sesiones' ? Boolean(envSesiones) : Boolean(envOpenHouse);
+      integration === 'sesiones'
+        ? Boolean(
+            process.env.KOMMO_SESIONES_ACCESS_TOKEN?.trim() ||
+              process.env.KOMMO_SESIONES_LONG_TOKEN?.trim(),
+          )
+        : Boolean(
+            process.env.KOMMO_OPEN_HOUSE_ACCESS_TOKEN?.trim() ||
+              process.env.KOMMO_ACCESS_TOKEN?.trim(),
+          );
     console.log(`🔑 Usando token para integración: ${integration}${fromEnv ? ' (desde env)' : ''}`);
     console.log('✅ Token obtenido exitosamente');
     return tokenToUse;
