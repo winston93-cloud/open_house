@@ -87,11 +87,30 @@ export default function AdminDashboard() {
 
   const onCicloEscolarChange = (value: string) => {
     setCicloEscolar(value);
-    if (value !== '2026') {
-      setEdicionOpenHouse('todos');
+    if (value === '2025') {
+      setEdicionOpenHouse('2025-diciembre');
     } else {
       setEdicionOpenHouse(getDefaultOpenHouseEdicion());
     }
+  };
+
+  const onEdicionOpenHouseChange = (value: string) => {
+    setEdicionOpenHouse(value);
+    if (value === '2025-diciembre') {
+      setCicloEscolar('2025');
+    } else if (value === '2026-enero' || value === '2026-junio') {
+      setCicloEscolar('2026');
+    }
+  };
+
+  const descripcionFiltroOpenHouse = (): string => {
+    if (edicionOpenHouse === 'todos') {
+      return `Ciclo ${cicloEscolar} · todas las ediciones`;
+    }
+    if (edicionOpenHouse === 'sin-etiqueta') {
+      return `Ciclo ${cicloEscolar} · sin etiqueta`;
+    }
+    return `${getOpenHouseEdicionLabel(edicionOpenHouse)} (${edicionOpenHouse})`;
   };
 
   // Obtener archivos de backup disponibles
@@ -146,18 +165,14 @@ export default function AdminDashboard() {
 
   const fetchOpenHouse = async () => {
     try {
-      let query = supabase
-        .from('inscripciones')
-        .select('*')
-        .eq('ciclo_escolar', cicloEscolar)
-        .order('created_at', { ascending: false });
+      let query = supabase.from('inscripciones').select('*').order('created_at', { ascending: false });
 
-      if (cicloEscolar === '2026') {
-        if (edicionOpenHouse === 'sin-etiqueta') {
-          query = query.is('edicion_open_house', null);
-        } else if (edicionOpenHouse !== 'todos') {
-          query = query.eq('edicion_open_house', edicionOpenHouse);
-        }
+      if (edicionOpenHouse === 'sin-etiqueta') {
+        query = query.is('edicion_open_house', null).eq('ciclo_escolar', cicloEscolar);
+      } else if (edicionOpenHouse !== 'todos') {
+        query = query.eq('edicion_open_house', edicionOpenHouse);
+      } else {
+        query = query.eq('ciclo_escolar', cicloEscolar);
       }
 
       const { data, error } = await query;
@@ -261,15 +276,7 @@ export default function AdminDashboard() {
         ['', '', '', '', '', ''],
         ['', 'REPORTE DE OPEN HOUSE WINSTON', '', '', '', ''],
         ['', 'Fecha de generación:', new Date().toLocaleDateString('es-MX'), '', '', ''],
-        ['', 'Filtro Open House (listado):', 
-          cicloEscolar !== '2026'
-            ? `Año ${cicloEscolar} (sin filtro por edición)`
-            : edicionOpenHouse === 'todos'
-              ? 'Todas las ediciones'
-              : edicionOpenHouse === 'sin-etiqueta'
-                ? 'Sin etiqueta'
-                : getOpenHouseEdicionLabel(edicionOpenHouse),
-          '', '', ''],
+        ['', 'Filtro Open House (listado):', descripcionFiltroOpenHouse(), '', '', ''],
         ['', '', '', '', '', ''],
         ['', 'RESUMEN EJECUTIVO', '', '', '', ''],
         ['', 'Total de Open House:', stats.totalOpenHouse, '', '', ''],
@@ -514,15 +521,14 @@ export default function AdminDashboard() {
                 <option value="2025">2025</option>
               </select>
             </div>
-            {cicloEscolar === '2026' && (
-              <div className="admin-ciclo-selector" style={{ marginRight: '15px' }}>
+            <div className="admin-ciclo-selector" style={{ marginRight: '15px' }}>
                 <label htmlFor="edicionOHSelect" style={{ marginRight: '8px', fontWeight: '600', color: '#1e3a8a' }}>
                   Open House:
                 </label>
                 <select
                   id="edicionOHSelect"
                   value={edicionOpenHouse}
-                  onChange={(e) => setEdicionOpenHouse(e.target.value)}
+                  onChange={(e) => onEdicionOpenHouseChange(e.target.value)}
                   style={{
                     padding: '8px 12px',
                     borderRadius: '6px',
@@ -532,10 +538,10 @@ export default function AdminDashboard() {
                     fontWeight: '600',
                     cursor: 'pointer',
                     fontSize: '14px',
-                    minWidth: '200px'
+                    minWidth: '220px'
                   }}
                 >
-                  <option value="todos">Todas las ediciones</option>
+                  <option value="todos">Todas las ediciones (por año)</option>
                   <option value="sin-etiqueta">Sin etiqueta</option>
                   {OPEN_HOUSE_EDICIONES_META.map((ed) => (
                     <option key={ed.id} value={ed.id}>
@@ -544,7 +550,6 @@ export default function AdminDashboard() {
                   ))}
                 </select>
               </div>
-            )}
             <button onClick={() => { fetchOpenHouse(); fetchSesiones(); }} className="admin-refresh-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -671,15 +676,9 @@ export default function AdminDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Open House Recientes
-              {cicloEscolar === '2026' && (
-                <span style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#64748b', marginTop: '6px' }}>
-                  {edicionOpenHouse === 'todos' && 'Mostrando: todas las ediciones'}
-                  {edicionOpenHouse === 'sin-etiqueta' && 'Mostrando: sin etiqueta'}
-                  {edicionOpenHouse !== 'todos' && edicionOpenHouse !== 'sin-etiqueta' && (
-                    <>Mostrando: {getOpenHouseEdicionLabel(edicionOpenHouse)}</>
-                  )}
-                </span>
-              )}
+              <span style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#64748b', marginTop: '6px' }}>
+                {descripcionFiltroOpenHouse()}
+              </span>
             </h2>
           </div>
           
