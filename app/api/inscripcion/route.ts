@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
-import { getOpenHouseEventConfig } from '../../../lib/open-house-event';
+import { getOpenHouseEventConfig, OPEN_HOUSE_EDICION_ACTUAL } from '../../../lib/open-house-event';
 
 
 
@@ -658,7 +658,8 @@ export async function POST(request: NextRequest) {
           fecha_inscripcion: new Date().toISOString(),
           reminder_sent: false,
           reminder_scheduled_for: reminderDate.toISOString(),
-          ciclo_escolar: '2026' // Año para eventos de junio 2026
+          ciclo_escolar: '2026', // Año para eventos de junio 2026
+          edicion_open_house: OPEN_HOUSE_EDICION_ACTUAL,
         }
       ])
       .select();

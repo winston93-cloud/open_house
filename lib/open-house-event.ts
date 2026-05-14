@@ -76,3 +76,30 @@ export function getOpenHouseFormInfo(nivel: string): { title: string; subtitle: 
   if (!c) return null;
   return { title: c.formTitle, subtitle: c.formSubtitle };
 }
+
+/** Convocatoria que guardan las nuevas inscripciones (formulario público). */
+export const OPEN_HOUSE_EDICION_ACTUAL = '2026-junio';
+
+/** Metadatos por edición: primera fecha del evento (para orden “próximo”). */
+export const OPEN_HOUSE_EDICIONES_META: { id: string; label: string; primeraFechaEvento: string }[] = [
+  { id: '2026-enero', label: 'Enero 2026', primeraFechaEvento: '2026-01-17' },
+  { id: '2026-junio', label: 'Junio 2026', primeraFechaEvento: '2026-06-06' },
+];
+
+/** Edición Open House por defecto en admin: la convocatoria con evento más próximo hacia adelante. */
+export function getDefaultOpenHouseEdicion(): string {
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = [...OPEN_HOUSE_EDICIONES_META]
+    .filter((e) => e.primeraFechaEvento >= today)
+    .sort((a, b) => a.primeraFechaEvento.localeCompare(b.primeraFechaEvento));
+  if (upcoming.length) return upcoming[0].id;
+  const past = [...OPEN_HOUSE_EDICIONES_META].sort((a, b) =>
+    b.primeraFechaEvento.localeCompare(a.primeraFechaEvento)
+  );
+  return past[0]?.id ?? OPEN_HOUSE_EDICION_ACTUAL;
+}
+
+export function getOpenHouseEdicionLabel(id: string | null | undefined): string {
+  if (!id) return 'Sin etiqueta';
+  return OPEN_HOUSE_EDICIONES_META.find((e) => e.id === id)?.label ?? id;
+}
