@@ -82,6 +82,7 @@ export const OPEN_HOUSE_EDICION_ACTUAL = '2026-junio';
 
 /** Metadatos por edición: primera fecha del evento (para orden “próximo”). */
 export const OPEN_HOUSE_EDICIONES_META: { id: string; label: string; primeraFechaEvento: string }[] = [
+  { id: '2025-dic', label: 'Diciembre 2025', primeraFechaEvento: '2025-12-06' },
   { id: '2026-enero', label: 'Enero 2026', primeraFechaEvento: '2026-01-17' },
   { id: '2026-junio', label: 'Junio 2026', primeraFechaEvento: '2026-06-06' },
 ];
