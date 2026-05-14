@@ -632,7 +632,7 @@ export default function SesionesForm() {
         
         {/* Copyright */}
         <div className="copyright">
-          <p>© 2025 Instituto Winston Churchill.</p>
+          <p>© 2026 Instituto Winston Churchill.</p>
         </div>
       </div>
 

@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Inscripción - Instituto Winston Churchill',
-  description: 'Formulario de inscripción para Open House 2025 - Instituto Winston Churchill e Instituto Educativo Winston',
+  description: 'Formulario de inscripción para Open House 2026 - Instituto Winston Churchill e Instituto Educativo Winston',
 }
 
 export default function RootLayout({
