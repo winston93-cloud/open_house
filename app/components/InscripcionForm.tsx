@@ -228,8 +228,8 @@ export default function InscripcionForm() {
       {/* Winston Banner */}
       <div className="winston-banner">
         <img 
-          src="/winston-banner.jpg" 
-          alt="Winston Open House Primaria 2025" 
+          src="/winston-banner.png" 
+          alt="Winston Open House 2026" 
           className="winston-banner-image"
         />
       </div>
