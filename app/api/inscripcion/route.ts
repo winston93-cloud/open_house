@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
+import { getOpenHouseEventConfig } from '../../../lib/open-house-event';
 
 
 
@@ -594,29 +595,20 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
 
 // Función para crear el template del email
 const createEmailTemplate = (formData: any) => {
-  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, correo } = formData;
-  
-  // Determinar fecha y hora del evento según el nivel
-  let fechaEvento, horaEvento, institucionNombre;
-  
-  if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Sábado 13 de junio de 2026';
-    horaEvento = '9:00 AM a 11:30 AM';
-    institucionNombre = 'Instituto Educativo Winston';
-    return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
-  } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Sábado 6 de junio de 2026';
-    horaEvento = '9:00 AM a 11:30 AM';
-    institucionNombre = 'Instituto Winston Churchill';
-    return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
-  } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Sábado 6 de junio de 2026';
-    horaEvento = '12:00 PM a 1:30 PM';
-    institucionNombre = 'Instituto Winston Churchill';
-    return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
+  const ev = getOpenHouseEventConfig(formData.nivelAcademico);
+  if (!ev) {
+    return createChurchillTemplate(
+      formData,
+      'Fecha no especificada',
+      'Hora no especificada',
+      'Instituto Winston Churchill'
+    );
   }
-  // Fallback if no academic level matches (should not happen with proper form validation)
-  return createChurchillTemplate(formData, 'Fecha no especificada', 'Hora no especificada', 'Instituto Winston Churchill');
+  const { fechaEventoMail, horaEventoMail, institucionNombre } = ev;
+  if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+    return createEducativoTemplate(formData, fechaEventoMail, horaEventoMail, institucionNombre);
+  }
+  return createChurchillTemplate(formData, fechaEventoMail, horaEventoMail, institucionNombre);
 };
 
 export async function POST(request: NextRequest) {
@@ -638,23 +630,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcular fecha para el recordatorio (1 día antes del evento según nivel)
-    let reminderDate: Date;
-    
-    if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-      // Open House Maternal/Kinder: 13 jun, recordatorio 12 jun
-      reminderDate = new Date('2026-06-12');
-    } else if (formData.nivelAcademico === 'primaria' || formData.nivelAcademico === 'secundaria') {
-      // Open House Primaria/Secundaria: 6 jun, recordatorio 5 jun
-      reminderDate = new Date('2026-06-05');
-    } else {
-      // Seguridad: rechazar niveles académicos no válidos
+    const ev = getOpenHouseEventConfig(formData.nivelAcademico);
+    if (!ev) {
       console.error('❌ Nivel académico no válido:', formData.nivelAcademico);
       return NextResponse.json(
         { error: `Nivel académico no válido: ${formData.nivelAcademico}. Debe ser: maternal, kinder, primaria o secundaria` },
         { status: 400 }
       );
     }
+    const reminderDate = new Date(ev.reminderDateStr);
 
     // Guardar en la base de datos
     const { data: inscripcion, error: dbError } = await supabase
@@ -695,6 +679,8 @@ export async function POST(request: NextRequest) {
       const plantel = determinePlantel(formData);
       
       // Crear lead en Kommo (esto también envía el WhatsApp automáticamente)
+      const notaLead = `${ev.notaKommoBase}\n\nAspirante: ${formData.nombreAspirante}\nGrado: ${formData.gradoEscolar}`;
+
       const leadId = await createKommoLead({
         name: formData.nombreCompleto,
         phone: formData.telefono || '',
@@ -702,7 +688,8 @@ export async function POST(request: NextRequest) {
         plantel: plantel,
         nivelAcademico: formData.nivelAcademico,
         gradoEscolar: formData.gradoEscolar,
-        nombreAspirante: formData.nombreAspirante
+        nombreAspirante: formData.nombreAspirante,
+        notaLead,
       });
       
       console.log(`✅ Lead creado exitosamente con ID: ${leadId}`);
@@ -717,13 +704,11 @@ export async function POST(request: NextRequest) {
       try {
         console.log('📱 Enviando SMS de confirmación...');
         
-        // Determinar mensaje según nivel académico (acortado para 1 segmento)
-        let mensaje = '';
-        if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `✅ Open House 2026 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528333474507 🏫`;
-        } else {
-          mensaje = `✅ Open House 2026 confirmado para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528334378743 🏫`;
-        }
+        const waUrl =
+          formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder'
+            ? 'https://wa.me/528333474507'
+            : 'https://wa.me/528334378743';
+        const mensaje = `✅ Open House 2026: ${formData.nombreAspirante}. ${ev.smsEventoCorto}. Rec. 1 día antes por correo. ${waUrl} 🏫`;
         
         // Formatear teléfono
         let phone = formData.telefono.toString().trim();
@@ -791,7 +776,7 @@ export async function POST(request: NextRequest) {
             <table style="width: 100%; border-collapse: collapse;">
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151; width: 40%;">Nombre del Aspirante:</td>
-                <td style="padding: 8px 0; color: #1e3a8a;">${formData.nombreCompleto}</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${formData.nombreAspirante}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Nivel Académico:</td>
@@ -802,14 +787,20 @@ export async function POST(request: NextRequest) {
                 <td style="padding: 8px 0; color: #1e3a8a;">${formData.gradoEscolar}</td>
               </tr>
               <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Fecha del Open House:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${ev.fechaEventoMail}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold; color: #374151;">Horario del evento:</td>
+                <td style="padding: 8px 0; color: #1e3a8a;">${ev.horaEventoMail}</td>
+              </tr>
+              <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Fecha de Nacimiento:</td>
                 <td style="padding: 8px 0; color: #1e3a8a;">${formData.fechaNacimiento}</td>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Email:</td>
                 <td style="padding: 8px 0; color: #1e3a8a;">${formData.correo}</td>
-              </tr>
-              <tr>
               </tr>
               <tr>
                 <td style="padding: 8px 0; font-weight: bold; color: #374151;">Fecha de Inscripción:</td>

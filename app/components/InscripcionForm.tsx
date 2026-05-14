@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getOpenHouseFormInfo } from '../../lib/open-house-event'
 
 interface FormData {
   nombreAspirante: string
@@ -20,27 +21,6 @@ interface FormData {
 interface FormErrors {
   [key: string]: string
 }
-
-const OPEN_HOUSE_EVENT_INFO: Record<string, { title: string; subtitle: string }> = {
-  maternal: {
-    title: 'Open House Maternal y Kinder',
-    subtitle: 'Sábado 13 de junio · 9:00 a 11:30 a.m.'
-  },
-  kinder: {
-    title: 'Open House Maternal y Kinder',
-    subtitle: 'Sábado 13 de junio · 9:00 a 11:30 a.m.'
-  },
-  primaria: {
-    title: 'Open House Primaria',
-    subtitle: 'Sábado 6 de junio · 9:00 a 11:30 a.m.'
-  },
-  secundaria: {
-    title: 'Open House Secundaria',
-    subtitle: 'Sábado 6 de junio · 12:00 a 1:30 p.m.'
-  }
-}
-
-const getOpenHouseEventInfo = (nivel: string) => OPEN_HOUSE_EVENT_INFO[nivel] ?? null
 
 export default function InscripcionForm() {
   const [formData, setFormData] = useState<FormData>({
@@ -62,7 +42,7 @@ export default function InscripcionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [showModal, setShowModal] = useState(false)
-  const selectedEventInfo = getOpenHouseEventInfo(formData.nivelAcademico)
+  const selectedEventInfo = getOpenHouseFormInfo(formData.nivelAcademico)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target

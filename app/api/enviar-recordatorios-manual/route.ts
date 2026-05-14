@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
+import { getOpenHouseEventConfig } from '../../../lib/open-house-event';
 
 // =============================================================================
 // ENDPOINT MANUAL: ENVIAR RECORDATORIOS DEL DÍA
@@ -1010,24 +1011,12 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
 // Función para obtener la información del evento según el nivel y tipo de formulario
 const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
   if (isOpenHouse) {
-    // OPEN HOUSE 2026
-    if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
+    const c = getOpenHouseEventConfig(nivelAcademico);
+    if (c) {
       return {
-        fechaEvento: '13 de Junio',
-        horaEvento: '9:00 AM - 11:30 AM',
-        institucionNombre: 'Instituto Educativo Winston'
-      };
-    } else if (nivelAcademico === 'primaria') {
-      return {
-        fechaEvento: '6 de Junio',
-        horaEvento: '9:00 AM - 11:30 AM',
-        institucionNombre: 'Instituto Winston Churchill'
-      };
-    } else if (nivelAcademico === 'secundaria') {
-      return {
-        fechaEvento: '6 de Junio',
-        horaEvento: '12:00 PM - 1:30 PM',
-        institucionNombre: 'Instituto Winston Churchill'
+        fechaEvento: c.fechaRecordatorio,
+        horaEvento: c.horaRecordatorio,
+        institucionNombre: c.institucionNombre,
       };
     }
   } else {

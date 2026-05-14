@@ -59,6 +59,8 @@ export async function createKommoLead(leadData: {
   gradoEscolar: string;
   nombreAspirante: string;
   tipoEvento?: 'open-house' | 'sesiones'; // Tipo de evento para determinar etiqueta
+  /** Nota visible en el lead (p. ej. fecha/hora del Open House). Opcional. */
+  notaLead?: string;
 }) {
   try {
     // Log para detectar múltiples llamadas
@@ -185,6 +187,35 @@ export async function createKommoLead(leadData: {
     const leadId = leadResponseData._embedded.leads[0].id;
     
     console.log('✅ Lead creado exitosamente con ID:', leadId);
+
+    if (leadData.notaLead?.trim()) {
+      try {
+        const notesUrl = `https://${cfg.subdomain}.kommo.com/api/v4/leads/${leadId}/notes`;
+        const notePayload = [
+          {
+            entity_id: leadId,
+            note_type: 'common',
+            params: { text: leadData.notaLead.trim() },
+          },
+        ];
+        const noteResponse = await fetch(notesUrl, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(notePayload),
+        });
+        if (!noteResponse.ok) {
+          const errText = await noteResponse.text();
+          console.error('⚠️ No se pudo agregar nota al lead:', errText);
+        } else {
+          console.log('✅ Nota de evento agregada al lead en Kommo');
+        }
+      } catch (noteError) {
+        console.error('⚠️ Error al agregar nota al lead (no crítico):', noteError);
+      }
+    }
     
     if (tagName) {
     console.log('🏷️ Etiqueta incluida en el payload del lead');
