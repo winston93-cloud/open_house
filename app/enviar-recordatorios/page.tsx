@@ -1,6 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import {
+  getProximosEnviosProgramados,
+  getReminderCalendarSummary,
+} from '../../lib/reminder-schedule';
 import './recordatorios.css';
 
 interface PendingReminder {
@@ -111,56 +115,8 @@ export default function EnviarRecordatoriosPage() {
     }
   };
 
-  const proximosEnvios = [
-    {
-      fecha: 'Sábado 6 de Junio 2026',
-      hora: '9:00 AM - 11:30 AM',
-      tipo: 'Open House',
-      niveles: ['Primaria'],
-      institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Viernes 5 de Junio, 9:00 AM'
-    },
-    {
-      fecha: 'Sábado 6 de Junio 2026',
-      hora: '12:00 PM - 1:30 PM',
-      tipo: 'Open House',
-      niveles: ['Secundaria'],
-      institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Viernes 5 de Junio, 9:00 AM'
-    },
-    {
-      fecha: 'Lunes 19 de Enero 2026',
-      hora: '6:00 PM',
-      tipo: 'Sesión Informativa',
-      niveles: ['Primaria'],
-      institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Domingo 18 de Enero, 9:00 AM'
-    },
-    {
-      fecha: 'Martes 20 de Enero 2026',
-      hora: '6:00 PM',
-      tipo: 'Sesión Informativa',
-      niveles: ['Secundaria'],
-      institucion: 'Instituto Winston Churchill',
-      recordatorio: 'Lunes 19 de Enero, 9:00 AM'
-    },
-    {
-      fecha: 'Sábado 13 de Junio 2026',
-      hora: '9:00 AM - 11:30 AM',
-      tipo: 'Open House',
-      niveles: ['Maternal', 'Kinder'],
-      institucion: 'Instituto Educativo Winston',
-      recordatorio: 'Viernes 12 de Junio, 9:00 AM'
-    },
-    {
-      fecha: 'Lunes 26 de Enero 2026',
-      hora: '6:00 PM',
-      tipo: 'Sesión Informativa',
-      niveles: ['Maternal', 'Kinder'],
-      institucion: 'Instituto Educativo Winston',
-      recordatorio: 'Domingo 25 de Enero, 9:00 AM'
-    }
-  ];
+  const proximosEnvios = useMemo(() => getProximosEnviosProgramados(), []);
+  const calendarioResumen = useMemo(() => getReminderCalendarSummary(), []);
 
   if (loading) {
     return (
@@ -269,18 +225,24 @@ export default function EnviarRecordatoriosPage() {
             <div className="recordatorios-stats">
               <div className="recordatorios-stat-item recordatorios-stat-openhouse">
                 <p className="recordatorios-stat-label">🏠 Open House</p>
-                <p className="recordatorios-stat-value">4 eventos</p>
-                <p className="recordatorios-stat-description">Viernes 5 y 12 de junio, 9:00 AM</p>
+                <p className="recordatorios-stat-value">
+                  {calendarioResumen.openHouseEventos} evento
+                  {calendarioResumen.openHouseEventos !== 1 ? 's' : ''}
+                </p>
+                <p className="recordatorios-stat-description">{calendarioResumen.openHouseEnviosLabel}</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-sesiones">
                 <p className="recordatorios-stat-label">📚 Sesiones Informativas</p>
-                <p className="recordatorios-stat-value">4 eventos</p>
-                <p className="recordatorios-stat-description">Dom 18, Lun 19, Dom 25 enero</p>
+                <p className="recordatorios-stat-value">
+                  {calendarioResumen.sesionesEventos} evento
+                  {calendarioResumen.sesionesEventos !== 1 ? 's' : ''}
+                </p>
+                <p className="recordatorios-stat-description">{calendarioResumen.sesionesEnviosLabel}</p>
               </div>
               <div className="recordatorios-stat-item recordatorios-stat-exito">
                 <p className="recordatorios-stat-label">📅 Primer recordatorio</p>
-                <p className="recordatorios-stat-value">5 Jun</p>
-                <p className="recordatorios-stat-description">Viernes 9:00 AM</p>
+                <p className="recordatorios-stat-value">{calendarioResumen.primerRecordatorioLabel}</p>
+                <p className="recordatorios-stat-description">{calendarioResumen.primerRecordatorioSub}</p>
               </div>
             </div>
           </div>
@@ -311,6 +273,11 @@ export default function EnviarRecordatoriosPage() {
         {/* Próximos envíos */}
         <div className="recordatorios-proximos">
           <h2 className="recordatorios-proximos-title">📅 Próximos Envíos Programados</h2>
+          {proximosEnvios.length === 0 ? (
+            <p className="recordatorios-empty-subtext" style={{ padding: '1rem 0' }}>
+              No hay envíos de recordatorio programados a partir de hoy.
+            </p>
+          ) : (
           <div className="recordatorios-proximos-list">
             {proximosEnvios.map((envio, idx) => (
               <div key={idx} className="recordatorios-proximo-item">
@@ -335,6 +302,7 @@ export default function EnviarRecordatoriosPage() {
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Modal de confirmación */}
