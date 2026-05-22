@@ -100,8 +100,8 @@ export function getReminderCalendarSummary(): {
   const oh = proximos.filter((p) => p.tipo === 'Open House');
   const ses = proximos.filter((p) => p.tipo === 'Sesión Informativa');
 
-  const ohReminderDays = [...new Set(oh.map((p) => p.reminderDateStr))].sort();
-  const sesReminderDays = [...new Set(ses.map((p) => p.reminderDateStr))].sort();
+  const ohReminderDays = Array.from(new Set(oh.map((p) => p.reminderDateStr))).sort();
+  const sesReminderDays = Array.from(new Set(ses.map((p) => p.reminderDateStr))).sort();
 
   const formatDayShort = (iso: string) => {
     const [y, m, d] = iso.split('-').map(Number);
