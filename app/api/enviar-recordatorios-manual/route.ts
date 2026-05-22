@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
-import { getOpenHouseEventConfig } from '../../../lib/open-house-event';
+import { getReminderEventInfo } from '../../../lib/reminder-event-info';
 
 // =============================================================================
 // ENDPOINT MANUAL: ENVIAR RECORDATORIOS DEL DÍA
@@ -1008,51 +1008,10 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
   return 0;
 };
 
-// Función para obtener la información del evento según el nivel y tipo de formulario
-const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
-  if (isOpenHouse) {
-    const c = getOpenHouseEventConfig(nivelAcademico);
-    if (c) {
-      return {
-        fechaEvento: c.fechaRecordatorio,
-        horaEvento: c.horaRecordatorio,
-        institucionNombre: c.institucionNombre,
-      };
-    }
-  } else {
-    // SESIONES INFORMATIVAS 2026
-    if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-      return {
-        fechaEvento: '26 de Enero',
-        horaEvento: '6:00 PM',
-        institucionNombre: 'Instituto Educativo Winston'
-      };
-    } else if (nivelAcademico === 'primaria') {
-      return {
-        fechaEvento: '19 de Enero',
-        horaEvento: '6:00 PM',
-        institucionNombre: 'Instituto Winston Churchill'
-      };
-    } else if (nivelAcademico === 'secundaria') {
-      return {
-        fechaEvento: '20 de Enero',
-        horaEvento: '6:00 PM',
-        institucionNombre: 'Instituto Winston Churchill'
-      };
-    }
-  }
-  
-  return {
-    fechaEvento: 'Fecha no especificada',
-    horaEvento: 'Hora no especificada',
-    institucionNombre: 'Instituto Winston Churchill'
-  };
-};
-
 // Función para enviar email de recordatorio de Sesiones Informativas (SOLO EMAIL)
 const sendSesionesReminderEmail = async (sesion: any) => {
   try {
-    const eventInfo = getEventInfo(sesion.nivel_academico, false); // false = Sesiones Informativas
+    const eventInfo = getReminderEventInfo(sesion.nivel_academico, false);
     
     // Crear el template del email
     const emailHtml = createSesionesReminderEmailTemplate({
@@ -1131,7 +1090,7 @@ async function sendReminderSMS(telefono: string, mensaje: string): Promise<boole
 // Función para enviar email de recordatorio de Open House (SOLO EMAIL)
 const sendReminderEmail = async (inscripcion: any) => {
   try {
-    const eventInfo = getEventInfo(inscripcion.nivel_academico, true); // true = Open House
+    const eventInfo = getReminderEventInfo(inscripcion.nivel_academico, true);
     
     // Crear el template del email
     const emailHtml = createReminderEmailTemplate({
@@ -1566,9 +1525,9 @@ export async function GET(request: NextRequest) {
           nivel_academico: i.nivel_academico,
           grado_escolar: i.grado_escolar,
           tipo_evento: 'open_house' as const,
-          fecha_evento: getEventInfo(i.nivel_academico, true).fechaEvento,
-          hora_evento: getEventInfo(i.nivel_academico, true).horaEvento,
-          institucion: getEventInfo(i.nivel_academico, true).institucionNombre
+          fecha_evento: getReminderEventInfo(i.nivel_academico, true).fechaEvento,
+          hora_evento: getReminderEventInfo(i.nivel_academico, true).horaEvento,
+          institucion: getReminderEventInfo(i.nivel_academico, true).institucionNombre
         })),
         ...(sesiones || []).map(s => ({
           id: s.id,
@@ -1578,9 +1537,9 @@ export async function GET(request: NextRequest) {
           nivel_academico: s.nivel_academico,
           grado_escolar: s.grado_escolar,
           tipo_evento: 'sesion' as const,
-          fecha_evento: getEventInfo(s.nivel_academico, false).fechaEvento,
-          hora_evento: getEventInfo(s.nivel_academico, false).horaEvento,
-          institucion: getEventInfo(s.nivel_academico, false).institucionNombre
+          fecha_evento: getReminderEventInfo(s.nivel_academico, false).fechaEvento,
+          hora_evento: getReminderEventInfo(s.nivel_academico, false).horaEvento,
+          institucion: getReminderEventInfo(s.nivel_academico, false).institucionNombre
         }))
       ];
       

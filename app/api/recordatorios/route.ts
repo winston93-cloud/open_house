@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
-import { getOpenHouseEventConfig } from '../../../lib/open-house-event';
+import { getReminderEventInfo } from '../../../lib/reminder-event-info';
 
 // =============================================================================
 // CRON JOB: SISTEMA DE RECORDATORIOS POR EMAIL Y SMS
@@ -1007,47 +1007,6 @@ const calculateDaysUntilEvent = (nivelAcademico: string): number => {
   return 0;
 };
 
-// Función para obtener la información del evento según el nivel y tipo de formulario
-const getEventInfo = (nivelAcademico: string, isOpenHouse: boolean = true) => {
-  if (isOpenHouse) {
-    const c = getOpenHouseEventConfig(nivelAcademico);
-    if (c) {
-      return {
-        fechaEvento: c.fechaRecordatorio,
-        horaEvento: c.horaRecordatorio,
-        institucionNombre: c.institucionNombre,
-      };
-    }
-  } else {
-    // SESIONES INFORMATIVAS 2026
-    if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-      return {
-        fechaEvento: '26 de Enero',
-        horaEvento: '6:00 PM',
-        institucionNombre: 'Instituto Educativo Winston'
-      };
-    } else if (nivelAcademico === 'primaria') {
-      return {
-        fechaEvento: '19 de Enero',
-        horaEvento: '6:00 PM',
-        institucionNombre: 'Instituto Winston Churchill'
-      };
-    } else if (nivelAcademico === 'secundaria') {
-      return {
-        fechaEvento: '20 de Enero',
-        horaEvento: '6:00 PM',
-        institucionNombre: 'Instituto Winston Churchill'
-      };
-    }
-  }
-  
-  return {
-    fechaEvento: 'Fecha no especificada',
-    horaEvento: 'Hora no especificada',
-    institucionNombre: 'Instituto Winston Churchill'
-  };
-};
-
 // Función para enviar SMS de recordatorio
 async function sendReminderSMS(telefono: string, mensaje: string): Promise<boolean> {
   try {
@@ -1090,7 +1049,7 @@ async function sendReminderSMS(telefono: string, mensaje: string): Promise<boole
 // Función para enviar email de recordatorio de Sesiones Informativas
 const sendSesionesReminderEmail = async (sesion: any) => {
   try {
-    const eventInfo = getEventInfo(sesion.nivel_academico, false); // false = Sesiones Informativas
+    const eventInfo = getReminderEventInfo(sesion.nivel_academico, false);
     
     // Crear el template del email
     const emailHtml = createSesionesReminderEmailTemplate({
@@ -1142,7 +1101,7 @@ https://open-house-chi.vercel.app/asistencia?id=${sesion.id}&confirmacion=confir
 // Función para enviar email de recordatorio de Open House
 const sendReminderEmail = async (inscripcion: any) => {
   try {
-    const eventInfo = getEventInfo(inscripcion.nivel_academico, true); // true = Open House
+    const eventInfo = getReminderEventInfo(inscripcion.nivel_academico, true);
     
     // Crear el template del email
     const emailHtml = createReminderEmailTemplate({

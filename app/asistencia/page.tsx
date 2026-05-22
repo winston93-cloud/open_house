@@ -48,12 +48,17 @@ function ConfirmarAsistenciaContent() {
       .then(data => {
         if (data.success) {
           setConfirmado(true);
+          if (data.inscripcion) {
+            setInscripcion(data.inscripcion);
+          }
         } else {
-          console.error('Error auto-confirmando:', data.message);
+          const msg = data.error || data.message || 'No se pudo guardar la confirmación';
+          console.error('Error auto-confirmando:', msg);
+          setError(msg);
         }
       })
-      .catch(error => {
-        console.error('Error auto-confirmando:', error);
+      .catch(() => {
+        setError('Error al confirmar asistencia. Intenta de nuevo.');
       })
       .finally(() => {
         setConfirmando(false);
@@ -98,8 +103,11 @@ function ConfirmarAsistenciaContent() {
 
       if (data.success) {
         setConfirmado(true);
+        if (data.inscripcion) {
+          setInscripcion(data.inscripcion);
+        }
       } else {
-        alert(`Error: ${data.message}`);
+        setError(data.error || data.message || 'No se pudo guardar la confirmación');
       }
     } catch (error) {
       alert('Error al confirmar asistencia. Intenta de nuevo.');
