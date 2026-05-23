@@ -108,7 +108,7 @@ body.campamento-page {
   color: #ef4444;
 }
 
-.campamento-field input,
+.campamento-field input:not([type='radio']):not([type='checkbox']),
 .campamento-field select,
 .campamento-field textarea {
   width: 100%;
@@ -125,7 +125,7 @@ body.campamento-page {
   appearance: none;
 }
 
-.campamento-field input:focus,
+.campamento-field input:not([type='radio']):not([type='checkbox']):focus,
 .campamento-field select:focus,
 .campamento-field textarea:focus {
   outline: none;
@@ -134,7 +134,7 @@ body.campamento-page {
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
-.campamento-field input:read-only {
+.campamento-field input:not([type='radio']):not([type='checkbox']):read-only {
   background: #f1f5f9;
   color: #64748b;
   cursor: default;
@@ -186,8 +186,16 @@ body.campamento-page {
 
 .campamento-radio input {
   accent-color: #2563eb;
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-height: unset;
+  padding: 0;
+  border: none;
+  background: transparent;
+  flex-shrink: 0;
+  cursor: pointer;
+  -webkit-appearance: auto;
+  appearance: auto;
 }
 
 .campamento-check {
