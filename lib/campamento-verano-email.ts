@@ -1,4 +1,5 @@
 import {
+  CAMPAMENTO_CONTACTO,
   CAMPAMENTO_INSTITUCION,
   CAMPAMENTO_SUBTITULO,
   CAMPAMENTO_TITULO,
@@ -114,15 +115,15 @@ export function createCampamentoConfirmacionEmail(
               </ul>
 
               <p style="margin:0;padding:16px;background:#eff6ff;border-radius:12px;color:#1e40af;font-size:14px;line-height:1.6;text-align:center;">
-                📞 Para dudas: <strong>833 347 4507</strong><br/>
-                📧 recepcioniew@winston93.edu.mx
+                📞 Para dudas: <strong>${CAMPAMENTO_CONTACTO.telefono}</strong><br/>
+                📧 ${CAMPAMENTO_CONTACTO.email}
               </p>
             </td>
           </tr>
           <tr>
             <td style="background:#1e293b;padding:20px;text-align:center;">
               <p style="margin:0;color:#94a3b8;font-size:12px;">© ${new Date().getFullYear()} ${CAMPAMENTO_INSTITUCION}</p>
-              <p style="margin:6px 0 0;color:#64748b;font-size:11px;">www.winstonkinder.edu.mx</p>
+              <p style="margin:6px 0 0;color:#64748b;font-size:11px;">${CAMPAMENTO_CONTACTO.web}</p>
             </td>
           </tr>
         </table>

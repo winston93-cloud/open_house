@@ -42,7 +42,7 @@ CREATE INDEX IF NOT EXISTS idx_campamento_verano_fecha_inscripcion ON public.cam
 CREATE INDEX IF NOT EXISTS idx_campamento_verano_edicion ON public.campamento_verano (edicion);
 CREATE INDEX IF NOT EXISTS idx_campamento_verano_plan ON public.campamento_verano (plan_campamento);
 
-COMMENT ON TABLE public.campamento_verano IS 'Inscripciones al campamento de verano Startup Kids Camp (IEW)';
+COMMENT ON TABLE public.campamento_verano IS 'Inscripciones al campamento de verano Startup Kids Camp (IWC)';
 COMMENT ON COLUMN public.campamento_verano.plan_campamento IS '4_semanas | 3_semanas | semanal';
 
 -- Trigger updated_at (usa la misma función que inscripciones si ya existe)

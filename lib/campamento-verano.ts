@@ -1,5 +1,5 @@
 export const CAMPAMENTO_EDICION = '2025';
-export const CAMPAMENTO_INSTITUCION = 'Instituto Educativo Winston';
+export const CAMPAMENTO_INSTITUCION = 'Instituto Winston Churchill';
 export const CAMPAMENTO_TITULO = 'Startup Kids Camp';
 export const CAMPAMENTO_SUBTITULO = 'Verano 2025';
 
@@ -36,6 +36,12 @@ export const PLANES_CAMPAMENTO: PlanCampamento[] = [
     precioFormateado: '$700',
   },
 ];
+
+export const CAMPAMENTO_CONTACTO = {
+  telefono: '833 437 8743',
+  email: 'vinculacionw@winston93.edu.mx',
+  web: 'www.winston93.edu.mx',
+};
 
 export function getPlanCampamento(id: string): PlanCampamento | undefined {
   return PLANES_CAMPAMENTO.find((p) => p.id === id);

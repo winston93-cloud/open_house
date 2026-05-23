@@ -11,7 +11,9 @@ body.campamento-page {
 .campamento-root {
   font-family: 'Nunito', 'Inter', system-ui, sans-serif;
   min-height: 100vh;
-  padding: 1.5rem 1rem 3rem;
+  min-height: 100dvh;
+  padding: max(0.75rem, env(safe-area-inset-top)) max(0.65rem, env(safe-area-inset-right))
+    max(2rem, env(safe-area-inset-bottom)) max(0.65rem, env(safe-area-inset-left));
 }
 
 .campamento-wrap {
@@ -20,12 +22,12 @@ body.campamento-page {
 }
 
 .campamento-banner {
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow:
-    0 24px 60px rgba(15, 23, 42, 0.35),
-    0 0 0 4px rgba(255, 255, 255, 0.15);
-  margin-bottom: 1.5rem;
+    0 16px 40px rgba(15, 23, 42, 0.3),
+    0 0 0 3px rgba(255, 255, 255, 0.12);
+  margin-bottom: 0.75rem;
 }
 
 .campamento-banner img {
@@ -36,9 +38,9 @@ body.campamento-page {
 
 .campamento-card {
   background: rgba(255, 255, 255, 0.98);
-  border-radius: 24px;
-  padding: 2rem 1.75rem 2.25rem;
-  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+  border-radius: 20px;
+  padding: 1.35rem 1.15rem 1.75rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
   position: relative;
   overflow: hidden;
 }
@@ -53,53 +55,21 @@ body.campamento-page {
   background: linear-gradient(90deg, #fbbf24, #f59e0b, #3b82f6, #1d4ed8);
 }
 
-.campamento-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.campamento-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #92400e;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.9rem;
-  border-radius: 999px;
-  margin-bottom: 0.75rem;
-}
-
-.campamento-header h1 {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 900;
-  color: #1e3a8a;
-  margin: 0 0 0.35rem;
-  line-height: 1.2;
-}
-
-.campamento-header p {
-  margin: 0;
-  color: #64748b;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
 .campamento-section {
   margin-bottom: 2rem;
 }
 
 .campamento-section-title {
   display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 1.05rem;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: clamp(0.95rem, 3.5vw, 1.05rem);
   font-weight: 800;
   color: #1e40af;
-  margin: 0 0 1.25rem;
-  padding-bottom: 0.65rem;
+  margin: 0 0 1rem;
+  padding-bottom: 0.55rem;
   border-bottom: 2px solid #e2e8f0;
+  line-height: 1.35;
 }
 
 .campamento-section-num {
@@ -142,14 +112,17 @@ body.campamento-page {
 .campamento-field select,
 .campamento-field textarea {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
+  min-height: 48px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 16px;
   color: #0f172a;
   background: #f8fafc;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .campamento-field input:focus,
@@ -190,16 +163,17 @@ body.campamento-page {
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  padding: 0.65rem 1rem;
+  padding: 0.85rem 1rem;
+  min-height: 48px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   background: #f8fafc;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #475569;
   transition: all 0.2s;
   flex: 1;
-  min-width: 120px;
+  min-width: 0;
   justify-content: center;
 }
 
@@ -220,7 +194,8 @@ body.campamento-page {
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
-  padding: 0.85rem 1rem;
+  padding: 0.95rem 1rem;
+  min-height: 48px;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   background: #f8fafc;
@@ -243,9 +218,9 @@ body.campamento-page {
 }
 
 .campamento-check span {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   color: #334155;
-  line-height: 1.5;
+  line-height: 1.55;
   font-weight: 600;
 }
 
@@ -266,11 +241,12 @@ body.campamento-page {
 .campamento-submit {
   width: 100%;
   margin-top: 0.5rem;
-  padding: 1rem 1.5rem;
+  padding: 1.05rem 1.25rem;
+  min-height: 52px;
   border: none;
   border-radius: 14px;
   font-family: inherit;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 800;
   color: #fff;
   cursor: pointer;
@@ -278,6 +254,7 @@ body.campamento-page {
   box-shadow: 0 12px 32px rgba(245, 158, 11, 0.4);
   transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
   letter-spacing: 0.02em;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .campamento-submit:hover:not(:disabled) {
@@ -381,11 +358,69 @@ body.campamento-page {
 }
 
 @media (max-width: 640px) {
-  .campamento-grid {
-    grid-template-columns: 1fr;
+  .campamento-wrap {
+    max-width: 100%;
+  }
+
+  .campamento-banner {
+    border-radius: 12px;
+    margin-bottom: 0.5rem;
   }
 
   .campamento-card {
-    padding: 1.5rem 1.15rem 1.75rem;
+    padding: 1.15rem 0.95rem 1.5rem;
+    border-radius: 16px;
+  }
+
+  .campamento-grid {
+    grid-template-columns: 1fr;
+    gap: 0.95rem;
+  }
+
+  .campamento-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .campamento-radio-group {
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .campamento-radio {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 1.15rem;
+  }
+
+  .campamento-section-num {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 0.8rem;
+  }
+
+  .campamento-modal {
+    padding: 1.5rem 1.25rem;
+    border-radius: 20px;
+  }
+
+  .campamento-footer {
+    font-size: 0.75rem;
+    margin-top: 1rem;
+  }
+}
+
+@media (min-width: 641px) {
+  .campamento-root {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .campamento-card {
+    padding: 2rem 1.75rem 2.25rem;
+    border-radius: 24px;
+  }
+
+  .campamento-banner {
+    border-radius: 20px;
+    margin-bottom: 1rem;
   }
 }

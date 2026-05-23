@@ -223,12 +223,6 @@ export default function CampamentoVeranoForm() {
         </div>
 
         <div className="campamento-card">
-          <header className="campamento-header">
-            <span className="campamento-badge">{CAMPAMENTO_SUBTITULO}</span>
-            <h1>{CAMPAMENTO_TITULO}</h1>
-            <p>{CAMPAMENTO_INSTITUCION}</p>
-          </header>
-
           {submitError && <div className="campamento-alert error">{submitError}</div>}
 
           <form onSubmit={handleSubmit} noValidate>
@@ -460,7 +454,7 @@ export default function CampamentoVeranoForm() {
                   onChange={handleChange}
                 />
                 <span>
-                  Autorizo al Instituto Educativo Winston a brindar primeros auxilios a mi
+                  Autorizo al {CAMPAMENTO_INSTITUCION} a brindar primeros auxilios a mi
                   hijo(a) si fuera necesario.
                 </span>
               </label>
@@ -477,7 +471,7 @@ export default function CampamentoVeranoForm() {
                 />
                 <span>
                   Autorizo el uso de fotos y videos de mi hijo(a) con fines educativos y
-                  promocionales del Instituto Educativo Winston.
+                  promocionales del {CAMPAMENTO_INSTITUCION}.
                 </span>
               </label>
               {errors.autorizaFotos && (
