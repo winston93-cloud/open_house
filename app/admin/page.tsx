@@ -7,6 +7,9 @@ import {
   OPEN_HOUSE_EDICIONES_META,
   getOpenHouseEdicionLabel,
 } from '../../lib/open-house-event';
+import { getPlanCampamento } from '../../lib/campamento-verano';
+import type { CampamentoRegistro } from '../../lib/campamento-admin';
+import CampamentoAdminModal from '../components/admin/CampamentoAdminModal';
 
 interface Inscripcion {
   id: string;
@@ -39,10 +42,15 @@ interface Sesion {
 }
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'openhouse' | 'sesiones'>('openhouse');
+  const [activeTab, setActiveTab] = useState<'openhouse' | 'sesiones' | 'campamento'>('openhouse');
   const [openHouse, setOpenHouse] = useState<Inscripcion[]>([]);
   const [sesiones, setSesiones] = useState<Sesion[]>([]);
+  const [campamento, setCampamento] = useState<CampamentoRegistro[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingCampamento, setLoadingCampamento] = useState(false);
+  const [campamentoModalOpen, setCampamentoModalOpen] = useState(false);
+  const [campamentoModalRegistro, setCampamentoModalRegistro] = useState<CampamentoRegistro | null>(null);
+  const [campamentoModalIsNew, setCampamentoModalIsNew] = useState(false);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
   const [cicloEscolar, setCicloEscolar] = useState<string>('2026'); // Año activo por defecto
@@ -58,6 +66,10 @@ export default function AdminDashboard() {
     sesionesKinder: 0,
     sesionesPrimaria: 0,
     sesionesSecundaria: 0,
+    totalCampamento: 0,
+    campamento4Semanas: 0,
+    campamento3Semanas: 0,
+    campamentoSemanal: 0,
     confirmados: 0,
     no_confirmados: 0,
     pendientes: 0
@@ -81,6 +93,7 @@ export default function AdminDashboard() {
     if (authenticated) {
       fetchOpenHouse();
       fetchSesiones();
+      fetchCampamento();
       fetchRestoreFiles();
     }
   }, [authenticated, cicloEscolar, edicionOpenHouse]); // Recargar cuando cambie el ciclo o la edición OH
@@ -151,6 +164,7 @@ export default function AdminDashboard() {
         // Recargar datos después de la restauración
         await fetchOpenHouse();
         await fetchSesiones();
+        await fetchCampamento();
       } else {
         alert(`❌ Error en la restauración: ${result.message}`);
       }
@@ -224,6 +238,82 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error al cargar sesiones:', error);
     }
+  };
+
+  const fetchCampamento = async () => {
+    setLoadingCampamento(true);
+    try {
+      const res = await fetch('/api/admin/campamento-verano?edicion=todos');
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message);
+
+      const registros: CampamentoRegistro[] = data.registros || [];
+      setCampamento(registros);
+      setStats((prev) => ({
+        ...prev,
+        totalCampamento: registros.length,
+        campamento4Semanas: registros.filter((r) => r.plan_campamento === '4_semanas').length,
+        campamento3Semanas: registros.filter((r) => r.plan_campamento === '3_semanas').length,
+        campamentoSemanal: registros.filter((r) => r.plan_campamento === 'semanal').length,
+      }));
+    } catch (error) {
+      console.error('Error al cargar campamento:', error);
+    } finally {
+      setLoadingCampamento(false);
+    }
+  };
+
+  const openCampamentoModal = (registro: CampamentoRegistro) => {
+    setCampamentoModalRegistro(registro);
+    setCampamentoModalIsNew(false);
+    setCampamentoModalOpen(true);
+  };
+
+  const openCampamentoNew = () => {
+    setCampamentoModalRegistro(null);
+    setCampamentoModalIsNew(true);
+    setCampamentoModalOpen(true);
+  };
+
+  const closeCampamentoModal = () => {
+    setCampamentoModalOpen(false);
+    setCampamentoModalRegistro(null);
+    setCampamentoModalIsNew(false);
+  };
+
+  const handleCampamentoSaved = (registro: CampamentoRegistro) => {
+    setCampamento((prev) => {
+      const idx = prev.findIndex((r) => r.id === registro.id);
+      const next = idx >= 0 ? [...prev] : [registro, ...prev];
+      if (idx >= 0) next[idx] = registro;
+      setStats((s) => ({
+        ...s,
+        totalCampamento: next.length,
+        campamento4Semanas: next.filter((r) => r.plan_campamento === '4_semanas').length,
+        campamento3Semanas: next.filter((r) => r.plan_campamento === '3_semanas').length,
+        campamentoSemanal: next.filter((r) => r.plan_campamento === 'semanal').length,
+      }));
+      return next;
+    });
+  };
+
+  const handleCampamentoDeleted = (id: string) => {
+    setCampamento((prev) => {
+      const next = prev.filter((r) => r.id !== id);
+      setStats((s) => ({
+        ...s,
+        totalCampamento: next.length,
+        campamento4Semanas: next.filter((r) => r.plan_campamento === '4_semanas').length,
+        campamento3Semanas: next.filter((r) => r.plan_campamento === '3_semanas').length,
+        campamentoSemanal: next.filter((r) => r.plan_campamento === 'semanal').length,
+      }));
+      return next;
+    });
+  };
+
+  const formatPlanCampamento = (planId: string): string => {
+    const plan = getPlanCampamento(planId);
+    return plan ? plan.label : planId;
   };
 
   // Función auxiliar para formatear el nombre del nivel
@@ -550,7 +640,7 @@ export default function AdminDashboard() {
                   ))}
                 </select>
               </div>
-            <button onClick={() => { fetchOpenHouse(); fetchSesiones(); }} className="admin-refresh-button">
+            <button onClick={() => { fetchOpenHouse(); fetchSesiones(); fetchCampamento(); }} className="admin-refresh-button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
@@ -590,6 +680,12 @@ export default function AdminDashboard() {
             onClick={() => setActiveTab('sesiones')}
           >
             📋 Sesiones Informativas ({stats.totalSesiones})
+          </button>
+          <button 
+            className={`admin-tab ${activeTab === 'campamento' ? 'active' : ''}`}
+            onClick={() => setActiveTab('campamento')}
+          >
+            🏕️ Campamento de Verano ({stats.totalCampamento})
           </button>
         </div>
 
@@ -768,7 +864,7 @@ export default function AdminDashboard() {
           </div>
         </div>
           </>
-        ) : (
+        ) : activeTab === 'sesiones' ? (
           <>
             <div className="admin-stats-grid">
               <div className="admin-stat-card">
@@ -937,8 +1033,155 @@ export default function AdminDashboard() {
               </div>
             </div>
           </>
+        ) : (
+          <>
+            <div className="admin-stats-grid">
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Total Campamento</p>
+                    <p className="admin-stat-number" style={{ color: '#0ea5e9' }}>{stats.totalCampamento}</p>
+                  </div>
+                  <div className="admin-stat-icon" style={{ background: '#0ea5e9' }}>
+                    <span style={{ fontSize: '24px' }}>🏕️</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Plan 4 semanas</p>
+                    <p className="admin-stat-number admin-stat-green">{stats.campamento4Semanas}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-green">
+                    <span style={{ fontSize: '20px' }}>4️⃣</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Plan 3 semanas</p>
+                    <p className="admin-stat-number admin-stat-purple">{stats.campamento3Semanas}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-purple">
+                    <span style={{ fontSize: '20px' }}>3️⃣</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="admin-stat-card">
+                <div className="admin-stat-content">
+                  <div>
+                    <p className="admin-stat-label">Plan semanal</p>
+                    <p className="admin-stat-number admin-stat-orange">{stats.campamentoSemanal}</p>
+                  </div>
+                  <div className="admin-stat-icon admin-stat-icon-orange">
+                    <span style={{ fontSize: '20px' }}>📅</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-table-container">
+              <div className="admin-table-header admin-table-header-with-action">
+                <h2>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Inscripciones Campamento de Verano
+                </h2>
+                <button type="button" className="admin-campamento-new-btn" onClick={openCampamentoNew}>
+                  ➕ Nuevo registro
+                </button>
+              </div>
+
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Grado</th>
+                      <th>Plan</th>
+                      <th>Email</th>
+                      <th>Fecha</th>
+                      <th>Edición</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {loadingCampamento ? (
+                      <tr>
+                        <td colSpan={6} className="admin-loading">
+                          <div className="admin-spinner"></div>
+                          <span>Cargando campamento...</span>
+                        </td>
+                      </tr>
+                    ) : campamento.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="admin-empty">
+                          <span style={{ fontSize: '32px' }}>🏕️</span>
+                          <p className="admin-empty-title">No hay inscripciones al campamento</p>
+                          <p className="admin-empty-subtitle">Los registros aparecerán aquí cuando los padres llenen el formulario en /campamento-verano.</p>
+                        </td>
+                      </tr>
+                    ) : (
+                      campamento.map((item, index) => (
+                        <tr key={item.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
+                          <td>
+                            <div className="admin-user-info">
+                              <div className="admin-user-avatar">
+                                {item.nombre_participante.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="admin-user-name">{item.nombre_participante}</div>
+                            </div>
+                          </td>
+                          <td className="admin-grade">{item.grado_escolar}</td>
+                          <td>
+                            <span className="admin-campamento-plan-badge">
+                              {formatPlanCampamento(item.plan_campamento)}
+                            </span>
+                          </td>
+                          <td className="admin-email">{item.email}</td>
+                          <td className="admin-date">
+                            {new Date(item.created_at).toLocaleDateString('es-MX', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="admin-campamento-edit-btn"
+                              onClick={() => openCampamentoModal(item)}
+                            >
+                              ✏️ Ver / Editar
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
       </div>
+
+      {campamentoModalOpen && (
+        <CampamentoAdminModal
+          registro={campamentoModalRegistro}
+          isNew={campamentoModalIsNew}
+          onClose={closeCampamentoModal}
+          onSaved={handleCampamentoSaved}
+          onDeleted={handleCampamentoDeleted}
+        />
+      )}
 
       {/* Modal de Restauración */}
       {showRestoreModal && (
