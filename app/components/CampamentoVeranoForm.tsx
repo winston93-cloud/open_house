@@ -40,9 +40,9 @@ const GRADOS = [
   '4° Primaria',
   '5° Primaria',
   '6° Primaria',
-  '1° Secundaria',
-  '2° Secundaria',
-  '3° Secundaria',
+  '7mo de Secundaria',
+  '8vo de Secundaria',
+  '9no de Secundaria',
   'Otro',
 ];
 
