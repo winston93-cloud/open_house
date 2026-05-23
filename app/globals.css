@@ -194,12 +194,14 @@ body {
 }
 
 .admin-header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 1.5rem 2rem;
+  padding: 1.25rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .admin-header-left {
@@ -241,6 +243,70 @@ body {
 .admin-header-actions {
   display: flex;
   gap: 1rem;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.admin-header-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.admin-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 100px;
+}
+
+.admin-filter-field-wide {
+  min-width: 240px;
+}
+
+.admin-filter-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-filter-field select {
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  min-width: 100%;
+}
+
+.admin-filter-field select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.admin-header-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .admin-refresh-button,
@@ -2272,6 +2338,33 @@ body.sesiones-page {
 
   .admin-header-left p {
     font-size: 0.875rem;
+  }
+
+  .admin-header-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+  }
+
+  .admin-header-filters {
+    width: 100%;
+  }
+
+  .admin-filter-field,
+  .admin-filter-field-wide {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .admin-header-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .admin-header-buttons button {
+    width: 100%;
+    justify-content: center;
   }
 
   .admin-header-actions {

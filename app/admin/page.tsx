@@ -74,9 +74,6 @@ export default function AdminDashboard() {
     no_confirmados: 0,
     pendientes: 0
   });
-  const [restoring, setRestoring] = useState(false);
-  const [restoreFiles, setRestoreFiles] = useState<any[]>([]);
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
 
   // Verificar autenticación
   const handleLogin = (e: React.FormEvent) => {
@@ -94,7 +91,6 @@ export default function AdminDashboard() {
       fetchOpenHouse();
       fetchSesiones();
       fetchCampamento();
-      fetchRestoreFiles();
     }
   }, [authenticated, cicloEscolar, edicionOpenHouse]); // Recargar cuando cambie el ciclo o la edición OH
 
@@ -124,57 +120,6 @@ export default function AdminDashboard() {
       return `Ciclo ${cicloEscolar} · sin etiqueta`;
     }
     return `${getOpenHouseEdicionLabel(edicionOpenHouse)} (${edicionOpenHouse})`;
-  };
-
-  // Obtener archivos de backup disponibles
-  const fetchRestoreFiles = async () => {
-    try {
-      const response = await fetch('/api/restore-database');
-      const data = await response.json();
-      if (data.success) {
-        setRestoreFiles(data.files || []);
-      }
-    } catch (error) {
-      console.error('Error al obtener archivos de backup:', error);
-    }
-  };
-
-  // Restaurar base de datos
-  const restoreDatabase = async (backupFile?: string) => {
-    if (!confirm('⚠️ ADVERTENCIA: Esta acción sobrescribirá los datos actuales. ¿Estás seguro?')) {
-      return;
-    }
-
-    setRestoring(true);
-    try {
-      const response = await fetch('/api/restore-database', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          backupFile: backupFile || 'latest'
-        }),
-      });
-
-      const result = await response.json();
-      
-      if (result.success) {
-        alert(`✅ Restauración exitosa!\n\n📊 Registros restaurados: ${result.successCount}\n⏱️ Duración: ${result.duration}\n📅 Backup: ${result.backupMetadata?.timestamp || 'N/A'}`);
-        // Recargar datos después de la restauración
-        await fetchOpenHouse();
-        await fetchSesiones();
-        await fetchCampamento();
-      } else {
-        alert(`❌ Error en la restauración: ${result.message}`);
-      }
-    } catch (error) {
-      console.error('Error al restaurar:', error);
-      alert('❌ Error al restaurar la base de datos');
-    } finally {
-      setRestoring(false);
-      setShowRestoreModal(false);
-    }
   };
 
   const fetchOpenHouse = async () => {
@@ -575,93 +520,75 @@ export default function AdminDashboard() {
     <div className="admin-dashboard">
       <div className="admin-header">
         <div className="admin-header-content">
-            <div className="admin-header-left">
-              <div className="admin-header-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <div>
+          <div className="admin-header-left">
+            <div className="admin-header-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <div>
               <h1>Dashboard de Gestión Winston</h1>
               <p>Sistema de gestión de inscripciones</p>
-              </div>
             </div>
-          
-          <div className="admin-header-actions">
-            <div className="admin-ciclo-selector" style={{ marginRight: '15px' }}>
-              <label htmlFor="cicloSelect" style={{ marginRight: '8px', fontWeight: '600', color: '#1e3a8a' }}>
-                Año:
-              </label>
-              <select 
-                id="cicloSelect"
-                value={cicloEscolar} 
-                onChange={(e) => onCicloEscolarChange(e.target.value)}
-                style={{
-                  padding: '8px 12px',
-                  borderRadius: '6px',
-                  border: '2px solid #1e3a8a',
-                  backgroundColor: 'white',
-                  color: '#1e3a8a',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  fontSize: '14px'
+          </div>
+
+          <div className="admin-header-right">
+            {(activeTab === 'openhouse' || activeTab === 'sesiones') && (
+              <div className="admin-header-filters">
+                
+                <div className="admin-filter-field">
+                  <label htmlFor="cicloSelect">Año</label>
+                  <select
+                    id="cicloSelect"
+                    value={cicloEscolar}
+                    onChange={(e) => onCicloEscolarChange(e.target.value)}
+                  >
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                  </select>
+                </div>
+                {activeTab === 'openhouse' && (
+                  <div className="admin-filter-field admin-filter-field-wide">
+                    <label htmlFor="edicionOHSelect">Open House</label>
+                    <select
+                      id="edicionOHSelect"
+                      value={edicionOpenHouse}
+                      onChange={(e) => onEdicionOpenHouseChange(e.target.value)}
+                    >
+                      <option value="todos">Todas las ediciones (por año)</option>
+                      <option value="sin-etiqueta">Sin etiqueta</option>
+                      {OPEN_HOUSE_EDICIONES_META.map((ed) => (
+                        <option key={ed.id} value={ed.id}>
+                          {ed.label} ({ed.id})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="admin-header-buttons">
+              <button
+                onClick={() => {
+                  fetchOpenHouse();
+                  fetchSesiones();
+                  fetchCampamento();
                 }}
+                className="admin-refresh-button"
               >
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-              </select>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Actualizar
+              </button>
+              <button onClick={exportToExcel} className="admin-export-button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Generar Reporte Excel
+              </button>
             </div>
-            <div className="admin-ciclo-selector" style={{ marginRight: '15px' }}>
-                <label htmlFor="edicionOHSelect" style={{ marginRight: '8px', fontWeight: '600', color: '#1e3a8a' }}>
-                  Open House:
-                </label>
-                <select
-                  id="edicionOHSelect"
-                  value={edicionOpenHouse}
-                  onChange={(e) => onEdicionOpenHouseChange(e.target.value)}
-                  style={{
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    border: '2px solid #1e3a8a',
-                    backgroundColor: 'white',
-                    color: '#1e3a8a',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    minWidth: '220px'
-                  }}
-                >
-                  <option value="todos">Todas las ediciones (por año)</option>
-                  <option value="sin-etiqueta">Sin etiqueta</option>
-                  {OPEN_HOUSE_EDICIONES_META.map((ed) => (
-                    <option key={ed.id} value={ed.id}>
-                      {ed.label} ({ed.id})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            <button onClick={() => { fetchOpenHouse(); fetchSesiones(); fetchCampamento(); }} className="admin-refresh-button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Actualizar
-            </button>
-            <button onClick={exportToExcel} className="admin-export-button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Generar Reporte Excel
-            </button>
-            <button 
-              onClick={() => setShowRestoreModal(true)} 
-              className="admin-restore-button"
-              disabled={restoring}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-              {restoring ? 'Restaurando...' : 'Restaurar Base de Datos'}
-            </button>
           </div>
         </div>
       </div>
@@ -1183,72 +1110,6 @@ export default function AdminDashboard() {
         />
       )}
 
-      {/* Modal de Restauración */}
-      {showRestoreModal && (
-        <div className="admin-modal-overlay" onClick={() => setShowRestoreModal(false)}>
-          <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="admin-modal-header">
-              <h3>🔄 Restaurar Base de Datos</h3>
-              <button 
-                className="admin-modal-close"
-                onClick={() => setShowRestoreModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="admin-modal-content">
-              <p className="admin-modal-warning">
-                ⚠️ <strong>ADVERTENCIA:</strong> Esta acción sobrescribirá los datos actuales con los datos del backup seleccionado.
-              </p>
-              
-              <div className="admin-restore-options">
-                <h4>📁 Archivos de Backup Disponibles:</h4>
-                
-                <div className="admin-backup-list">
-                  {restoreFiles.length > 0 ? (
-                    restoreFiles.map((file, index) => (
-                      <div key={index} className="admin-backup-item">
-                        <div className="admin-backup-info">
-                          <strong>{file.name}</strong>
-                          <span className="admin-backup-date">{file.lastModified}</span>
-                          <span className="admin-backup-size">({Math.round(file.size / 1024)} KB)</span>
-                        </div>
-                        <button 
-                          className="admin-backup-restore-btn"
-                          onClick={() => restoreDatabase(file.downloadUrl)}
-                          disabled={restoring}
-                        >
-                          {restoring ? 'Restaurando...' : 'Restaurar'}
-                        </button>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="admin-no-backups">No se encontraron archivos de backup</p>
-                  )}
-                </div>
-
-                <div className="admin-restore-actions">
-                  <button 
-                    className="admin-restore-latest-btn"
-                    onClick={() => restoreDatabase()}
-                    disabled={restoring || restoreFiles.length === 0}
-                  >
-                    {restoring ? 'Restaurando...' : '🔄 Restaurar Más Reciente'}
-                  </button>
-                  <button 
-                    className="admin-modal-cancel"
-                    onClick={() => setShowRestoreModal(false)}
-                    disabled={restoring}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
