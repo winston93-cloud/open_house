@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import CampamentoSemanasPicker from './CampamentoSemanasPicker';
 import {
   PLANES_CAMPAMENTO,
   calcularEdad,
@@ -8,6 +9,10 @@ import {
   CAMPAMENTO_SUBTITULO,
   CAMPAMENTO_TITULO,
 } from '../../lib/campamento-verano';
+import {
+  getTodasSemanasIds,
+  validarSemanasSeleccionadas,
+} from '../../lib/campamento-semanas';
 
 interface FormData {
   nombreParticipante: string;
@@ -26,7 +31,7 @@ interface FormData {
   planCampamento: string;
 }
 
-type FormErrors = Partial<Record<keyof FormData | 'general', string>>;
+type FormErrors = Partial<Record<keyof FormData | 'semanasSeleccionadas' | 'general', string>>;
 
 const GRADOS = [
   '1° Primaria',
@@ -76,6 +81,7 @@ export default function CampamentoVeranoForm() {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [semanasSeleccionadas, setSemanasSeleccionadas] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -110,6 +116,15 @@ export default function CampamentoVeranoForm() {
 
       return next;
     });
+
+    if (name === 'planCampamento') {
+      if (value === '4_semanas') {
+        setSemanasSeleccionadas(getTodasSemanasIds());
+      } else {
+        setSemanasSeleccionadas([]);
+      }
+      setErrors((prev) => ({ ...prev, semanasSeleccionadas: undefined }));
+    }
 
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
@@ -153,6 +168,10 @@ export default function CampamentoVeranoForm() {
     if (!formData.autorizaFotos) next.autorizaFotos = 'Autorización requerida';
     if (!formData.aceptaReglamento) next.aceptaReglamento = 'Debes aceptar el reglamento';
     if (!formData.planCampamento) next.planCampamento = 'Selecciona un plan';
+    else {
+      const errSem = validarSemanasSeleccionadas(formData.planCampamento, semanasSeleccionadas);
+      if (errSem) next.semanasSeleccionadas = errSem;
+    }
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -174,6 +193,7 @@ export default function CampamentoVeranoForm() {
           tieneAlergias: formData.tieneAlergias === 'si',
           edad: Number(formData.edad),
           fechaFirma,
+          semanasSeleccionadas,
         }),
       });
 
@@ -197,6 +217,7 @@ export default function CampamentoVeranoForm() {
           aceptaReglamento: false,
           planCampamento: '',
         });
+        setSemanasSeleccionadas([]);
       } else {
         setSubmitError(result.message || 'Error al procesar la inscripción');
       }
@@ -525,6 +546,20 @@ export default function CampamentoVeranoForm() {
                 )}
                 {errors.planCampamento && (
                   <p className="campamento-error">{errors.planCampamento}</p>
+                )}
+
+                {formData.planCampamento && (
+                  <CampamentoSemanasPicker
+                    planId={formData.planCampamento}
+                    selected={semanasSeleccionadas}
+                    onChange={(ids) => {
+                      setSemanasSeleccionadas(ids);
+                      if (errors.semanasSeleccionadas) {
+                        setErrors((prev) => ({ ...prev, semanasSeleccionadas: undefined }));
+                      }
+                    }}
+                    error={errors.semanasSeleccionadas}
+                  />
                 )}
               </div>
             </section>

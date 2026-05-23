@@ -7,6 +7,7 @@ import {
   getPlanCampamento,
   type PlanCampamento,
 } from './campamento-verano';
+import { getSemanasCampamentoLabels } from './campamento-semanas';
 
 export interface CampamentoEmailData {
   nombreParticipante: string;
@@ -20,6 +21,7 @@ export interface CampamentoEmailData {
   tieneAlergias: boolean;
   alergiasDetalle: string | null;
   planId: string;
+  semanasSeleccionadas: string[];
   fechaFirma: string;
 }
 
@@ -38,6 +40,10 @@ export function createCampamentoConfirmacionEmail(
 ): { subject: string; html: string } {
   const plan = getPlanCampamento(data.planId) as PlanCampamento;
   const bannerUrl = getBannerCampamentoUrl();
+  const semanasLabels = getSemanasCampamentoLabels(data.semanasSeleccionadas);
+  const semanasHtml = semanasLabels
+    .map((s) => `<li style="margin:6px 0;">${s}</li>`)
+    .join('');
   const alergiasTexto = data.tieneAlergias
     ? data.alergiasDetalle || 'Sí (sin detalle)'
     : 'No';
@@ -85,6 +91,11 @@ export function createCampamentoConfirmacionEmail(
                   </td>
                 </tr>
               </table>
+
+              <h2 style="margin:0 0 14px;color:#1e40af;font-size:18px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">📅 Semanas de participación</h2>
+              <ul style="margin:0 0 22px;padding-left:20px;color:#0f172a;font-size:14px;line-height:1.65;font-weight:600;">
+                ${semanasHtml}
+              </ul>
 
               <h2 style="margin:0 0 14px;color:#1e40af;font-size:18px;border-bottom:2px solid #e2e8f0;padding-bottom:8px;">👤 Participante</h2>
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom:22px;font-size:14px;">

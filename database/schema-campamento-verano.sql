@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS public.campamento_verano (
     -- Plan
     plan_campamento VARCHAR(20) NOT NULL CHECK (plan_campamento IN ('4_semanas', '3_semanas', 'semanal')),
     plan_precio NUMERIC(10, 2) NOT NULL,
+    semanas_seleccionadas JSONB NOT NULL DEFAULT '[]'::jsonb,
 
     edicion VARCHAR(20) NOT NULL DEFAULT '2025',
     fecha_inscripcion TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -44,6 +45,7 @@ CREATE INDEX IF NOT EXISTS idx_campamento_verano_plan ON public.campamento_veran
 
 COMMENT ON TABLE public.campamento_verano IS 'Inscripciones al campamento de verano Startup Kids Camp (IWC)';
 COMMENT ON COLUMN public.campamento_verano.plan_campamento IS '4_semanas | 3_semanas | semanal';
+COMMENT ON COLUMN public.campamento_verano.semanas_seleccionadas IS 'IDs de semanas elegidas (ej. 2025-s1, 2025-s2)';
 
 -- Trigger updated_at (usa la misma función que inscripciones si ya existe)
 DROP TRIGGER IF EXISTS campamento_verano_updated_at ON public.campamento_verano;

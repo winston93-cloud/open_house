@@ -7,6 +7,7 @@ import {
   calcularEdad,
   getPlanCampamento,
 } from '../../../lib/campamento-verano';
+import { validarSemanasSeleccionadas } from '../../../lib/campamento-semanas';
 import { createCampamentoConfirmacionEmail } from '../../../lib/campamento-verano-email';
 
 const transporter = nodemailer.createTransport({
@@ -42,6 +43,9 @@ function parseBody(body: Record<string, unknown>) {
     aceptaReglamento: body.aceptaReglamento === true || body.aceptaReglamento === 'true',
     fechaFirma: String(body.fechaFirma ?? '').trim(),
     planCampamento: String(body.planCampamento ?? '').trim(),
+    semanasSeleccionadas: Array.isArray(body.semanasSeleccionadas)
+      ? (body.semanasSeleccionadas as unknown[]).map(String)
+      : [],
   };
 }
 
@@ -83,6 +87,8 @@ function validate(data: ReturnType<typeof parseBody>): string | null {
   if (!data.fechaFirma) return 'La fecha de firma es obligatoria.';
   const plan = getPlanCampamento(data.planCampamento);
   if (!plan) return 'Selecciona un plan de campamento válido.';
+  const errSem = validarSemanasSeleccionadas(data.planCampamento, data.semanasSeleccionadas);
+  if (errSem) return errSem;
   return null;
 }
 
@@ -117,6 +123,7 @@ export async function POST(request: NextRequest) {
           fecha_firma: data.fechaFirma,
           plan_campamento: plan.id,
           plan_precio: plan.precio,
+          semanas_seleccionadas: data.semanasSeleccionadas,
           edicion: CAMPAMENTO_EDICION,
         },
       ])
@@ -143,6 +150,7 @@ export async function POST(request: NextRequest) {
       tieneAlergias: data.tieneAlergias,
       alergiasDetalle: data.tieneAlergias ? data.alergiasDetalle : null,
       planId: plan.id,
+      semanasSeleccionadas: data.semanasSeleccionadas,
       fechaFirma: data.fechaFirma,
     };
 
