@@ -1,7 +1,7 @@
-export const CAMPAMENTO_EDICION = '2025';
+export const CAMPAMENTO_EDICION = '2026';
 export const CAMPAMENTO_INSTITUCION = 'Instituto Winston Churchill';
 export const CAMPAMENTO_TITULO = 'Startup Kids Camp';
-export const CAMPAMENTO_SUBTITULO = 'Verano 2025';
+export const CAMPAMENTO_SUBTITULO = 'Verano 2026';
 
 export type PlanCampamentoId = '4_semanas' | '3_semanas' | 'semanal';
 

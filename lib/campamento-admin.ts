@@ -1,5 +1,5 @@
 import type { PlanCampamentoId } from './campamento-verano';
-import { getPlanCampamento } from './campamento-verano';
+import { getPlanCampamento, CAMPAMENTO_EDICION } from './campamento-verano';
 import { validarSemanasSeleccionadas } from './campamento-semanas';
 
 export interface CampamentoRegistro {
@@ -70,7 +70,7 @@ export function parseCampamentoPayload(body: Record<string, unknown>): Campament
     semanasSeleccionadas: Array.isArray(body.semanasSeleccionadas)
       ? (body.semanasSeleccionadas as unknown[]).map(String)
       : [],
-    edicion: body.edicion ? String(body.edicion).trim() : '2025',
+    edicion: body.edicion ? String(body.edicion).trim() : CAMPAMENTO_EDICION,
   };
 }
 
@@ -118,7 +118,7 @@ export function payloadToDbRow(data: CampamentoPayload) {
     plan_campamento: plan.id,
     plan_precio: plan.precio,
     semanas_seleccionadas: data.semanasSeleccionadas,
-    edicion: data.edicion || '2025',
+    edicion: data.edicion || CAMPAMENTO_EDICION,
   };
 }
 

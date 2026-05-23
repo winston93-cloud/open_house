@@ -10,40 +10,40 @@ export interface SemanaCampamento {
   emoji: string;
 }
 
-/** Del 13 de julio al 7 de agosto (Verano 2025). */
+/** Del 13 de julio al 7 de agosto (Verano 2026). */
 export const SEMANAS_CAMPAMENTO: SemanaCampamento[] = [
   {
-    id: '2025-s1',
+    id: '2026-s1',
     numero: 1,
-    inicio: '2025-07-13',
-    fin: '2025-07-19',
+    inicio: '2026-07-13',
+    fin: '2026-07-19',
     label: '13 al 19 de julio',
     labelCorto: '13–19 jul',
     emoji: '☀️',
   },
   {
-    id: '2025-s2',
+    id: '2026-s2',
     numero: 2,
-    inicio: '2025-07-20',
-    fin: '2025-07-26',
+    inicio: '2026-07-20',
+    fin: '2026-07-26',
     label: '20 al 26 de julio',
     labelCorto: '20–26 jul',
     emoji: '🌊',
   },
   {
-    id: '2025-s3',
+    id: '2026-s3',
     numero: 3,
-    inicio: '2025-07-27',
-    fin: '2025-08-02',
+    inicio: '2026-07-27',
+    fin: '2026-08-02',
     label: '27 de julio al 2 de agosto',
     labelCorto: '27 jul – 2 ago',
     emoji: '🚀',
   },
   {
-    id: '2025-s4',
+    id: '2026-s4',
     numero: 4,
-    inicio: '2025-08-03',
-    fin: '2025-08-07',
+    inicio: '2026-08-03',
+    fin: '2026-08-07',
     label: '3 al 7 de agosto',
     labelCorto: '3–7 ago',
     emoji: '🎉',
