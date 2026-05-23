@@ -29,11 +29,6 @@ interface FormData {
 type FormErrors = Partial<Record<keyof FormData | 'general', string>>;
 
 const GRADOS = [
-  'Maternal A',
-  'Maternal B',
-  'Kinder 1',
-  'Kinder 2',
-  'Kinder 3',
   '1° Primaria',
   '2° Primaria',
   '3° Primaria',
