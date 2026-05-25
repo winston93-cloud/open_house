@@ -3,6 +3,25 @@ export const CAMPAMENTO_INSTITUCION = 'Instituto Winston Churchill';
 export const CAMPAMENTO_TITULO = 'Startup Kids Camp';
 export const CAMPAMENTO_SUBTITULO = 'Verano 2026';
 
+/** Grados: Educativo Winston (Maternal/Kinder) + Primaria y Secundaria IWC. */
+export const GRADOS_CAMPAMENTO = [
+  'Maternal A',
+  'Maternal B',
+  'Kinder-1',
+  'Kinder-2',
+  'Kinder-3',
+  '1° Primaria',
+  '2° Primaria',
+  '3° Primaria',
+  '4° Primaria',
+  '5° Primaria',
+  '6° Primaria',
+  '7mo de Secundaria',
+  '8vo de Secundaria',
+  '9no de Secundaria',
+  'Otro',
+] as const;
+
 export type PlanCampamentoId = '4_semanas' | '3_semanas' | 'semanal';
 
 export interface PlanCampamento {

@@ -8,6 +8,7 @@ import {
   CAMPAMENTO_INSTITUCION,
   CAMPAMENTO_SUBTITULO,
   CAMPAMENTO_TITULO,
+  GRADOS_CAMPAMENTO,
 } from '../../lib/campamento-verano';
 import {
   getTodasSemanasIds,
@@ -32,19 +33,6 @@ interface FormData {
 }
 
 type FormErrors = Partial<Record<keyof FormData | 'semanasSeleccionadas' | 'general', string>>;
-
-const GRADOS = [
-  '1° Primaria',
-  '2° Primaria',
-  '3° Primaria',
-  '4° Primaria',
-  '5° Primaria',
-  '6° Primaria',
-  '7mo de Secundaria',
-  '8vo de Secundaria',
-  '9no de Secundaria',
-  'Otro',
-];
 
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
@@ -312,7 +300,7 @@ export default function CampamentoVeranoForm() {
                     onChange={handleChange}
                   >
                     <option value="">Selecciona el grado</option>
-                    {GRADOS.map((g) => (
+                    {GRADOS_CAMPAMENTO.map((g) => (
                       <option key={g} value={g}>
                         {g}
                       </option>
