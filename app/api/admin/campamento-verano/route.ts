@@ -6,6 +6,7 @@ import {
   payloadToDbRow,
   validateCampamentoPayload,
 } from '../../../../lib/campamento-admin';
+import { ensureCampamentoFolio } from '../../../../lib/campamento-folio';
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,9 +46,14 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabaseAdmin();
+    const folio = await ensureCampamentoFolio(supabase, {
+      nombreParticipante: payload.nombreParticipante,
+      fechaNacimiento: payload.fechaNacimiento,
+    });
+
     const { data, error } = await supabase
       .from('campamento_verano')
-      .insert([payloadToDbRow(payload)])
+      .insert([{ ...payloadToDbRow(payload), folio }])
       .select()
       .single();
 

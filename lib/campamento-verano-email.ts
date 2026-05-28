@@ -10,6 +10,7 @@ import {
 import { getSemanasCampamentoLabels } from './campamento-semanas';
 
 export interface CampamentoEmailData {
+  folio: string;
   nombreParticipante: string;
   fechaNacimiento: string;
   edad: number;
@@ -82,6 +83,18 @@ export function createCampamentoConfirmacionEmail(
               <p style="margin:0 0 24px;color:#475569;font-size:15px;line-height:1.65;">
                 Hemos recibido correctamente la inscripción de <strong>${data.nombreParticipante}</strong> al campamento <strong>${CAMPAMENTO_TITULO}</strong> (${CAMPAMENTO_SUBTITULO}). A continuación el resumen:
               </p>
+
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);border-radius:16px;margin-bottom:28px;">
+                <tr>
+                  <td style="padding:26px 20px;text-align:center;">
+                    <p style="margin:0 0 8px;color:rgba(255,255,255,0.9);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;">Folio de inscripción</p>
+                    <p style="margin:0 0 14px;color:#ffffff;font-size:32px;font-weight:800;letter-spacing:0.2em;font-family:ui-monospace,monospace;">${data.folio}</p>
+                    <p style="margin:0;color:#bfdbfe;font-size:14px;line-height:1.55;font-weight:600;">
+                      Presente este folio al momento de pagar la inscripción al campamento.
+                    </p>
+                  </td>
+                </tr>
+              </table>
 
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);border-radius:14px;margin-bottom:24px;">
                 <tr>

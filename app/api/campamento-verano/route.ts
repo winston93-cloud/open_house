@@ -1,22 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+import { getSupabaseAdmin } from '../../../lib/supabase-admin';
 import {
   CAMPAMENTO_EDICION,
-  CAMPAMENTO_INSTITUCION,
   calcularEdad,
   getPlanCampamento,
 } from '../../../lib/campamento-verano';
 import { validarSemanasSeleccionadas } from '../../../lib/campamento-semanas';
-import { createCampamentoConfirmacionEmail } from '../../../lib/campamento-verano-email';
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm',
-  },
-});
+import { ensureCampamentoFolio } from '../../../lib/campamento-folio';
+import {
+  registroToCampamentoEmailData,
+  sendCampamentoConfirmacionEmail,
+} from '../../../lib/campamento-mail';
+import { normalizeCampamentoRow } from '../../../lib/campamento-admin';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^[\d\s\-+()]{10,20}$/;
@@ -102,6 +97,12 @@ export async function POST(request: NextRequest) {
     }
 
     const plan = getPlanCampamento(data.planCampamento)!;
+    const supabase = getSupabaseAdmin();
+
+    const folio = await ensureCampamentoFolio(supabase, {
+      nombreParticipante: data.nombreParticipante,
+      fechaNacimiento: data.fechaNacimiento,
+    });
 
     const { data: registro, error: dbError } = await supabase
       .from('campamento_verano')
@@ -125,6 +126,7 @@ export async function POST(request: NextRequest) {
           plan_precio: plan.precio,
           semanas_seleccionadas: data.semanasSeleccionadas,
           edicion: CAMPAMENTO_EDICION,
+          folio,
         },
       ])
       .select()
@@ -138,39 +140,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const emailPayload = {
-      nombreParticipante: data.nombreParticipante,
-      fechaNacimiento: data.fechaNacimiento,
-      edad: data.edad,
-      gradoEscolar: data.gradoEscolar,
-      nombreTutor: data.nombreTutor,
-      telefonoPrincipal: data.telefonoPrincipal,
-      telefonoEmergencia: data.telefonoEmergencia,
-      email: data.email,
-      tieneAlergias: data.tieneAlergias,
-      alergiasDetalle: data.tieneAlergias ? data.alergiasDetalle : null,
-      planId: plan.id,
-      semanasSeleccionadas: data.semanasSeleccionadas,
-      fechaFirma: data.fechaFirma,
-    };
-
-    const { subject, html } = createCampamentoConfirmacionEmail(emailPayload);
+    const normalized = normalizeCampamentoRow(registro);
 
     try {
-      await transporter.sendMail({
-        from: {
-          name: CAMPAMENTO_INSTITUCION,
-          address: 'sistemas.desarrollo@winston93.edu.mx',
-        },
-        to: data.email,
-        subject,
-        html,
-      });
+      await sendCampamentoConfirmacionEmail(registroToCampamentoEmailData(normalized));
     } catch (mailError) {
       console.error('Inscripción guardada pero falló el correo:', mailError);
       return NextResponse.json({
         success: true,
         warning: 'Inscripción registrada, pero no se pudo enviar el correo de confirmación.',
+        folio,
         id: registro?.id,
       });
     }
@@ -178,6 +157,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Inscripción registrada correctamente. Revisa tu correo de confirmación.',
+      folio,
       id: registro?.id,
     });
   } catch (error) {

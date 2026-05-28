@@ -73,6 +73,7 @@ export default function CampamentoVeranoForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [folioConfirmado, setFolioConfirmado] = useState<string | null>(null);
 
   const planSeleccionado = PLANES_CAMPAMENTO.find((p) => p.id === formData.planCampamento);
 
@@ -188,6 +189,7 @@ export default function CampamentoVeranoForm() {
       const result = await response.json();
 
       if (result.success) {
+        setFolioConfirmado(result.folio || null);
         setShowModal(true);
         setFormData({
           nombreParticipante: '',
@@ -562,15 +564,24 @@ export default function CampamentoVeranoForm() {
       </div>
 
       {showModal && (
-        <div className="campamento-modal-overlay" onClick={() => setShowModal(false)}>
+        <div className="campamento-modal-overlay" onClick={() => { setShowModal(false); setFolioConfirmado(null); }}>
           <div className="campamento-modal" onClick={(e) => e.stopPropagation()}>
             <div className="campamento-modal-icon">🎉</div>
             <h2>¡Inscripción exitosa!</h2>
+            {folioConfirmado && (
+              <div className="campamento-folio-box">
+                <p className="campamento-folio-label">Tu folio de inscripción</p>
+                <p className="campamento-folio-code">{folioConfirmado}</p>
+                <p className="campamento-folio-hint">
+                  Presenta este folio al momento de pagar la inscripción al campamento.
+                </p>
+              </div>
+            )}
             <p>
               Tu registro al campamento fue guardado correctamente. Revisa tu correo electrónico
-              con la confirmación y el resumen de tu plan.
+              con la confirmación, el folio y el resumen de tu plan.
             </p>
-            <button type="button" className="campamento-modal-btn" onClick={() => setShowModal(false)}>
+            <button type="button" className="campamento-modal-btn" onClick={() => { setShowModal(false); setFolioConfirmado(null); }}>
               Entendido
             </button>
           </div>

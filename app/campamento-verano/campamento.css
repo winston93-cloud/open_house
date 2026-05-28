@@ -352,6 +352,39 @@ body.campamento-page {
   font-weight: 600;
 }
 
+.campamento-folio-box {
+  margin: 0 0 1.25rem;
+  padding: 1.1rem 1rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: #fff;
+}
+
+.campamento-folio-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+.campamento-folio-code {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  font-family: ui-monospace, monospace;
+}
+
+.campamento-folio-hint {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  font-weight: 600;
+  color: #bfdbfe;
+}
+
 .campamento-modal-btn {
   width: 100%;
   padding: 0.85rem;

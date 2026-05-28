@@ -51,6 +51,9 @@ export default function AdminDashboard() {
   const [campamentoModalOpen, setCampamentoModalOpen] = useState(false);
   const [campamentoModalRegistro, setCampamentoModalRegistro] = useState<CampamentoRegistro | null>(null);
   const [campamentoModalIsNew, setCampamentoModalIsNew] = useState(false);
+  const [campamentoSeleccionados, setCampamentoSeleccionados] = useState<Set<string>>(new Set());
+  const [enviandoCorreosCampamento, setEnviandoCorreosCampamento] = useState(false);
+  const [asignandoFoliosCampamento, setAsignandoFoliosCampamento] = useState(false);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
   const [cicloEscolar, setCicloEscolar] = useState<string>('2026'); // Año activo por defecto
@@ -259,6 +262,84 @@ export default function AdminDashboard() {
   const formatPlanCampamento = (planId: string): string => {
     const plan = getPlanCampamento(planId);
     return plan ? plan.label : planId;
+  };
+
+  const toggleCampamentoSeleccion = (id: string) => {
+    setCampamentoSeleccionados((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleCampamentoSeleccionTodos = () => {
+    if (campamentoSeleccionados.size === campamento.length) {
+      setCampamentoSeleccionados(new Set());
+    } else {
+      setCampamentoSeleccionados(new Set(campamento.map((r) => r.id)));
+    }
+  };
+
+  const mergeCampamentoRegistros = (actualizados: CampamentoRegistro[]) => {
+    if (!actualizados.length) return;
+    setCampamento((prev) => {
+      const map = new Map(prev.map((r) => [r.id, r]));
+      for (const r of actualizados) map.set(r.id, r);
+      return Array.from(map.values()).sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    });
+  };
+
+  const handleAsignarFoliosFaltantes = async () => {
+    if (!confirm('¿Generar folio para todas las inscripciones que aún no lo tienen?')) return;
+    setAsignandoFoliosCampamento(true);
+    try {
+      const res = await fetch('/api/admin/campamento-verano/asignar-folios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.registros?.length) mergeCampamentoRegistros(data.registros);
+      alert(data.message || (data.success ? 'Folios asignados.' : 'Hubo errores al asignar folios.'));
+    } catch {
+      alert('Error de conexión al asignar folios.');
+    } finally {
+      setAsignandoFoliosCampamento(false);
+    }
+  };
+
+  const handleEnviarCorreosCampamento = async () => {
+    const ids = Array.from(campamentoSeleccionados);
+    if (ids.length === 0) {
+      alert('Selecciona al menos una inscripción.');
+      return;
+    }
+    if (
+      !confirm(
+        `¿Enviar correo de confirmación con folio a ${ids.length} inscripción(es)? Se generará folio si falta.`
+      )
+    ) {
+      return;
+    }
+    setEnviandoCorreosCampamento(true);
+    try {
+      const res = await fetch('/api/admin/campamento-verano/enviar-correos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids }),
+      });
+      const data = await res.json();
+      await fetchCampamento();
+      alert(data.message || 'Proceso completado.');
+      setCampamentoSeleccionados(new Set());
+    } catch {
+      alert('Error de conexión al enviar correos.');
+    } finally {
+      setEnviandoCorreosCampamento(false);
+    }
   };
 
   // Función auxiliar para formatear el nombre del nivel
@@ -1020,15 +1101,51 @@ export default function AdminDashboard() {
                   </svg>
                   Inscripciones Campamento de Verano
                 </h2>
-                <button type="button" className="admin-campamento-new-btn" onClick={openCampamentoNew}>
-                  ➕ Nuevo registro
-                </button>
+                <div className="admin-campamento-header-actions">
+                  <button
+                    type="button"
+                    className="admin-campamento-folio-btn"
+                    onClick={handleAsignarFoliosFaltantes}
+                    disabled={asignandoFoliosCampamento || enviandoCorreosCampamento}
+                  >
+                    {asignandoFoliosCampamento ? 'Generando folios…' : '🔖 Generar folios faltantes'}
+                  </button>
+                  <button
+                    type="button"
+                    className="admin-campamento-email-btn"
+                    onClick={handleEnviarCorreosCampamento}
+                    disabled={
+                      enviandoCorreosCampamento ||
+                      asignandoFoliosCampamento ||
+                      campamentoSeleccionados.size === 0
+                    }
+                  >
+                    {enviandoCorreosCampamento
+                      ? 'Enviando…'
+                      : `📧 Enviar correo (${campamentoSeleccionados.size})`}
+                  </button>
+                  <button type="button" className="admin-campamento-new-btn" onClick={openCampamentoNew}>
+                    ➕ Nuevo registro
+                  </button>
+                </div>
               </div>
 
               <div className="admin-table-wrapper">
                 <table className="admin-table">
                   <thead>
                     <tr>
+                      <th className="admin-campamento-check-col">
+                        <input
+                          type="checkbox"
+                          checked={
+                            campamento.length > 0 &&
+                            campamentoSeleccionados.size === campamento.length
+                          }
+                          onChange={toggleCampamentoSeleccionTodos}
+                          aria-label="Seleccionar todos"
+                        />
+                      </th>
+                      <th>Folio</th>
                       <th>Nombre</th>
                       <th>Grado</th>
                       <th>Plan</th>
@@ -1040,14 +1157,14 @@ export default function AdminDashboard() {
                   <tbody>
                     {loadingCampamento ? (
                       <tr>
-                        <td colSpan={6} className="admin-loading">
+                        <td colSpan={8} className="admin-loading">
                           <div className="admin-spinner"></div>
                           <span>Cargando campamento...</span>
                         </td>
                       </tr>
                     ) : campamento.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="admin-empty">
+                        <td colSpan={8} className="admin-empty">
                           <span style={{ fontSize: '32px' }}>🏕️</span>
                           <p className="admin-empty-title">No hay inscripciones al campamento</p>
                           <p className="admin-empty-subtitle">Los registros aparecerán aquí cuando los padres llenen el formulario en /campamento-verano.</p>
@@ -1056,6 +1173,21 @@ export default function AdminDashboard() {
                     ) : (
                       campamento.map((item, index) => (
                         <tr key={item.id} className={index % 2 === 0 ? 'admin-row-even' : 'admin-row-odd'}>
+                          <td className="admin-campamento-check-col">
+                            <input
+                              type="checkbox"
+                              checked={campamentoSeleccionados.has(item.id)}
+                              onChange={() => toggleCampamentoSeleccion(item.id)}
+                              aria-label={`Seleccionar ${item.nombre_participante}`}
+                            />
+                          </td>
+                          <td>
+                            {item.folio ? (
+                              <code className="admin-campamento-folio">{item.folio}</code>
+                            ) : (
+                              <span className="admin-campamento-sin-folio">Sin folio</span>
+                            )}
+                          </td>
                           <td>
                             <div className="admin-user-info">
                               <div className="admin-user-avatar">

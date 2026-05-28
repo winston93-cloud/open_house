@@ -147,6 +147,16 @@ export default function CampamentoAdminModal({
         <div className="admin-modal-content admin-campamento-modal-body">
           {error && <div className="admin-campamento-error">{error}</div>}
 
+          {!isNew && registro?.folio && (
+            <div className="admin-campamento-folio-banner">
+              <span className="admin-campamento-folio-banner-label">Folio de inscripción</span>
+              <span className="admin-campamento-folio-banner-code">{registro.folio}</span>
+              <span className="admin-campamento-folio-banner-hint">
+                Presentar al pagar la inscripción
+              </span>
+            </div>
+          )}
+
           <section className="admin-campamento-section">
             <h4>Participante</h4>
             <div className="admin-campamento-grid">

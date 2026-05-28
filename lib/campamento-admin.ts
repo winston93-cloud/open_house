@@ -22,6 +22,7 @@ export interface CampamentoRegistro {
   plan_precio: number;
   semanas_seleccionadas: string[];
   edicion: string;
+  folio?: string | null;
   fecha_inscripcion?: string;
   created_at: string;
   updated_at?: string;
