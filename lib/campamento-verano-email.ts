@@ -84,12 +84,18 @@ export function createCampamentoConfirmacionEmail(
                 Hemos recibido correctamente la inscripción de <strong>${data.nombreParticipante}</strong> al campamento <strong>${CAMPAMENTO_TITULO}</strong> (${CAMPAMENTO_SUBTITULO}). A continuación el resumen:
               </p>
 
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);border-radius:16px;margin-bottom:28px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" bgcolor="#fffbeb" style="margin-bottom:28px;border:3px solid #1e40af;border-radius:16px;background-color:#fffbeb;">
                 <tr>
-                  <td style="padding:26px 20px;text-align:center;">
-                    <p style="margin:0 0 8px;color:rgba(255,255,255,0.9);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;">Folio de inscripción</p>
-                    <p style="margin:0 0 14px;color:#ffffff;font-size:32px;font-weight:800;letter-spacing:0.2em;font-family:ui-monospace,monospace;">${data.folio}</p>
-                    <p style="margin:0;color:#bfdbfe;font-size:14px;line-height:1.55;font-weight:600;">
+                  <td bgcolor="#fffbeb" style="padding:28px 20px;text-align:center;background-color:#fffbeb;">
+                    <p style="margin:0 0 12px;color:#1e40af;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;">Folio de inscripción</p>
+                    <table role="presentation" cellspacing="0" cellpadding="0" align="center" style="margin:0 auto 16px;">
+                      <tr>
+                        <td bgcolor="#ffffff" style="padding:14px 22px;background-color:#ffffff;border:3px dashed #2563eb;border-radius:12px;">
+                          <p style="margin:0;color:#0f172a;font-size:34px;font-weight:900;letter-spacing:0.22em;font-family:Consolas,'Courier New',monospace;line-height:1.2;">${data.folio}</p>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin:0;color:#334155;font-size:15px;line-height:1.55;font-weight:700;">
                       Presente este folio al momento de pagar la inscripción al campamento.
                     </p>
                   </td>
