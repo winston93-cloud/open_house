@@ -281,8 +281,7 @@ export default function CampamentoVeranoForm() {
                     id="edad"
                     name="edad"
                     type="number"
-                    min={3}
-                    max={18}
+                    min={0}
                     value={formData.edad}
                     onChange={handleChange}
                     placeholder="Años"
