@@ -54,8 +54,8 @@ function validate(data: ReturnType<typeof parseBody>): string | null {
     return 'Ingresa una fecha de nacimiento válida.';
   }
   const edadCalculada = calcularEdad(data.fechaNacimiento);
-  if (edadCalculada === null || edadCalculada < 3 || edadCalculada > 18) {
-    return 'La edad del participante debe estar entre 3 y 18 años.';
+  if (edadCalculada === null || edadCalculada < 0) {
+    return 'Ingresa una fecha de nacimiento válida.';
   }
   if (!Number.isInteger(data.edad) || data.edad !== edadCalculada) {
     return 'La edad no coincide con la fecha de nacimiento.';

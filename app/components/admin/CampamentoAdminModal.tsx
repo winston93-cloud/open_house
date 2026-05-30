@@ -179,8 +179,7 @@ export default function CampamentoAdminModal({
                 Edad
                 <input
                   type="number"
-                  min={3}
-                  max={18}
+                  min={0}
                   value={form.edad || ''}
                   onChange={(e) => update({ edad: Number(e.target.value) })}
                 />

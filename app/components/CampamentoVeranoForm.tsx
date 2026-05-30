@@ -129,8 +129,8 @@ export default function CampamentoVeranoForm() {
     if (!formData.fechaNacimiento) next.fechaNacimiento = 'Campo obligatorio';
     else {
       const edadCalc = calcularEdad(formData.fechaNacimiento);
-      if (edadCalc === null || edadCalc < 3 || edadCalc > 18) {
-        next.fechaNacimiento = 'Edad del participante debe ser entre 3 y 18 años';
+      if (edadCalc === null || edadCalc < 0) {
+        next.fechaNacimiento = 'Ingresa una fecha de nacimiento válida';
       } else if (formData.edad !== String(edadCalc)) {
         next.edad = 'No coincide con la fecha de nacimiento';
       }
