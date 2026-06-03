@@ -1,4 +1,5 @@
 import { getOpenHouseEventConfig } from './open-house-event';
+import { getSesionesInformativasEventConfig } from './sesiones-informativas-event';
 
 export interface ProximoEnvioProgramado {
   fecha: string;
@@ -10,32 +11,10 @@ export interface ProximoEnvioProgramado {
   reminderDateStr: string;
 }
 
-/** Sesiones informativas (recordatorio = día anterior del evento, 9:00). */
-const SESIONES_SCHEDULE: Omit<ProximoEnvioProgramado, 'tipo'>[] = [
-  {
-    fecha: 'Lunes 19 de Enero 2026',
-    hora: '6:00 PM',
-    niveles: ['Primaria'],
-    institucion: 'Instituto Winston Churchill',
-    recordatorio: 'Domingo 18 de Enero, 9:00 AM',
-    reminderDateStr: '2026-01-18',
-  },
-  {
-    fecha: 'Martes 20 de Enero 2026',
-    hora: '6:00 PM',
-    niveles: ['Secundaria'],
-    institucion: 'Instituto Winston Churchill',
-    recordatorio: 'Lunes 19 de Enero, 9:00 AM',
-    reminderDateStr: '2026-01-19',
-  },
-  {
-    fecha: 'Lunes 26 de Enero 2026',
-    hora: '6:00 PM',
-    niveles: ['Maternal', 'Kinder'],
-    institucion: 'Instituto Educativo Winston',
-    recordatorio: 'Domingo 25 de Enero, 9:00 AM',
-    reminderDateStr: '2026-01-25',
-  },
+const SESIONES_SLOTS: { nivel: string; niveles: string[] }[] = [
+  { nivel: 'secundaria', niveles: ['Secundaria'] },
+  { nivel: 'primaria', niveles: ['Primaria'] },
+  { nivel: 'maternal', niveles: ['Maternal', 'Kinder'] },
 ];
 
 const OPEN_HOUSE_SLOTS: { nivel: string; niveles: string[] }[] = [
@@ -80,9 +59,18 @@ export function getProximosEnviosProgramados(): ProximoEnvioProgramado[] {
     });
   }
 
-  for (const s of SESIONES_SCHEDULE) {
-    if (s.reminderDateStr < today) continue;
-    items.push({ ...s, tipo: 'Sesión Informativa' });
+  for (const slot of SESIONES_SLOTS) {
+    const c = getSesionesInformativasEventConfig(slot.nivel);
+    if (!c || c.reminderDateStr < today) continue;
+    items.push({
+      tipo: 'Sesión Informativa',
+      niveles: slot.niveles,
+      fecha: capitalizeEventDate(c.fechaEventoMail),
+      hora: c.horaEventoMail,
+      institucion: c.institucionNombre,
+      recordatorio: formatReminderSendLabel(c.reminderDateStr),
+      reminderDateStr: c.reminderDateStr,
+    });
   }
 
   return items.sort((a, b) => a.reminderDateStr.localeCompare(b.reminderDateStr));
@@ -131,7 +119,7 @@ export function getReminderCalendarSummary(): {
     sesionesEnviosLabel:
       sesReminderDays.length > 0
         ? sesReminderDays.map(formatDayShort).join(', ')
-        : 'Convocatoria enero finalizada',
+        : 'Sin envíos programados',
     primerRecordatorioLabel: primer ? formatDayShort(primer) : '—',
     primerRecordatorioSub: primer ? formatDayLong(primer) : 'Sin recordatorios próximos',
   };

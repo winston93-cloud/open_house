@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import { supabase } from '../../../lib/supabase';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
+import {
+  getSesionesInformativasEventConfig,
+  SESIONES_EDICION_ACTUAL,
+} from '../../../lib/sesiones-informativas-event';
 
 
 
@@ -592,31 +596,21 @@ const createChurchillTemplate = (formData: any, fechaEvento: string, horaEvento:
   `;
 };
 
-// Función para crear el template del email
 const createEmailTemplate = (formData: any) => {
-  const { nombreAspirante, nivelAcademico, gradoEscolar, fechaNacimiento, nombreCompleto, correo } = formData;
-  
-  // Determinar fecha y hora del evento según el nivel
-  let fechaEvento, horaEvento, institucionNombre;
-  
-  if (nivelAcademico === 'maternal' || nivelAcademico === 'kinder') {
-    fechaEvento = 'Lunes 26 de enero de 2026';
-    horaEvento = '6:00 PM';
-    institucionNombre = 'Instituto Educativo Winston';
-    return createEducativoTemplate(formData, fechaEvento, horaEvento, institucionNombre);
-  } else if (nivelAcademico === 'primaria') {
-    fechaEvento = 'Lunes 19 de enero de 2026';
-    horaEvento = '6:00 PM';
-    institucionNombre = 'Instituto Winston Churchill';
-    return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
-  } else if (nivelAcademico === 'secundaria') {
-    fechaEvento = 'Martes 20 de enero de 2026';
-    horaEvento = '6:00 PM';
-    institucionNombre = 'Instituto Winston Churchill';
-    return createChurchillTemplate(formData, fechaEvento, horaEvento, institucionNombre);
+  const ev = getSesionesInformativasEventConfig(formData.nivelAcademico);
+  if (!ev) {
+    return createChurchillTemplate(
+      formData,
+      'Fecha no especificada',
+      'Hora no especificada',
+      'Instituto Winston Churchill'
+    );
   }
-  // Fallback if no academic level matches (should not happen with proper form validation)
-  return createChurchillTemplate(formData, 'Fecha no especificada', 'Hora no especificada', 'Instituto Winston Churchill');
+  const { fechaEventoMail, horaEventoMail, institucionNombre } = ev;
+  if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
+    return createEducativoTemplate(formData, fechaEventoMail, horaEventoMail, institucionNombre);
+  }
+  return createChurchillTemplate(formData, fechaEventoMail, horaEventoMail, institucionNombre);
 };
 
 export async function POST(request: NextRequest) {
@@ -634,26 +628,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcular fecha para el recordatorio (1 día antes del evento según nivel)
-    let reminderDate: Date;
-    
-    if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-      // Sesiones Maternal/Kinder: 26 Ene, recordatorio 25 Ene
-      reminderDate = new Date('2026-01-25');
-    } else if (formData.nivelAcademico === 'primaria') {
-      // Sesión Primaria: 19 Ene, recordatorio 18 Ene
-      reminderDate = new Date('2026-01-18');
-    } else if (formData.nivelAcademico === 'secundaria') {
-      // Sesión Secundaria: 20 Ene, recordatorio 19 Ene
-      reminderDate = new Date('2026-01-19');
-    } else {
-      // Seguridad: rechazar niveles académicos no válidos
+    const ev = getSesionesInformativasEventConfig(formData.nivelAcademico);
+    if (!ev) {
       console.error('❌ Nivel académico no válido:', formData.nivelAcademico);
       return NextResponse.json(
         { error: `Nivel académico no válido: ${formData.nivelAcademico}. Debe ser: maternal, kinder, primaria o secundaria` },
         { status: 400 }
       );
     }
+    const reminderDate = new Date(ev.reminderDateStr);
 
     // Guardar en la base de datos (tabla 'sesiones' en lugar de 'inscripciones')
     const { data: inscripcion, error: dbError } = await supabase
@@ -673,7 +656,8 @@ export async function POST(request: NextRequest) {
           fecha_inscripcion: new Date().toISOString(),
           reminder_sent: false,
           reminder_scheduled_for: reminderDate.toISOString(),
-          ciclo_escolar: '2026' // Año para eventos de enero 2026
+          ciclo_escolar: '2026',
+          edicion_sesiones: SESIONES_EDICION_ACTUAL,
         }
       ])
       .select();
@@ -694,6 +678,8 @@ export async function POST(request: NextRequest) {
       const plantel = determinePlantel(formData);
       
       // Crear lead en Kommo (esto también envía el WhatsApp automáticamente)
+      const notaLead = `${ev.notaKommoBase}\n\nAspirante: ${formData.nombreAspirante}\nGrado: ${formData.gradoEscolar}`;
+
       const leadId = await createKommoLead({
         name: formData.nombreCompleto,
         phone: formData.telefono || '',
@@ -702,7 +688,8 @@ export async function POST(request: NextRequest) {
         nivelAcademico: formData.nivelAcademico,
         gradoEscolar: formData.gradoEscolar,
         nombreAspirante: formData.nombreAspirante,
-        tipoEvento: 'sesiones' // Especificar que es Sesiones Informativas
+        tipoEvento: 'sesiones',
+        notaLead,
       });
       
       console.log(`✅ Lead creado exitosamente con ID: ${leadId}`);
@@ -718,13 +705,11 @@ export async function POST(request: NextRequest) {
       try {
         console.log('📱 Enviando SMS de confirmación...');
         
-        // Determinar mensaje según nivel académico (acortado para 1 segmento)
-        let mensaje = '';
-        if (formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder') {
-          mensaje = `✅ Sesión Informativa 2026 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528333474507 📚`;
-        } else {
-          mensaje = `✅ Sesión Informativa 2026 confirmada para ${formData.nombreAspirante}. Recordatorio por email 1 día antes. WhatsApp: https://wa.me/528334378743 📚`;
-        }
+        const waUrl =
+          formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder'
+            ? 'https://wa.me/528333474507'
+            : 'https://wa.me/528334378743';
+        const mensaje = `✅ Sesión Informativa 2026: ${formData.nombreAspirante}. ${ev.smsEventoCorto}. Rec. 1 día antes por correo. ${waUrl} 📚`;
         
         // Formatear teléfono
         let phone = formData.telefono.toString().trim();

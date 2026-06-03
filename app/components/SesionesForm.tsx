@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { getSesionesFormInfo } from '../../lib/sesiones-informativas-event'
 
 interface FormData {
   nombreAspirante: string
@@ -20,27 +21,6 @@ interface FormData {
 interface FormErrors {
   [key: string]: string
 }
-
-const SESIONES_EVENT_INFO: Record<string, { title: string; subtitle: string }> = {
-  maternal: {
-    title: 'Sesión Informativa Maternal y Kinder',
-    subtitle: 'Lunes 26 de enero · 6:00 p.m.'
-  },
-  kinder: {
-    title: 'Sesión Informativa Maternal y Kinder',
-    subtitle: 'Lunes 26 de enero · 6:00 p.m.'
-  },
-  primaria: {
-    title: 'Sesión Informativa Primaria',
-    subtitle: 'Lunes 19 de enero · 6:00 p.m.'
-  },
-  secundaria: {
-    title: 'Sesión Informativa Secundaria',
-    subtitle: 'Martes 20 de enero · 6:00 p.m.'
-  }
-}
-
-const getSesionesEventInfo = (nivel: string) => SESIONES_EVENT_INFO[nivel] ?? null
 
 export default function SesionesForm() {
   const [formData, setFormData] = useState<FormData>({
@@ -62,7 +42,7 @@ export default function SesionesForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [showModal, setShowModal] = useState(false)
-  const selectedEventInfo = getSesionesEventInfo(formData.nivelAcademico)
+  const selectedEventInfo = getSesionesFormInfo(formData.nivelAcademico)
 
   // Agregar clase al body para aplicar estilos naranjas
   useEffect(() => {

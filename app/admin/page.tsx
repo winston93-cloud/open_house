@@ -7,6 +7,11 @@ import {
   OPEN_HOUSE_EDICIONES_META,
   getOpenHouseEdicionLabel,
 } from '../../lib/open-house-event';
+import {
+  getDefaultSesionesEdicion,
+  SESIONES_EDICIONES_META,
+  getSesionesEdicionLabel,
+} from '../../lib/sesiones-informativas-event';
 import { getPlanCampamento } from '../../lib/campamento-verano';
 import type { CampamentoRegistro } from '../../lib/campamento-admin';
 import CampamentoAdminModal from '../components/admin/CampamentoAdminModal';
@@ -39,6 +44,7 @@ interface Sesion {
   confirmacion_asistencia: string;
   fecha_confirmacion?: string;
   ciclo_escolar: string;
+  edicion_sesiones?: string | null;
 }
 
 export default function AdminDashboard() {
@@ -58,6 +64,7 @@ export default function AdminDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
   const [cicloEscolar, setCicloEscolar] = useState<string>('2026'); // Año activo por defecto
   const [edicionOpenHouse, setEdicionOpenHouse] = useState<string>(() => getDefaultOpenHouseEdicion());
+  const [edicionSesiones, setEdicionSesiones] = useState<string>(() => getDefaultSesionesEdicion());
   const [stats, setStats] = useState({
     totalOpenHouse: 0,
     totalSesiones: 0,
@@ -95,7 +102,7 @@ export default function AdminDashboard() {
       fetchSesiones();
       fetchCampamento();
     }
-  }, [authenticated, cicloEscolar, edicionOpenHouse]); // Recargar cuando cambie el ciclo o la edición OH
+  }, [authenticated, cicloEscolar, edicionOpenHouse, edicionSesiones]);
 
   const onCicloEscolarChange = (value: string) => {
     setCicloEscolar(value);
@@ -103,6 +110,7 @@ export default function AdminDashboard() {
       setEdicionOpenHouse('2025-diciembre');
     } else {
       setEdicionOpenHouse(getDefaultOpenHouseEdicion());
+      setEdicionSesiones(getDefaultSesionesEdicion());
     }
   };
 
@@ -113,6 +121,23 @@ export default function AdminDashboard() {
     } else if (value === '2026-enero' || value === '2026-junio') {
       setCicloEscolar('2026');
     }
+  };
+
+  const onEdicionSesionesChange = (value: string) => {
+    setEdicionSesiones(value);
+    if (value === '2026-enero' || value === '2026-junio') {
+      setCicloEscolar('2026');
+    }
+  };
+
+  const descripcionFiltroSesiones = (): string => {
+    if (edicionSesiones === 'todos') {
+      return `Ciclo ${cicloEscolar} · todas las ediciones`;
+    }
+    if (edicionSesiones === 'sin-etiqueta') {
+      return `Ciclo ${cicloEscolar} · sin etiqueta de convocatoria`;
+    }
+    return `${getSesionesEdicionLabel(edicionSesiones)} (${edicionSesiones})`;
   };
 
   const descripcionFiltroOpenHouse = (): string => {
@@ -164,11 +189,17 @@ export default function AdminDashboard() {
 
   const fetchSesiones = async () => {
     try {
-      const { data, error } = await supabase
-        .from('sesiones')
-        .select('*')
-        .eq('ciclo_escolar', cicloEscolar)
-        .order('created_at', { ascending: false});
+      let query = supabase.from('sesiones').select('*').order('created_at', { ascending: false });
+
+      if (edicionSesiones === 'sin-etiqueta') {
+        query = query.is('edicion_sesiones', null).eq('ciclo_escolar', cicloEscolar);
+      } else if (edicionSesiones !== 'todos') {
+        query = query.eq('edicion_sesiones', edicionSesiones);
+      } else {
+        query = query.eq('ciclo_escolar', cicloEscolar);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -491,7 +522,7 @@ export default function AdminDashboard() {
         ['', '', '', '', '', '', '', '', '', ''],
         ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', '', '', ''],
         ['', '', '', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'AÑO']
+        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONVOCATORIA', 'AÑO']
       ];
       
       nivelAnterior = '';
@@ -509,6 +540,7 @@ export default function AdminDashboard() {
           item.email,
           item.telefono || '',
           new Date(item.created_at).toLocaleDateString('es-MX'),
+          getSesionesEdicionLabel(item.edicion_sesiones),
           item.ciclo_escolar || '2025'
         ]);
         
@@ -524,6 +556,7 @@ export default function AdminDashboard() {
         { width: 35 },
         { width: 20 },
         { width: 25 },
+        { width: 18 },
         { width: 15 }
       ];
       
@@ -639,6 +672,24 @@ export default function AdminDashboard() {
                       <option value="todos">Todas las ediciones (por año)</option>
                       <option value="sin-etiqueta">Sin etiqueta</option>
                       {OPEN_HOUSE_EDICIONES_META.map((ed) => (
+                        <option key={ed.id} value={ed.id}>
+                          {ed.label} ({ed.id})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {activeTab === 'sesiones' && (
+                  <div className="admin-filter-field admin-filter-field-wide">
+                    <label htmlFor="edicionSesionesSelect">Sesiones Informativas</label>
+                    <select
+                      id="edicionSesionesSelect"
+                      value={edicionSesiones}
+                      onChange={(e) => onEdicionSesionesChange(e.target.value)}
+                    >
+                      <option value="todos">Todas las ediciones (por año)</option>
+                      <option value="sin-etiqueta">Sin etiqueta</option>
+                      {SESIONES_EDICIONES_META.map((ed) => (
                         <option key={ed.id} value={ed.id}>
                           {ed.label} ({ed.id})
                         </option>
@@ -954,6 +1005,7 @@ export default function AdminDashboard() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                   Sesiones Informativas Recientes
+                  <span className="admin-table-filter-hint">{descripcionFiltroSesiones()}</span>
                 </h2>
               </div>
               
@@ -966,20 +1018,21 @@ export default function AdminDashboard() {
                       <th>Grado</th>
                       <th>Email</th>
                       <th>Fecha</th>
+                      <th>Convocatoria</th>
                       <th>Recordatorio</th>
                     </tr>
                   </thead>
                   <tbody>
                     {loading ? (
                       <tr>
-                        <td colSpan={7} className="admin-loading">
+                        <td colSpan={8} className="admin-loading">
                           <div className="admin-spinner"></div>
                           <span>Cargando Sesiones Informativas...</span>
                         </td>
                       </tr>
                     ) : sesiones.length === 0 ? (
                       <tr>
-                        <td colSpan={7} className="admin-empty">
+                        <td colSpan={8} className="admin-empty">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
@@ -1019,6 +1072,9 @@ export default function AdminDashboard() {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}
+                          </td>
+                          <td className="admin-grade">
+                            {getSesionesEdicionLabel(item.edicion_sesiones)}
                           </td>
                           <td>
                             <span className={`admin-confirmation-badge ${
