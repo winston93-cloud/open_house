@@ -1,11 +1,14 @@
 import { createAdminClient, type InsForgeClient } from '@insforge/sdk';
+import { normalizeInsforgeUrl } from './insforge-url';
 
 let adminClient: InsForgeClient | null = null;
 
 /** Cliente admin (API key) para operaciones de servidor. */
 export function getInsforgeAdmin(): InsForgeClient {
   if (!adminClient) {
-    const baseUrl = process.env.INSFORGE_URL ?? process.env.NEXT_PUBLIC_INSFORGE_URL;
+    const baseUrl = normalizeInsforgeUrl(
+      process.env.INSFORGE_URL ?? process.env.NEXT_PUBLIC_INSFORGE_URL!
+    );
     const apiKey = process.env.INSFORGE_API_KEY;
     if (!baseUrl || !apiKey) {
       throw new Error('Faltan INSFORGE_URL (o NEXT_PUBLIC_INSFORGE_URL) o INSFORGE_API_KEY');
