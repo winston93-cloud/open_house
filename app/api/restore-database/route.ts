@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 
 // Función para obtener archivos de backup desde GitHub
 async function getBackupFilesFromGitHub() {
@@ -55,10 +55,10 @@ async function downloadBackupFile(downloadUrl: string) {
 }
 
 // Función para verificar si la tabla existe
-async function ensureTableExists() {
+async function ensureTableExists(db: ReturnType<typeof getInsforgeAdmin>['database']) {
   try {
     // Intentar hacer una consulta simple para verificar si la tabla existe
-    const { error: checkError } = await supabase
+    const { error: checkError } = await db
       .from('inscripciones')
       .select('id')
       .limit(1);
@@ -78,6 +78,7 @@ async function ensureTableExists() {
 }
 
 export async function POST(request: NextRequest) {
+  const db = getInsforgeAdmin().database;
   const startTime = new Date();
   const logId = `RESTORE_${startTime.getTime()}`;
   
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
     
     // Asegurar que la tabla existe
     console.log(`🔧 [${logId}] Verificando/creando tabla inscripciones...`);
-    await ensureTableExists();
+    await ensureTableExists(db);
 
     let backupData;
     
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
 
     // Limpiar tabla actual (opcional - comentado para seguridad)
     // console.log(`🗑️ [${logId}] Limpiando tabla actual...`);
-    // await supabase.from('inscripciones').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+    // await db.from('inscripciones').delete().neq('id', '00000000-0000-0000-0000-000000000000');
 
     // Insertar inscripciones
     console.log(`💾 [${logId}] Insertando inscripciones en la base de datos...`);
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
       const batch = inscripciones.slice(i, i + batchSize);
       
       try {
-        const { error: insertError } = await supabase
+        const { error: insertError } = await db
           .from('inscripciones')
           .upsert(batch, { 
             onConflict: 'id',

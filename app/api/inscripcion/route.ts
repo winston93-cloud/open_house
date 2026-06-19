@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+import { insforge } from '../../../lib/insforge';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 import { getOpenHouseEventConfig, OPEN_HOUSE_EDICION_ACTUAL } from '../../../lib/open-house-event';
 
@@ -641,7 +641,7 @@ export async function POST(request: NextRequest) {
     const reminderDate = new Date(ev.reminderDateStr);
 
     // Guardar en la base de datos
-    const { data: inscripcion, error: dbError } = await supabase
+    const { data: inscripcion, error: dbError } = await insforge.database
       .from('inscripciones')
       .insert([
         {

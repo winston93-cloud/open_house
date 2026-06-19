@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const db = getInsforgeAdmin().database;
 
-    const { data: inscripciones, error } = await supabase
+    const { data: inscripciones, error } = await db
       .from('inscripciones')
       .select('id, nombre_aspirante, nivel_academico, email, created_at')
       .order('created_at', { ascending: false })

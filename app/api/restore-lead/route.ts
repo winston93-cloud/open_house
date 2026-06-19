@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 
 // Configuración de Supabase
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const db = getInsforgeAdmin().database;
 
 
 export async function POST(request: NextRequest) {
@@ -23,7 +20,7 @@ export async function POST(request: NextRequest) {
     console.log('🔍 Buscando inscripción con ID:', id);
     
     // 1. Obtener datos de la inscripción
-    const { data: inscripcion, error: dbError } = await supabase
+    const { data: inscripcion, error: dbError } = await db
       .from('inscripciones')
       .select('*')
       .eq('id', id)

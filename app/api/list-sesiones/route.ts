@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 
 export async function GET(request: NextRequest) {
+  const db = getInsforgeAdmin().database;
   try {
     // Obtener los últimos 5 registros de sesiones ordenados por fecha de creación
-    const { data: sesiones, error } = await supabase
+    const { data: sesiones, error } = await db
       .from('sesiones')
       .select('*')
       .order('created_at', { ascending: false })

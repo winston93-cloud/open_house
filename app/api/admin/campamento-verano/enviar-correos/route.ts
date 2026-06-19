@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '../../../../../lib/supabase-admin';
+import { getInsforgeAdmin } from '../../../../../lib/insforge-admin';
 import {
   registroToCampamentoEmailData,
   sendCampamentoConfirmacionEmail,
@@ -18,18 +18,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
+    const client = getInsforgeAdmin();
     const enviados: string[] = [];
     const fallidos: { id: string; message: string }[] = [];
 
     for (const id of ids) {
       try {
-        let registro = await loadRegistroById(supabase, id);
+        let registro = await loadRegistroById(client, id);
         if (!registro) {
           fallidos.push({ id, message: 'Registro no encontrado' });
           continue;
         }
-        registro = await assignFolioToRegistro(supabase, registro);
+        registro = await assignFolioToRegistro(client, registro);
         await sendCampamentoConfirmacionEmail(registroToCampamentoEmailData(registro));
         enviados.push(id);
       } catch (err) {

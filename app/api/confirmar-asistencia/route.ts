@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '../../../lib/supabase-admin';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,10 +19,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
+    const db = getInsforgeAdmin().database;
 
     // Primero intentar buscar en inscripciones (Open House)
-    let { data, error } = await supabase
+    let { data, error } = await db
       .from('inscripciones')
       .update({
         confirmacion_asistencia: confirmacion,
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     if (error || !data || data.length === 0) {
       console.log('No encontrado en inscripciones, buscando en sesiones...');
       
-      const { data: sesionData, error: sesionError } = await supabase
+      const { data: sesionData, error: sesionError } = await db
         .from('sesiones')
         .update({
           confirmacion_asistencia: confirmacion,
@@ -104,10 +104,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const supabase = getSupabaseAdmin();
+    const db = getInsforgeAdmin().database;
 
     // Primero intentar buscar en inscripciones (Open House)
-    let { data, error } = await supabase
+    let { data, error } = await db
       .from('inscripciones')
       .select('id, nombre_aspirante, nivel_academico, confirmacion_asistencia, fecha_confirmacion')
       .eq('id', id)
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest) {
     if (error || !data) {
       console.log('No encontrado en inscripciones, buscando en sesiones...');
       
-      const { data: sesionData, error: sesionError } = await supabase
+      const { data: sesionData, error: sesionError } = await db
         .from('sesiones')
         .select('id, nombre_aspirante, nivel_academico, confirmacion_asistencia, fecha_confirmacion')
         .eq('id', id)

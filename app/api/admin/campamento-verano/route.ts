@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '../../../../lib/supabase-admin';
+import { getInsforgeAdmin } from '../../../../lib/insforge-admin';
 import {
   normalizeCampamentoRow,
   parseCampamentoPayload,
@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const edicion = searchParams.get('edicion');
 
-    const supabase = getSupabaseAdmin();
-    let query = supabase.from('campamento_verano').select('*').order('created_at', { ascending: false });
+    const db = getInsforgeAdmin().database;
+    let query = db.from('campamento_verano').select('*').order('created_at', { ascending: false });
 
     if (edicion && edicion !== 'todos') {
       query = query.eq('edicion', edicion);
@@ -45,13 +45,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: err }, { status: 400 });
     }
 
-    const supabase = getSupabaseAdmin();
-    const folio = await ensureCampamentoFolio(supabase, {
+    const client = getInsforgeAdmin();
+    const db = client.database;
+    const folio = await ensureCampamentoFolio(client, {
       nombreParticipante: payload.nombreParticipante,
       fechaNacimiento: payload.fechaNacimiento,
     });
 
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('campamento_verano')
       .insert([{ ...payloadToDbRow(payload), folio }])
       .select()

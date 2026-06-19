@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase-client';
 import {
   getDefaultOpenHouseEdicion,
   OPEN_HOUSE_EDICIONES_META,
@@ -152,21 +151,16 @@ export default function AdminDashboard() {
 
   const fetchOpenHouse = async () => {
     try {
-      let query = supabase.from('inscripciones').select('*').order('created_at', { ascending: false });
+      const params = new URLSearchParams({
+        ciclo_escolar: cicloEscolar,
+        edicion_open_house: edicionOpenHouse,
+      });
+      const res = await fetch(`/api/admin/inscripciones?${params}`);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || 'Error al cargar inscripciones');
+      const data: Inscripcion[] = json.inscripciones || [];
 
-      if (edicionOpenHouse === 'sin-etiqueta') {
-        query = query.is('edicion_open_house', null).eq('ciclo_escolar', cicloEscolar);
-      } else if (edicionOpenHouse !== 'todos') {
-        query = query.eq('edicion_open_house', edicionOpenHouse);
-      } else {
-        query = query.eq('ciclo_escolar', cicloEscolar);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      setOpenHouse(data || []);
+      setOpenHouse(data);
       
       // Actualizar solo las estadísticas de Open House, preservando las de Sesiones
       setStats(prev => ({
@@ -189,21 +183,16 @@ export default function AdminDashboard() {
 
   const fetchSesiones = async () => {
     try {
-      let query = supabase.from('sesiones').select('*').order('created_at', { ascending: false });
+      const params = new URLSearchParams({
+        ciclo_escolar: cicloEscolar,
+        edicion_sesiones: edicionSesiones,
+      });
+      const res = await fetch(`/api/admin/sesiones?${params}`);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || 'Error al cargar sesiones');
+      const data: Sesion[] = json.sesiones || [];
 
-      if (edicionSesiones === 'sin-etiqueta') {
-        query = query.is('edicion_sesiones', null).eq('ciclo_escolar', cicloEscolar);
-      } else if (edicionSesiones !== 'todos') {
-        query = query.eq('edicion_sesiones', edicionSesiones);
-      } else {
-        query = query.eq('ciclo_escolar', cicloEscolar);
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      setSesiones(data || []);
+      setSesiones(data);
       
       // Actualizar estadísticas
       setStats(prev => ({

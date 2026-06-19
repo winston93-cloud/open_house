@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 
 // =============================================================================
 // MÓDULO: Gestión de Leads Completados (Ciclo de 5 días terminado)
@@ -11,8 +11,9 @@ import { supabase } from '../../../lib/supabase';
 
 // GET: Listar leads completados
 export async function GET(request: NextRequest) {
+  const db = getInsforgeAdmin().database;
   try {
-    const { data: leadsCompletados, error } = await supabase
+    const { data: leadsCompletados, error } = await db
       .from('kommo_lead_tracking')
       .select('*')
       .eq('sms_72h_sent', true)
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest) {
 
 // DELETE: Eliminar lead(s) completado(s)
 export async function DELETE(request: NextRequest) {
+  const db = getInsforgeAdmin().database;
   try {
     const body = await request.json();
     const { leadIds, eliminarTodos } = body;
@@ -51,7 +53,7 @@ export async function DELETE(request: NextRequest) {
     // Si se solicita eliminar todos
     if (eliminarTodos === true) {
       // Primero obtener los IDs para el conteo
-      const { data: leadsParaEliminar } = await supabase
+      const { data: leadsParaEliminar } = await db
         .from('kommo_lead_tracking')
         .select('kommo_lead_id')
         .eq('sms_72h_sent', true)
@@ -60,7 +62,7 @@ export async function DELETE(request: NextRequest) {
       const count = leadsParaEliminar?.length || 0;
       
       // Eliminar físicamente
-      const { error } = await supabase
+      const { error } = await db
         .from('kommo_lead_tracking')
         .delete()
         .eq('sms_72h_sent', true)
@@ -90,7 +92,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     // Primero obtener los leads para el conteo
-    const { data: leadsParaEliminar } = await supabase
+    const { data: leadsParaEliminar } = await db
       .from('kommo_lead_tracking')
       .select('kommo_lead_id')
       .in('kommo_lead_id', leadIds)
@@ -100,7 +102,7 @@ export async function DELETE(request: NextRequest) {
     const count = leadsParaEliminar?.length || 0;
 
     // Eliminar físicamente
-    const { error } = await supabase
+    const { error } = await db
       .from('kommo_lead_tracking')
       .delete()
       .in('kommo_lead_id', leadIds)

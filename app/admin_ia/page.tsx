@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase-client';
 
 interface TallerParticipante {
   id: string;
@@ -49,14 +48,12 @@ export default function AdminIADashboard() {
 
   const fetchParticipantes = async () => {
     try {
-      const { data, error } = await supabase
-        .from('taller_ia')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const res = await fetch('/api/admin/taller-ia');
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || 'Error al cargar participantes');
+      const data: TallerParticipante[] = json.participantes || [];
 
-      if (error) throw error;
-
-      setParticipantes(data || []);
+      setParticipantes(data);
       
       // Calcular estadísticas
       const totalParticipantes = data?.length || 0;

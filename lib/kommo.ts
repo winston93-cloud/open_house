@@ -251,22 +251,22 @@ export async function createKommoLead(leadData: {
     // 🎯 Registrar lead en tracking para monitoreo de 24h
     console.log('📝 Registrando lead en tracking de comunicaciones...');
     try {
-      const { supabase } = await import('./supabase');
-      await supabase
+      const { getInsforgeAdmin } = await import('./insforge-admin');
+      await getInsforgeAdmin().database
         .from('kommo_lead_tracking')
-        .insert({
+        .insert([{
           kommo_lead_id: leadId,
           kommo_contact_id: contactId,
           nombre: leadData.name,
           telefono: leadData.phone,
           email: leadData.email,
           plantel: leadData.plantel,
-          last_contact_time: new Date().toISOString(), // Ahora mismo, porque se acaba de crear
+          last_contact_time: new Date().toISOString(),
           pipeline_id: parseInt(cfg.pipelineId!),
           status_id: parseInt(cfg.statusId!),
           responsible_user_id: parseInt(cfg.responsibleUserId!),
-          lead_status: 'active'
-        });
+          lead_status: 'active',
+        }]);
       console.log('✅ Lead registrado en tracking');
     } catch (trackingError) {
       console.error('⚠️ Error registrando en tracking (no crítico):', trackingError);

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../../lib/insforge-admin';
 
 // =============================================================================
 // WEBHOOK DE KOMMO - REGISTRO Y ACTUALIZACIÓN DE LEADS
@@ -35,6 +35,8 @@ export async function POST(request: NextRequest) {
       
       const webhookData = parseWebhookData(text);
       
+      const db = getInsforgeAdmin().database;
+
       if (webhookData.leadId) {
         console.log(`📝 Actividad detectada en lead ${webhookData.leadId}`);
         console.log(`🔖 Tipo de evento: ${webhookData.eventType}`);
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
           console.log(`🆕 Lead nuevo detectado, verificando si existe en tracking...`);
           
           // Verificar si ya existe en tracking
-          const { data: existingLead } = await supabase
+          const { data: existingLead } = await db
             .from('kommo_lead_tracking')
             .select('kommo_lead_id')
             .eq('kommo_lead_id', webhookData.leadId)
@@ -61,21 +63,21 @@ export async function POST(request: NextRequest) {
             
             if (leadData) {
               // Insertar en tracking
-              const { error: insertError } = await supabase
+              const { error: insertError } = await db
                 .from('kommo_lead_tracking')
-                .insert({
+                .insert([{
                   kommo_lead_id: leadData.leadId,
                   kommo_contact_id: leadData.contactId,
                   nombre: leadData.nombre,
                   telefono: leadData.telefono,
                   email: leadData.email,
-                  plantel: 'winston', // Por defecto, se puede ajustar según la lógica
+                  plantel: 'winston',
                   last_contact_time: ahoraMexico.toISOString(),
                   pipeline_id: leadData.pipelineId,
                   status_id: leadData.statusId,
                   responsible_user_id: leadData.responsibleUserId,
-                  lead_status: 'active'
-                });
+                  lead_status: 'active',
+                }]);
               
               if (insertError) {
                 console.error(`❌ Error creando lead en tracking:`, insertError);
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
         }
         
         // Actualizar last_contact_time y resetear todos los flags de SMS (para leads existentes)
-        const { error } = await supabase
+        const { error } = await db
           .from('kommo_lead_tracking')
           .update({
             last_contact_time: ahoraMexico.toISOString(),

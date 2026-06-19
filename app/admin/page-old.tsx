@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase-client';
+
+/** Dashboard legacy — usar /admin en su lugar. */
 
 interface OpenHouse {
   id: string;
@@ -104,25 +105,22 @@ export default function AdminDashboard() {
 
   const fetchOpenHouse = async () => {
     try {
-      const { data, error } = await supabase
-        .from('inscripciones')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setOpenHouse(data || []);
+      const res = await fetch('/api/admin/inscripciones?ciclo_escolar=2026&edicion_open_house=todos');
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message);
+      const data = json.inscripciones || [];
+      setOpenHouse(data);
       
       // Calcular estadísticas
       const stats = {
-        total: data?.length || 0,
-        maternal: data?.filter(i => i.nivel_academico === 'maternal').length || 0,
-        kinder: data?.filter(i => i.nivel_academico === 'kinder').length || 0,
-        primaria: data?.filter(i => i.nivel_academico === 'primaria').length || 0,
-        secundaria: data?.filter(i => i.nivel_academico === 'secundaria').length || 0,
-        confirmados: data?.filter(i => i.confirmacion_asistencia === 'confirmado').length || 0,
-        no_confirmados: data?.filter(i => i.confirmacion_asistencia === 'no_confirmado').length || 0,
-        pendientes: data?.filter(i => i.confirmacion_asistencia === 'pendiente' || !i.confirmacion_asistencia).length || 0
+        total: data.length || 0,
+        maternal: data.filter((i: OpenHouse) => i.nivel_academico === 'maternal').length || 0,
+        kinder: data.filter((i: OpenHouse) => i.nivel_academico === 'kinder').length || 0,
+        primaria: data.filter((i: OpenHouse) => i.nivel_academico === 'primaria').length || 0,
+        secundaria: data.filter((i: OpenHouse) => i.nivel_academico === 'secundaria').length || 0,
+        confirmados: data.filter((i: OpenHouse) => i.confirmacion_asistencia === 'confirmado').length || 0,
+        no_confirmados: data.filter((i: OpenHouse) => i.confirmacion_asistencia === 'no_confirmado').length || 0,
+        pendientes: data.filter((i: OpenHouse) => i.confirmacion_asistencia === 'pendiente' || !i.confirmacion_asistencia).length || 0,
       };
       
       setStats(stats);

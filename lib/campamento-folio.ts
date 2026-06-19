@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import type { InsForgeClient } from '@insforge/sdk';
 
 /** Sin 0/O/1/I para lectura más clara al pagar. */
 const FOLIO_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -30,11 +30,11 @@ export function generateFolioFromSeed(
 }
 
 export async function folioExists(
-  supabase: SupabaseClient,
+  client: InsForgeClient,
   folio: string,
   excludeId?: string
 ): Promise<boolean> {
-  const { data, error } = await supabase
+  const { data, error } = await client.database
     .from('campamento_verano')
     .select('id')
     .eq('folio', folio)
@@ -48,7 +48,7 @@ export async function folioExists(
 
 /** Devuelve un folio único; reutiliza el existente si ya tiene. */
 export async function ensureCampamentoFolio(
-  supabase: SupabaseClient,
+  client: InsForgeClient,
   params: {
     nombreParticipante: string;
     fechaNacimiento: string;
@@ -62,7 +62,7 @@ export async function ensureCampamentoFolio(
   for (let attempt = 0; attempt < 40; attempt++) {
     const salt = attempt === 0 ? '' : String(attempt);
     const folio = generateFolioFromSeed(params.nombreParticipante, fecha, salt);
-    const exists = await folioExists(supabase, folio, params.registroId);
+    const exists = await folioExists(client, folio, params.registroId);
     if (!exists) return folio;
   }
   throw new Error('No se pudo generar un folio único');

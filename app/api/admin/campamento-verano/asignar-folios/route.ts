@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '../../../../../lib/supabase-admin';
+import { getInsforgeAdmin } from '../../../../../lib/insforge-admin';
 import { assignFolioToRegistro, loadRegistroById } from '../../../../../lib/campamento-registro-service';
 
 export async function POST(request: NextRequest) {
@@ -7,11 +7,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const ids = Array.isArray(body.ids) ? (body.ids as unknown[]).map(String).filter(Boolean) : null;
 
-    const supabase = getSupabaseAdmin();
+    const db = getInsforgeAdmin().database;
     let targetIds = ids;
 
     if (!targetIds?.length) {
-      const { data, error } = await supabase
+      const { data, error } = await db
         .from('campamento_verano')
         .select('id')
         .is('folio', null);
@@ -35,13 +35,14 @@ export async function POST(request: NextRequest) {
 
     for (const id of targetIds) {
       try {
-        let registro = await loadRegistroById(supabase, id);
+        const client = getInsforgeAdmin();
+        let registro = await loadRegistroById(client, id);
         if (!registro) {
           fallidos.push({ id, message: 'No encontrado' });
           continue;
         }
         if (!registro.folio) {
-          registro = await assignFolioToRegistro(supabase, registro);
+          registro = await assignFolioToRegistro(client, registro);
         }
         actualizados.push(registro);
       } catch (err) {

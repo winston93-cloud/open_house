@@ -4,6 +4,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Datos exportados (PII — no commitear)
+database/export/
+
 # Environment variables
 .env
 .env.local
@@ -96,3 +99,17 @@ coverage/
 
 # Email credentials (security)
 backend/src/emailCredentials.js
+# InsForge & AI agent skills
+.insforge
+.agent
+.agents
+.augment
+.claude
+.cline
+.github/copilot*
+.kilocode
+.qoder
+.qwen
+.roo
+.trae
+.windsurf

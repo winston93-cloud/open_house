@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import { getReminderEventInfo } from '../../../lib/reminder-event-info';
+
+const db = getInsforgeAdmin().database;
 
 // =============================================================================
 // CRON JOB: SISTEMA DE RECORDATORIOS POR EMAIL Y SMS
@@ -1198,7 +1200,7 @@ export async function POST(request: NextRequest) {
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase...`);
     console.log(`🔍 [${logId}] Buscando reminder_scheduled_for >= ${today.toISOString().split('T')[0]} AND < ${tomorrow.toISOString().split('T')[0]}`);
     
-    const { data: inscripciones, error: dbError } = await supabase
+    const { data: inscripciones, error: dbError } = await db
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
@@ -1260,7 +1262,7 @@ export async function POST(request: NextRequest) {
           
           // Marcar como enviado en la base de datos
           console.log(`💾 [${logId}] Actualizando base de datos para ${inscripcion.email}...`);
-          const { error: updateError } = await supabase
+          const { error: updateError } = await db
             .from('inscripciones')
             .update({
               reminder_sent: true,
@@ -1305,7 +1307,7 @@ export async function POST(request: NextRequest) {
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase para sesiones...`);
     console.log(`🔍 [${logId}] Buscando reminder_scheduled_for >= ${today.toISOString().split('T')[0]} AND < ${tomorrow.toISOString().split('T')[0]}`);
     
-    const { data: sesiones, error: sesionesError } = await supabase
+    const { data: sesiones, error: sesionesError } = await db
       .from('sesiones')
       .select('*')
       .eq('reminder_sent', false)
@@ -1347,7 +1349,7 @@ export async function POST(request: NextRequest) {
             
             // Marcar como enviado en la base de datos
             console.log(`💾 [${logId}] Actualizando base de datos para ${sesion.email}...`);
-            const { error: updateError } = await supabase
+            const { error: updateError } = await db
               .from('sesiones')
               .update({
                 reminder_sent: true,
@@ -1433,7 +1435,7 @@ export async function POST(request: NextRequest) {
 // Endpoint GET para verificar el estado del sistema de recordatorios  
 export async function GET() {
   try {
-    const { data: pendingReminders, error } = await supabase
+    const { data: pendingReminders, error } = await db
       .from('inscripciones')
       .select('id, email, nombre_aspirante, nivel_academico, created_at, reminder_sent')
       .eq('reminder_sent', false)

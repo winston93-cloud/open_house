@@ -1,58 +1,34 @@
-const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config({ path: '.env.local' });
+const { createAdminClient } = require('@insforge/sdk');
+const fs = require('fs');
+const path = require('path');
 
-const supabase = createClient(
-  'https://nmxrccrbnoenkahefrrw.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5teHJjY3Jibm9lbmthaGVmcnJ3Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDE1MTg0OCwiZXhwIjoyMDY5NzI3ODQ4fQ._SIR3rmq7TWukuym30cCP4BAKGe-dhnillDV0Bz6Hf0'
-);
+const project = JSON.parse(fs.readFileSync('.insforge/project.json', 'utf8'));
+const admin = createAdminClient({
+  baseUrl: project.oss_host,
+  apiKey: project.api_key,
+});
 
-async function deleteTestRecords() {
-  console.log('🗑️  Eliminando registros de prueba...\n');
-  
-  const email = 'isc.escobedo@gmail.com';
-  
-  // Eliminar de inscripciones
-  console.log('📋 Eliminando de INSCRIPCIONES...');
-  const { data: inscDeleted, error: errorInsc } = await supabase
-    .from('inscripciones')
-    .delete()
-    .eq('email', email)
-    .select();
-  
-  if (errorInsc) {
-    console.error('❌ Error:', errorInsc.message);
-  } else {
-    console.log(`✅ Eliminados ${inscDeleted?.length || 0} registros de inscripciones`);
-    if (inscDeleted && inscDeleted.length > 0) {
-      inscDeleted.forEach((r, idx) => {
-        console.log(`   ${idx + 1}. ${r.nombre_aspirante} (ID: ${r.id})`);
-      });
-    }
+async function main() {
+  const db = admin.database;
+  const ids = process.argv.slice(2);
+  if (ids.length === 0) {
+    console.error('Uso: node delete-test-records.js <uuid-inscripcion> [uuid-sesion...]');
+    process.exit(1);
   }
-  
-  console.log('');
-  
-  // Eliminar de sesiones
-  console.log('📚 Eliminando de SESIONES...');
-  const { data: sesDeleted, error: errorSes } = await supabase
-    .from('sesiones')
-    .delete()
-    .eq('email', email)
-    .select();
-  
-  if (errorSes) {
-    console.error('❌ Error:', errorSes.message);
-  } else {
-    console.log(`✅ Eliminados ${sesDeleted?.length || 0} registros de sesiones`);
-    if (sesDeleted && sesDeleted.length > 0) {
-      sesDeleted.forEach((r, idx) => {
-        console.log(`   ${idx + 1}. ${r.nombre_aspirante} (ID: ${r.id})`);
-      });
-    }
+
+  for (const id of ids) {
+    const { error: inscErr } = await db.from('inscripciones').delete().eq('id', id);
+    if (inscErr) console.log('inscripciones', id, inscErr.message);
+    else console.log('Eliminado de inscripciones:', id);
+
+    const { error: sesErr } = await db.from('sesiones').delete().eq('id', id);
+    if (sesErr) console.log('sesiones', id, sesErr.message);
+    else console.log('Eliminado de sesiones:', id);
   }
-  
-  console.log('');
-  console.log('🎉 Registros de prueba eliminados');
 }
 
-deleteTestRecords().catch(console.error);
-
+main().catch((e) => {
+  console.error(e.message);
+  process.exit(1);
+});

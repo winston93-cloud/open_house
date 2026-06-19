@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+import { insforge } from '../../../lib/insforge';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 import {
   getSesionesInformativasEventConfig,
@@ -639,7 +639,7 @@ export async function POST(request: NextRequest) {
     const reminderDate = new Date(ev.reminderDateStr);
 
     // Guardar en la base de datos (tabla 'sesiones' en lugar de 'inscripciones')
-    const { data: inscripcion, error: dbError } = await supabase
+    const { data: inscripcion, error: dbError } = await insforge.database
       .from('sesiones')
       .insert([
         {

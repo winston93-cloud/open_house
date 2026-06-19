@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import { getReminderEventInfo } from '../../../lib/reminder-event-info';
+
+const db = getInsforgeAdmin().database;
 
 // =============================================================================
 // ENDPOINT MANUAL: ENVIAR RECORDATORIOS DEL DÍA
@@ -1156,7 +1158,7 @@ async function processReminders() {
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase...`);
     console.log(`🔍 [${logId}] Buscando reminder_scheduled_for >= ${today.toISOString().split('T')[0]} AND < ${tomorrow.toISOString().split('T')[0]}`);
     
-    const { data: inscripciones, error: dbError } = await supabase
+    const { data: inscripciones, error: dbError } = await db
       .from('inscripciones')
       .select('*')
       .eq('reminder_sent', false)
@@ -1214,7 +1216,7 @@ async function processReminders() {
             console.log(`✅ [${logId}] Email enviado exitosamente a ${inscripcion.email}`);
             
             // Marcar como enviado en la base de datos
-            const { error: updateError } = await supabase
+            const { error: updateError } = await db
               .from('inscripciones')
               .update({
                 reminder_sent: true,
@@ -1273,7 +1275,7 @@ async function processReminders() {
     console.log(`🔍 [${logId}] Ejecutando consulta a Supabase para sesiones...`);
     console.log(`🔍 [${logId}] Buscando reminder_scheduled_for >= ${today.toISOString().split('T')[0]} AND < ${tomorrow.toISOString().split('T')[0]}`);
     
-    const { data: sesiones, error: sesionesError } = await supabase
+    const { data: sesiones, error: sesionesError } = await db
       .from('sesiones')
       .select('*')
       .eq('reminder_sent', false)
@@ -1315,7 +1317,7 @@ async function processReminders() {
             console.log(`✅ [${logId}] Email enviado exitosamente a ${sesion.email}`);
             
             // Marcar como enviado en la base de datos
-            const { error: updateError } = await supabase
+            const { error: updateError } = await db
               .from('sesiones')
               .update({
                 reminder_sent: true,
@@ -1499,7 +1501,7 @@ export async function GET(request: NextRequest) {
       tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
       
       // Buscar inscripciones pendientes (Open House)
-      const { data: inscripciones, error: inscripcionesError } = await supabase
+      const { data: inscripciones, error: inscripcionesError } = await db
         .from('inscripciones')
         .select('*')
         .eq('reminder_sent', false)
@@ -1508,7 +1510,7 @@ export async function GET(request: NextRequest) {
         .lt('reminder_scheduled_for', tomorrow.toISOString());
       
       // Buscar sesiones pendientes
-      const { data: sesiones, error: sesionesError } = await supabase
+      const { data: sesiones, error: sesionesError } = await db
         .from('sesiones')
         .select('*')
         .eq('reminder_sent', false)

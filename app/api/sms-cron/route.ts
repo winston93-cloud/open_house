@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '../../../lib/supabase';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import * as nodemailer from 'nodemailer';
 import { getEmailTemplate24h, getEmailTemplate72h, getEmailTemplate5d } from '../../../lib/email-templates';
+
+const db = getInsforgeAdmin().database;
 
 // =============================================================================
 // CRON JOB: SISTEMA DE SMS Y EMAILS AUTOMÁTICOS PARA LEADS DE KOMMO
@@ -127,7 +129,7 @@ async function checkAndSendSMS24h(logId: string) {
     console.log(`📅 [${logId}] Buscando leads con >24h y <48h sin actividad...`);
     console.log(`📅 [${logId}] Rango: ${fortyEightHoursAgo.toISOString()} a ${twentyFourHoursAgo.toISOString()}`);
     
-    const { data: pendingLeads, error } = await supabase
+    const { data: pendingLeads, error } = await db
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', twentyFourHoursAgo.toISOString())
@@ -171,7 +173,7 @@ async function checkAndSendSMS24h(logId: string) {
         
         if (smsSuccess || emailSuccess) {
           // Actualizar BD
-          await supabase
+          await db
             .from('kommo_lead_tracking')
             .update({
               sms_24h_sent: true,
@@ -223,7 +225,7 @@ async function checkAndSendSMS72h(logId: string) {
     console.log(`📅 [${logId}] Buscando leads con >72h y <5 días sin actividad...`);
     console.log(`📅 [${logId}] Rango: ${fiveDaysAgo.toISOString()} a ${seventyTwoHoursAgo.toISOString()}`);
     
-    const { data: pendingLeads, error } = await supabase
+    const { data: pendingLeads, error } = await db
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', seventyTwoHoursAgo.toISOString())
@@ -266,7 +268,7 @@ async function checkAndSendSMS72h(logId: string) {
         );
         
         if (smsSuccess || emailSuccess) {
-          await supabase
+          await db
             .from('kommo_lead_tracking')
             .update({
               sms_48h_sent: true,
@@ -316,7 +318,7 @@ async function checkAndSendSMS5d(logId: string) {
     
     console.log(`📅 [${logId}] Buscando leads con >5 días sin actividad...`);
     
-    const { data: pendingLeads, error } = await supabase
+    const { data: pendingLeads, error } = await db
       .from('kommo_lead_tracking')
       .select('*')
       .lt('last_contact_time', fiveDaysAgo.toISOString())
@@ -358,7 +360,7 @@ async function checkAndSendSMS5d(logId: string) {
         );
         
         if (smsSuccess || emailSuccess) {
-          await supabase
+          await db
             .from('kommo_lead_tracking')
             .update({
               sms_72h_sent: true,  // Campo reutilizado para 5 días

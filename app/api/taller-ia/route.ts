@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-import { supabase } from '../../../lib/supabase';
+import { insforge } from '../../../lib/insforge';
 
 // Configuración del transporter de email
 const transporter = nodemailer.createTransport({
@@ -328,7 +328,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Guardar en la base de datos
-    const { data: registro, error: dbError } = await supabase
+    const { data: registro, error: dbError } = await insforge.database
       .from('taller_ia')
       .insert([
         {

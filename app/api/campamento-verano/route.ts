@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseAdmin } from '../../../lib/supabase-admin';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import {
   CAMPAMENTO_EDICION,
   calcularEdad,
@@ -97,14 +97,15 @@ export async function POST(request: NextRequest) {
     }
 
     const plan = getPlanCampamento(data.planCampamento)!;
-    const supabase = getSupabaseAdmin();
+    const client = getInsforgeAdmin();
+    const db = client.database;
 
-    const folio = await ensureCampamentoFolio(supabase, {
+    const folio = await ensureCampamentoFolio(client, {
       nombreParticipante: data.nombreParticipante,
       fechaNacimiento: data.fechaNacimiento,
     });
 
-    const { data: registro, error: dbError } = await supabase
+    const { data: registro, error: dbError } = await db
       .from('campamento_verano')
       .insert([
         {
