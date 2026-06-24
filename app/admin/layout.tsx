@@ -1,4 +1,18 @@
 import type { Metadata } from 'next'
+import { Inter, Space_Grotesk } from 'next/font/google'
+import './admin-totality-theme.css'
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Dashboard de Gestión - Open House y Sesiones Informativas',
@@ -10,6 +24,12 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return children
+  return (
+    <div
+      className={`admin-totality-theme ${spaceGrotesk.variable} ${inter.variable} ${inter.className}`}
+      data-admin-theme="totality-festival"
+    >
+      {children}
+    </div>
+  )
 }
-

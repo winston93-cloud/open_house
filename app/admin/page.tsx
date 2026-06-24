@@ -826,7 +826,7 @@ export default function AdminDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Open House Recientes
-              <span style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#64748b', marginTop: '6px' }}>
+              <span className="admin-table-filter-desc">
                 {descripcionFiltroOpenHouse()}
               </span>
             </h2>
@@ -896,7 +896,7 @@ export default function AdminDashboard() {
                           minute: '2-digit'
                         })}
                       </td>
-                      <td style={{ fontSize: '13px', color: '#475569' }}>
+                      <td className="admin-campamento-cell">
                         {getOpenHouseEdicionLabel(item.edicion_open_house)}
                       </td>
                           <td>
@@ -925,10 +925,10 @@ export default function AdminDashboard() {
                 <div className="admin-stat-content">
                   <div>
                     <p className="admin-stat-label">Total Sesiones Informativas</p>
-                    <p className="admin-stat-number" style={{ color: '#FA9D00' }}>{stats.totalSesiones}</p>
+                    <p className="admin-stat-number admin-stat-number--amber">{stats.totalSesiones}</p>
                   </div>
-                  <div className="admin-stat-icon" style={{ background: '#FA9D00' }}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="white">
+                  <div className="admin-stat-icon admin-stat-icon--amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
@@ -1099,9 +1099,9 @@ export default function AdminDashboard() {
                 <div className="admin-stat-content">
                   <div>
                     <p className="admin-stat-label">Total Campamento</p>
-                    <p className="admin-stat-number" style={{ color: '#0ea5e9' }}>{stats.totalCampamento}</p>
+                    <p className="admin-stat-number admin-stat-number--sky">{stats.totalCampamento}</p>
                   </div>
-                  <div className="admin-stat-icon" style={{ background: '#0ea5e9' }}>
+                  <div className="admin-stat-icon admin-stat-icon--sky">
                     <span style={{ fontSize: '24px' }}>🏕️</span>
                   </div>
                 </div>
