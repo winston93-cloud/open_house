@@ -12,6 +12,7 @@ import {
   getSesionesEdicionLabel,
 } from '../../lib/sesiones-informativas-event';
 import { getPlanCampamento } from '../../lib/campamento-verano';
+import { urlServiciosAdminDashboard } from '../../lib/serviciosAdminConfig';
 import type { CampamentoRegistro } from '../../lib/campamento-admin';
 import CampamentoAdminModal from '../components/admin/CampamentoAdminModal';
 
@@ -624,6 +625,10 @@ export default function AdminDashboard() {
       <div className="admin-header">
         <div className="admin-header-content">
           <div className="admin-header-left">
+            <a href={urlServiciosAdminDashboard()} className="admin-back-link">
+              ← Volver al inicio
+            </a>
+            <div className="admin-header-brand-row">
             <div className="admin-header-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -632,6 +637,7 @@ export default function AdminDashboard() {
             <div>
               <h1>Dashboard de Gestión Winston</h1>
               <p>Sistema de gestión de inscripciones</p>
+            </div>
             </div>
           </div>
 

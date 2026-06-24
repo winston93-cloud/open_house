@@ -126,6 +126,7 @@
                                 <option value="03">03 - Noviembre</option>
                                 <option value="04">04 - Diciembre</option>
                                 <option value="05">05 - Enero</option>
+                                <option value="16">16 - Evaluación y herramientas tecnológicas</option>
                                 <option value="06">06 - Febrero</option>
                                 <option value="07">07 - Marzo</option>
                                 <option value="08">08 - Abril</option>
@@ -152,6 +153,7 @@
                                 <option value="03">03 - Noviembre</option>
                                 <option value="04">04 - Diciembre</option>
                                 <option value="05">05 - Enero</option>
+                                <option value="16">16 - Evaluación y herramientas tecnológicas</option>
                                 <option value="06">06 - Febrero</option>
                                 <option value="07">07 - Marzo</option>
                                 <option value="08">08 - Abril</option>

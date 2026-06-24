@@ -206,8 +206,35 @@ body {
 
 .admin-header-left {
   display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.admin-header-brand-row {
+  display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #1e293b;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-back-link:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
 }
 
 .admin-header-icon {

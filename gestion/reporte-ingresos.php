@@ -17,6 +17,7 @@ $nombres_conceptos = array(
     '03' => 'Colegiatura de Noviembre',
     '04' => 'Colegiatura de Diciembre',
     '05' => 'Colegiatura de Enero',
+    '16' => 'Evaluacion y herramientas tecnologicas',
     '06' => 'Colegiatura de Febrero',
     '07' => 'Colegiatura de Marzo',
     '08' => 'Colegiatura de Abril',
@@ -26,6 +27,9 @@ $nombres_conceptos = array(
 );
 
 $nombre_concepto = isset($nombres_conceptos[$concepto]) ? $nombres_conceptos[$concepto] : 'Concepto desconocido';
+
+// Julio (26): solo plan 11 meses (a.mes=2). El plan 10 meses (a.mes=1) termina en junio.
+$filtro_plan_julio = ($concepto === '26') ? ' AND a.mes = 2' : '';
 
 // Configuracion del PDF
 class PDF extends FPDF {
@@ -82,6 +86,9 @@ SELECT
     
     SUM(
         CASE 
+            -- Concepto 16: Evaluación y herramientas tecnológicas - $600 fijos SIN becas
+            WHEN '$concepto' = '16' THEN 600
+            
             -- Si el concepto es de noviembre (03) a julio (26) Y tiene beca SEP, usar monto prorrateado directamente
             WHEN ('$concepto' >= '03' AND '$concepto' <= '26')
                  AND sep.id IS NOT NULL 
@@ -107,6 +114,9 @@ SELECT
     
     SUM(
         CASE 
+            -- Concepto 16: Evaluación y herramientas tecnológicas - $600 fijos SIN becas
+            WHEN '$concepto' = '16' THEN 600
+            
             -- Si el concepto es de noviembre (03) a julio (26) Y tiene beca SEP, usar monto prorrateado directamente
             WHEN ('$concepto' >= '03' AND '$concepto' <= '26')
                  AND sep.id IS NOT NULL 
@@ -142,6 +152,7 @@ LEFT JOIN alumno_beca_sep sep
 
 WHERE a.alumno_ciclo_escolar = 22
   AND a.alumno_status = 1
+" . $filtro_plan_julio . "
 
 GROUP BY plantel
 ";
@@ -169,6 +180,7 @@ WHERE SUBSTR(pd.pago_referencia, 6, 2) = '$concepto'
   AND pd.pago_cancelado = 0
   AND a.alumno_ciclo_escolar = 22
   AND a.alumno_status = 1
+" . $filtro_plan_julio . "
 
 GROUP BY plantel
 ";
