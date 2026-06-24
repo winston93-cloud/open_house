@@ -563,9 +563,33 @@
 }
 
 .admin-totality-theme .admin-campamento-delete {
-  background: rgba(255, 180, 171, 0.15);
+  background: rgba(147, 0, 10, 0.55);
   color: #ffb4ab;
-  border: 1px solid rgba(255, 180, 171, 0.35);
+  border: 1px solid rgba(255, 180, 171, 0.55);
+  font-weight: 600;
+}
+
+.admin-totality-theme .admin-campamento-delete:hover:not(:disabled) {
+  background: rgba(180, 20, 30, 0.75);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(255, 180, 171, 0.25);
+}
+
+.admin-totality-theme .admin-campamento-modal-actions {
+  background: rgba(20, 21, 27, 0.95);
+  border-top: 1px solid var(--glass-border);
+}
+
+.admin-totality-theme .admin-modal-cancel {
+  background: rgba(52, 52, 58, 0.6);
+  color: var(--totality-text-muted);
+  border: 1px solid var(--glass-border);
+}
+
+.admin-totality-theme .admin-modal-cancel:hover:not(:disabled) {
+  background: rgba(52, 52, 58, 0.9);
+  color: var(--totality-text);
+  transform: none;
 }
 
 .admin-totality-theme .admin-campamento-folio-btn,
@@ -587,20 +611,37 @@
 }
 
 .admin-totality-theme .admin-campamento-folio-banner {
-  background: linear-gradient(135deg, rgba(255, 246, 223, 0.12) 0%, rgba(255, 215, 0, 0.18) 100%);
-  border-color: rgba(255, 215, 0, 0.25);
+  background: linear-gradient(135deg, rgba(255, 246, 223, 0.1) 0%, rgba(255, 215, 0, 0.15) 100%);
+  border: 2px solid rgba(255, 215, 0, 0.45);
 }
 
 .admin-totality-theme .admin-campamento-folio-banner-label {
-  color: var(--totality-outline);
+  color: var(--totality-secondary);
+  letter-spacing: 0.12em;
 }
 
 .admin-totality-theme .admin-campamento-folio-banner-code {
-  color: var(--totality-primary);
+  color: #ffd700;
+  background: #0d0e13;
+  border: 2px dashed rgba(255, 215, 0, 0.55);
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.35);
 }
 
 .admin-totality-theme .admin-campamento-folio-banner-hint {
   color: var(--totality-text-muted);
+}
+
+.admin-totality-theme .admin-campamento-sin-folio {
+  color: var(--totality-outline);
+}
+
+.admin-totality-theme .admin-campamento-semanas-hint,
+.admin-totality-theme .admin-campamento-semanas-list {
+  color: var(--totality-text-muted);
+}
+
+.admin-totality-theme .admin-campamento-modal-body {
+  background: transparent;
 }
 
 .admin-totality-theme .admin-stat-icon--amber svg {
