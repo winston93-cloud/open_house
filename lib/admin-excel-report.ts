@@ -1,6 +1,12 @@
 import type { Workbook, Worksheet, Cell, Borders, Fill } from 'exceljs';
 import type { CampamentoRegistro } from './campamento-admin';
 
+/** IDs de imágenes embebidas en el workbook. */
+export interface ReportLogoIds {
+  winston: number;
+  educativo: number;
+}
+
 /** Paleta Winston / Totality adaptada a Excel (fondo claro, acentos marca). */
 const C = {
   navy: 'FF1A1B21',
@@ -60,47 +66,121 @@ function styleCell(
   if (opts.numFmt) cell.numFmt = opts.numFmt;
 }
 
-function addSheetBanner(
+function colLetter(colCount: number): string {
+  return String.fromCharCode(64 + colCount);
+}
+
+async function loadReportLogos(wb: Workbook): Promise<ReportLogoIds> {
+  const fetchAsBase64 = async (url: string): Promise<string> => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`No se pudo cargar logo: ${url}`);
+    const buffer = await res.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]!);
+    return btoa(binary);
+  };
+
+  const [winstonB64, educativoB64] = await Promise.all([
+    fetchAsBase64('/logos/logo_winston.png'),
+    fetchAsBase64('/logos/educativo%20hd.png'),
+  ]);
+
+  return {
+    winston: wb.addImage({ base64: winstonB64, extension: 'png' }),
+    educativo: wb.addImage({ base64: educativoB64, extension: 'png' }),
+  };
+}
+
+function paintRowBackground(sheet: Worksheet, rowNum: number, colCount: number, fill: string) {
+  for (let c = 1; c <= colCount; c++) {
+    styleCell(sheet.getCell(rowNum, c), { fill });
+  }
+}
+
+/** Encabezado con logos embebidos + título institucional. Devuelve la fila donde empieza el contenido. */
+function addBrandedBanner(
   sheet: Worksheet,
+  logos: ReportLogoIds,
   title: string,
   subtitle: string,
   colCount: number
-) {
-  const endCol = String.fromCharCode(64 + colCount);
-  sheet.mergeCells(`A1:${endCol}1`);
-  const titleCell = sheet.getCell('A1');
-  titleCell.value = title;
-  styleCell(titleCell, { bold: true, size: 16, color: C.cream, fill: C.navy, align: 'center' });
-  sheet.getRow(1).height = 36;
+): number {
+  const endCol = colLetter(colCount);
 
-  sheet.mergeCells(`A2:${endCol}2`);
-  const subCell = sheet.getCell('A2');
+  paintRowBackground(sheet, 1, colCount, C.navy);
+  paintRowBackground(sheet, 2, colCount, C.navy);
+  sheet.getRow(1).height = 30;
+  sheet.getRow(2).height = 30;
+
+  sheet.addImage(logos.winston, {
+    tl: { col: 0.2, row: 0.15 },
+    ext: { width: 190, height: 46 },
+  });
+
+  sheet.addImage(logos.educativo, {
+    tl: { col: colCount - 1.05, row: 0.08 },
+    ext: { width: 42, height: 54 },
+  });
+
+  const titleStartCol = 2;
+  const titleEndCol = Math.max(titleStartCol, colCount - 1);
+  sheet.mergeCells(1, titleStartCol, 2, titleEndCol);
+  const titleCell = sheet.getCell(1, titleStartCol);
+  titleCell.value = title;
+  styleCell(titleCell, {
+    bold: true,
+    size: 15,
+    color: C.cream,
+    fill: C.navy,
+    align: 'center',
+  });
+
+  sheet.mergeCells(`A3:${endCol}3`);
+  const subCell = sheet.getCell('A3');
   subCell.value = subtitle;
   styleCell(subCell, { size: 10, color: C.muted, fill: C.rowAlt, align: 'center' });
-  sheet.getRow(2).height = 22;
+  sheet.getRow(3).height = 24;
+
+  return 5;
 }
 
-function addMetaRows(sheet: Worksheet, rows: [string, string][], startRow = 4) {
+function addSheetBanner(
+  sheet: Worksheet,
+  logos: ReportLogoIds,
+  title: string,
+  subtitle: string,
+  colCount: number
+): number {
+  return addBrandedBanner(sheet, logos, title, subtitle, colCount);
+}
+
+function addMetaRows(
+  sheet: Worksheet,
+  rows: [string, string][],
+  startRow: number,
+  colCount: number
+) {
   rows.forEach(([label, value], i) => {
     const r = sheet.getRow(startRow + i);
-    r.height = 20;
+    r.height = 22;
     const labelCell = r.getCell(1);
     labelCell.value = label;
-    styleCell(labelCell, { bold: true, color: C.muted, size: 10 });
-    sheet.mergeCells(startRow + i, 2, startRow + i, 4);
+    styleCell(labelCell, { bold: true, color: C.muted, size: 10, border: true });
+    sheet.mergeCells(startRow + i, 2, startRow + i, colCount);
     const valueCell = r.getCell(2);
     valueCell.value = value;
-    styleCell(valueCell, { size: 10 });
+    styleCell(valueCell, { size: 10, border: true });
   });
 }
 
 function addSectionTitle(sheet: Worksheet, rowNum: number, text: string, colCount: number) {
-  const endCol = String.fromCharCode(64 + colCount);
+  const endCol = colLetter(colCount);
   sheet.mergeCells(`A${rowNum}:${endCol}${rowNum}`);
   const cell = sheet.getCell(`A${rowNum}`);
   cell.value = text;
   styleCell(cell, { bold: true, size: 11, color: C.cream, fill: C.surface });
-  sheet.getRow(rowNum).height = 24;
+  sheet.getRow(rowNum).height = 26;
 }
 
 function addMetricRow(
@@ -108,14 +188,20 @@ function addMetricRow(
   rowNum: number,
   label: string,
   value: number | string,
+  colCount: number,
   highlight = false
 ) {
   const row = sheet.getRow(rowNum);
-  row.height = 22;
+  row.height = 24;
   const labelCell = row.getCell(1);
   labelCell.value = label;
-  styleCell(labelCell, { color: C.muted, size: 10, border: true });
-  sheet.mergeCells(rowNum, 2, rowNum, 3);
+  styleCell(labelCell, {
+    color: C.text,
+    size: 10,
+    border: true,
+    bold: highlight,
+  });
+  sheet.mergeCells(rowNum, 2, rowNum, colCount);
   const valueCell = row.getCell(2);
   valueCell.value = value;
   styleCell(valueCell, {
@@ -181,7 +267,7 @@ function addDataRow(
 }
 
 function applyAutoFilter(sheet: Worksheet, headerRow: number, colCount: number) {
-  const endCol = String.fromCharCode(64 + colCount);
+  const endCol = colLetter(colCount);
   sheet.autoFilter = {
     from: `A${headerRow}`,
     to: `${endCol}${headerRow}`,
@@ -286,14 +372,16 @@ function labelConfirmacionSesion(item: AdminExcelSesion): string {
   return 'Pendiente';
 }
 
-function buildResumenSheet(wb: Workbook, input: AdminExcelReportInput) {
+function buildResumenSheet(wb: Workbook, input: AdminExcelReportInput, logos: ReportLogoIds) {
   const { stats } = input;
+  const colCount = 6;
   const sheet = wb.addWorksheet('Resumen Ejecutivo', {
     properties: { defaultRowHeight: 20 },
     pageSetup: { orientation: 'portrait', fitToPage: true, fitToWidth: 1 },
   });
 
-  setColumnWidths(sheet, [4, 34, 18, 12, 12, 12]);
+  // Col A ancha para etiquetas largas; B–F para valores y espacio visual
+  setColumnWidths(sheet, [38, 14, 14, 14, 14, 14]);
 
   const fecha = new Date().toLocaleDateString('es-MX', {
     weekday: 'long',
@@ -302,66 +390,73 @@ function buildResumenSheet(wb: Workbook, input: AdminExcelReportInput) {
     day: 'numeric',
   });
 
-  addSheetBanner(
+  const contentStart = addBrandedBanner(
     sheet,
+    logos,
     'Instituto Winston Churchill',
     'Reporte integral — Open House · Sesiones Informativas · Campamento de Verano',
-    6
+    colCount
   );
 
-  addMetaRows(sheet, [
-    ['Fecha de generación', fecha],
-    ['Filtro Open House', input.filtroOpenHouse],
-    ['Filtro Sesiones', input.filtroSesiones],
-    ['Campamento de Verano', 'Todas las ediciones'],
-  ]);
+  addMetaRows(
+    sheet,
+    [
+      ['Fecha de generación', fecha],
+      ['Filtro Open House', input.filtroOpenHouse],
+      ['Filtro Sesiones', input.filtroSesiones],
+      ['Campamento de Verano', 'Todas las ediciones'],
+    ],
+    contentStart,
+    colCount
+  );
 
-  let row = 9;
-  addSectionTitle(sheet, row++, 'RESUMEN EJECUTIVO', 6);
-  addMetricRow(sheet, row++, 'Total Open House', stats.totalOpenHouse);
-  addMetricRow(sheet, row++, 'Total Sesiones Informativas', stats.totalSesiones);
-  addMetricRow(sheet, row++, 'Total Campamento de Verano', stats.totalCampamento);
+  let row = contentStart + 5;
+  addSectionTitle(sheet, row++, 'RESUMEN EJECUTIVO', colCount);
+  addMetricRow(sheet, row++, 'Total Open House', stats.totalOpenHouse, colCount);
+  addMetricRow(sheet, row++, 'Total Sesiones Informativas', stats.totalSesiones, colCount);
+  addMetricRow(sheet, row++, 'Total Campamento de Verano', stats.totalCampamento, colCount);
   addMetricRow(
     sheet,
     row++,
     'TOTAL GENERAL',
     stats.totalOpenHouse + stats.totalSesiones + stats.totalCampamento,
+    colCount,
     true
   );
 
   row++;
-  addSectionTitle(sheet, row++, 'OPEN HOUSE — POR NIVEL', 6);
-  addMetricRow(sheet, row++, 'Maternal', stats.maternal);
-  addMetricRow(sheet, row++, 'Kinder', stats.kinder);
-  addMetricRow(sheet, row++, 'Primaria', stats.primaria);
-  addMetricRow(sheet, row++, 'Secundaria', stats.secundaria);
+  addSectionTitle(sheet, row++, 'OPEN HOUSE — POR NIVEL', colCount);
+  addMetricRow(sheet, row++, 'Maternal', stats.maternal, colCount);
+  addMetricRow(sheet, row++, 'Kinder', stats.kinder, colCount);
+  addMetricRow(sheet, row++, 'Primaria', stats.primaria, colCount);
+  addMetricRow(sheet, row++, 'Secundaria', stats.secundaria, colCount);
 
   row++;
-  addSectionTitle(sheet, row++, 'OPEN HOUSE — CONFIRMACIONES', 6);
-  addMetricRow(sheet, row++, 'Confirmados', stats.confirmados);
-  addMetricRow(sheet, row++, 'No confirmados', stats.no_confirmados);
-  addMetricRow(sheet, row++, 'Pendientes', stats.pendientes);
+  addSectionTitle(sheet, row++, 'OPEN HOUSE — CONFIRMACIONES', colCount);
+  addMetricRow(sheet, row++, 'Confirmados', stats.confirmados, colCount);
+  addMetricRow(sheet, row++, 'No confirmados', stats.no_confirmados, colCount);
+  addMetricRow(sheet, row++, 'Pendientes', stats.pendientes, colCount);
 
   row++;
-  addSectionTitle(sheet, row++, 'SESIONES — POR NIVEL', 6);
-  addMetricRow(sheet, row++, 'Maternal', stats.sesionesMaternal);
-  addMetricRow(sheet, row++, 'Kinder', stats.sesionesKinder);
-  addMetricRow(sheet, row++, 'Primaria', stats.sesionesPrimaria);
-  addMetricRow(sheet, row++, 'Secundaria', stats.sesionesSecundaria);
+  addSectionTitle(sheet, row++, 'SESIONES — POR NIVEL', colCount);
+  addMetricRow(sheet, row++, 'Maternal', stats.sesionesMaternal, colCount);
+  addMetricRow(sheet, row++, 'Kinder', stats.sesionesKinder, colCount);
+  addMetricRow(sheet, row++, 'Primaria', stats.sesionesPrimaria, colCount);
+  addMetricRow(sheet, row++, 'Secundaria', stats.sesionesSecundaria, colCount);
 
   row++;
-  addSectionTitle(sheet, row++, 'CAMPAMENTO — POR PLAN', 6);
-  addMetricRow(sheet, row++, 'Plan 4 semanas', stats.campamento4Semanas);
-  addMetricRow(sheet, row++, 'Plan 3 semanas', stats.campamento3Semanas);
-  addMetricRow(sheet, row++, 'Plan semanal', stats.campamentoSemanal);
+  addSectionTitle(sheet, row++, 'CAMPAMENTO — POR PLAN', colCount);
+  addMetricRow(sheet, row++, 'Plan 4 semanas', stats.campamento4Semanas, colCount);
+  addMetricRow(sheet, row++, 'Plan 3 semanas', stats.campamento3Semanas, colCount);
+  addMetricRow(sheet, row++, 'Plan semanal', stats.campamentoSemanal, colCount);
 
-  sheet.mergeCells(row + 1, 1, row + 1, 6);
+  sheet.mergeCells(row + 1, 1, row + 1, colCount);
   const footer = sheet.getCell(row + 1, 1);
   footer.value = 'Generado desde el Dashboard de Gestión Winston · open-house-chi.vercel.app/admin';
   styleCell(footer, { size: 9, color: C.muted, align: 'center' });
 }
 
-function buildOpenHouseSheet(wb: Workbook, input: AdminExcelReportInput) {
+function buildOpenHouseSheet(wb: Workbook, input: AdminExcelReportInput, logos: ReportLogoIds) {
   const sheet = wb.addWorksheet('Open House');
   const headers = [
     '#',
@@ -378,9 +473,14 @@ function buildOpenHouseSheet(wb: Workbook, input: AdminExcelReportInput) {
   const colCount = headers.length;
 
   setColumnWidths(sheet, [5, 32, 14, 14, 34, 16, 20, 18, 16, 8]);
-  addSheetBanner(sheet, 'Open House — Detalle de inscripciones', input.filtroOpenHouse, colCount);
+  const headerRow = addSheetBanner(
+    sheet,
+    logos,
+    'Open House — Detalle de inscripciones',
+    input.filtroOpenHouse,
+    colCount
+  ) + 1;
 
-  const headerRow = 4;
   addTableHeader(sheet, headerRow, headers);
 
   const items = input.ordenarPorNivelYNombre(input.openHouse);
@@ -409,7 +509,7 @@ function buildOpenHouseSheet(wb: Workbook, input: AdminExcelReportInput) {
   applyAutoFilter(sheet, headerRow, colCount);
 }
 
-function buildSesionesSheet(wb: Workbook, input: AdminExcelReportInput) {
+function buildSesionesSheet(wb: Workbook, input: AdminExcelReportInput, logos: ReportLogoIds) {
   const sheet = wb.addWorksheet('Sesiones Informativas');
   const headers = [
     '#',
@@ -426,9 +526,14 @@ function buildSesionesSheet(wb: Workbook, input: AdminExcelReportInput) {
   const colCount = headers.length;
 
   setColumnWidths(sheet, [5, 32, 14, 14, 34, 16, 20, 20, 18, 8]);
-  addSheetBanner(sheet, 'Sesiones Informativas — Detalle', input.filtroSesiones, colCount);
+  const headerRow = addSheetBanner(
+    sheet,
+    logos,
+    'Sesiones Informativas — Detalle',
+    input.filtroSesiones,
+    colCount
+  ) + 1;
 
-  const headerRow = 4;
   addTableHeader(sheet, headerRow, headers);
 
   const items = input.ordenarPorNivelYNombre(input.sesiones);
@@ -458,7 +563,7 @@ function buildSesionesSheet(wb: Workbook, input: AdminExcelReportInput) {
   applyAutoFilter(sheet, headerRow, colCount);
 }
 
-function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput) {
+function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos: ReportLogoIds) {
   const sheet = wb.addWorksheet('Campamento de Verano');
   const headers = [
     '#',
@@ -476,9 +581,14 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput) {
   const colCount = headers.length;
 
   setColumnWidths(sheet, [5, 14, 30, 16, 14, 32, 16, 26, 20, 10, 28]);
-  addSheetBanner(sheet, 'Campamento de Verano — Detalle', 'Todas las ediciones', colCount);
+  const headerRow = addSheetBanner(
+    sheet,
+    logos,
+    'Campamento de Verano — Detalle',
+    'Todas las ediciones',
+    colCount
+  ) + 1;
 
-  const headerRow = 4;
   addTableHeader(sheet, headerRow, headers);
 
   const items = [...input.campamento].sort((a, b) =>
@@ -531,10 +641,12 @@ export async function generateAdminExcelReport(input: AdminExcelReportInput): Pr
   wb.created = new Date();
   wb.modified = new Date();
 
-  buildResumenSheet(wb, input);
-  buildOpenHouseSheet(wb, input);
-  buildSesionesSheet(wb, input);
-  buildCampamentoSheet(wb, input);
+  const logos = await loadReportLogos(wb);
+
+  buildResumenSheet(wb, input, logos);
+  buildOpenHouseSheet(wb, input, logos);
+  buildSesionesSheet(wb, input, logos);
+  buildCampamentoSheet(wb, input, logos);
 
   const buffer = await wb.xlsx.writeBuffer();
   const blob = new Blob([buffer], {
