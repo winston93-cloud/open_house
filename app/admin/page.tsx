@@ -15,6 +15,7 @@ import { getPlanCampamento } from '../../lib/campamento-verano';
 import { urlServiciosAdminDashboard } from '../../lib/serviciosAdminConfig';
 import type { CampamentoRegistro } from '../../lib/campamento-admin';
 import CampamentoAdminModal from '../components/admin/CampamentoAdminModal';
+import { generateAdminExcelReport } from '../../lib/admin-excel-report';
 
 interface Inscripcion {
   id: string;
@@ -399,239 +400,19 @@ export default function AdminDashboard() {
 
   const exportToExcel = async () => {
     try {
-      const XLSX = await import('xlsx');
-      if (!XLSX.utils) {
-        throw new Error('XLSX library not loaded properly');
-      }
-    
-      // Crear workbook
-      const workbook = XLSX.utils.book_new();
-    
-      const totalGeneral =
-        stats.totalOpenHouse + stats.totalSesiones + stats.totalCampamento;
-
-      // === HOJA 1: RESUMEN EJECUTIVO ===
-      const resumenData = [
-        ['', '', '', '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'REPORTE WINSTON — OPEN HOUSE, SESIONES Y CAMPAMENTO', '', '', '', ''],
-        ['', 'Fecha de generación:', new Date().toLocaleDateString('es-MX'), '', '', ''],
-        ['', 'Filtro Open House (listado):', descripcionFiltroOpenHouse(), '', '', ''],
-        ['', 'Filtro Sesiones (listado):', descripcionFiltroSesiones(), '', '', ''],
-        ['', 'Campamento de Verano:', 'Todas las ediciones', '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'RESUMEN EJECUTIVO', '', '', '', ''],
-        ['', 'Total de Open House:', stats.totalOpenHouse, '', '', ''],
-        ['', 'Total de Sesiones Informativas:', stats.totalSesiones, '', '', ''],
-        ['', 'Total de Campamento de Verano:', stats.totalCampamento, '', '', ''],
-        ['', 'Total General:', totalGeneral, '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'DESGLOSE POR NIVELES (OPEN HOUSE)', '', '', '', ''],
-        ['', 'Maternal:', stats.maternal, '', '', ''],
-        ['', 'Kinder:', stats.kinder, '', '', ''],
-        ['', 'Primaria:', stats.primaria, '', '', ''],
-        ['', 'Secundaria:', stats.secundaria, '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'CONFIRMACIONES DE ASISTENCIA (OPEN HOUSE)', '', '', '', ''],
-        ['', 'Confirmados:', stats.confirmados, '', '', ''],
-        ['', 'No confirmados:', stats.no_confirmados, '', '', ''],
-        ['', 'Pendientes:', stats.pendientes, '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'DESGLOSE POR NIVELES (SESIONES INFORMATIVAS)', '', '', '', ''],
-        ['', 'Maternal:', stats.sesionesMaternal, '', '', ''],
-        ['', 'Kinder:', stats.sesionesKinder, '', '', ''],
-        ['', 'Primaria:', stats.sesionesPrimaria, '', '', ''],
-        ['', 'Secundaria:', stats.sesionesSecundaria, '', '', ''],
-        ['', '', '', '', '', ''],
-        ['', 'DESGLOSE POR PLAN (CAMPAMENTO DE VERANO)', '', '', '', ''],
-        ['', 'Plan 4 semanas:', stats.campamento4Semanas, '', '', ''],
-        ['', 'Plan 3 semanas:', stats.campamento3Semanas, '', '', ''],
-        ['', 'Plan semanal:', stats.campamentoSemanal, '', '', '']
-      ];
-      
-      const resumenSheet = XLSX.utils.aoa_to_sheet(resumenData);
-      resumenSheet['!cols'] = [
-        { width: 5 },
-        { width: 30 },
-        { width: 20 },
-        { width: 10 },
-        { width: 10 },
-        { width: 10 }
-      ];
-      
-      XLSX.utils.book_append_sheet(workbook, resumenSheet, 'Resumen Ejecutivo');
-      
-      // === HOJA 2: DATOS DETALLADOS OPEN HOUSE ===
-      // Ordenar y agrupar por nivel
-      const openHouseOrdenados = ordenarPorNivelYNombre(openHouse);
-      
-      const datosOpenHouse = [
-        ['', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', ''],
-        ['', 'OPEN HOUSE - DATOS DETALLADOS', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'EDICIÓN OH', 'CONFIRMACIÓN', 'AÑO']
-      ];
-      
-      let nivelAnterior = '';
-      openHouseOrdenados.forEach(item => {
-        // Agregar separador de nivel si cambió el nivel
-        if (nivelAnterior !== item.nivel_academico && nivelAnterior !== '') {
-          datosOpenHouse.push(['', '', '', '', '', '', '', '', '', '']); // Línea en blanco para separar
-        }
-        
-        datosOpenHouse.push([
-          '',
-          item.nombre_aspirante,
-          formatNivelAcademico(item.nivel_academico),
-          item.grado_escolar,
-          item.email,
-          item.telefono || '',
-          new Date(item.created_at).toLocaleDateString('es-MX'),
-          getOpenHouseEdicionLabel(item.edicion_open_house),
-          item.confirmacion_asistencia === 'confirmado' ? '✅ CONFIRMADO' :
-          item.confirmacion_asistencia === 'no_confirmado' ? '❌ NO CONFIRMADO' :
-          '⏳ PENDIENTE',
-          item.ciclo_escolar || '2025'
-        ]);
-        
-        nivelAnterior = item.nivel_academico;
+      await generateAdminExcelReport({
+        stats,
+        openHouse,
+        sesiones,
+        campamento,
+        filtroOpenHouse: descripcionFiltroOpenHouse(),
+        filtroSesiones: descripcionFiltroSesiones(),
+        formatNivel: formatNivelAcademico,
+        labelOpenHouseEdicion: getOpenHouseEdicionLabel,
+        labelSesionesEdicion: getSesionesEdicionLabel,
+        formatPlan: formatPlanCampamento,
+        ordenarPorNivelYNombre,
       });
-      
-      const openHouseSheet = XLSX.utils.aoa_to_sheet(datosOpenHouse);
-      openHouseSheet['!cols'] = [
-        { width: 5 },
-        { width: 30 },
-        { width: 15 },
-        { width: 15 },
-        { width: 35 },
-        { width: 20 },
-        { width: 22 },
-        { width: 14 },
-        { width: 18 },
-        { width: 10 }
-      ];
-      
-      XLSX.utils.book_append_sheet(workbook, openHouseSheet, 'Open House');
-      
-      // === HOJA 3: DATOS DETALLADOS SESIONES INFORMATIVAS ===
-      // Ordenar y agrupar por nivel
-      const sesionesOrdenadas = ordenarPorNivelYNombre(sesiones);
-      
-      const datosSesiones = [
-        ['', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', ''],
-        ['', 'SESIONES INFORMATIVAS - DATOS DETALLADOS', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', ''],
-        ['', 'NOMBRE DEL ASPIRANTE', 'NIVEL ACADÉMICO', 'GRADO ESCOLAR', 'EMAIL', 'TELÉFONO', 'FECHA DE INSCRIPCIÓN', 'CONVOCATORIA', 'AÑO']
-      ];
-      
-      nivelAnterior = '';
-      sesionesOrdenadas.forEach(item => {
-        // Agregar separador de nivel si cambió el nivel
-        if (nivelAnterior !== item.nivel_academico && nivelAnterior !== '') {
-          datosSesiones.push(['', '', '', '', '', '', '', '']); // Línea en blanco para separar
-        }
-        
-        datosSesiones.push([
-          '',
-          item.nombre_aspirante,
-          formatNivelAcademico(item.nivel_academico),
-          item.grado_escolar,
-          item.email,
-          item.telefono || '',
-          new Date(item.created_at).toLocaleDateString('es-MX'),
-          getSesionesEdicionLabel(item.edicion_sesiones),
-          item.ciclo_escolar || '2025'
-        ]);
-        
-        nivelAnterior = item.nivel_academico;
-      });
-      
-      const sesionesSheet = XLSX.utils.aoa_to_sheet(datosSesiones);
-      sesionesSheet['!cols'] = [
-        { width: 5 },
-        { width: 30 },
-        { width: 15 },
-        { width: 15 },
-        { width: 35 },
-        { width: 20 },
-        { width: 25 },
-        { width: 18 },
-        { width: 15 }
-      ];
-      
-      XLSX.utils.book_append_sheet(workbook, sesionesSheet, 'Sesiones Informativas');
-
-      // === HOJA 4: CAMPAMENTO DE VERANO ===
-      const campamentoOrdenados = [...campamento].sort((a, b) =>
-        a.nombre_participante.localeCompare(b.nombre_participante, 'es', { sensitivity: 'base' })
-      );
-
-      const datosCampamento = [
-        ['', '', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', ''],
-        ['', 'CAMPAMENTO DE VERANO — DATOS DETALLADOS', '', '', '', '', '', '', '', '', ''],
-        ['', '', '', '', '', '', '', '', '', '', ''],
-        [
-          '',
-          'FOLIO',
-          'NOMBRE DEL PARTICIPANTE',
-          'GRADO ESCOLAR',
-          'PLAN',
-          'EMAIL',
-          'TELÉFONO',
-          'TUTOR',
-          'FECHA DE INSCRIPCIÓN',
-          'EDICIÓN',
-          'SEMANAS SELECCIONADAS',
-        ],
-      ];
-
-      campamentoOrdenados.forEach((item) => {
-        datosCampamento.push([
-          '',
-          item.folio || 'Sin folio',
-          item.nombre_participante,
-          item.grado_escolar,
-          formatPlanCampamento(item.plan_campamento),
-          item.email,
-          item.telefono_principal || '',
-          item.nombre_tutor || '',
-          new Date(item.created_at).toLocaleDateString('es-MX', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-          item.edicion || '',
-          item.semanas_seleccionadas?.length
-            ? item.semanas_seleccionadas.join(', ')
-            : '',
-        ]);
-      });
-
-      const campamentoSheet = XLSX.utils.aoa_to_sheet(datosCampamento);
-      campamentoSheet['!cols'] = [
-        { width: 5 },
-        { width: 14 },
-        { width: 30 },
-        { width: 18 },
-        { width: 16 },
-        { width: 35 },
-        { width: 18 },
-        { width: 28 },
-        { width: 22 },
-        { width: 10 },
-        { width: 36 },
-      ];
-
-      XLSX.utils.book_append_sheet(workbook, campamentoSheet, 'Campamento de Verano');
-      
-      // Generar y descargar archivo
-      const fileName = `Reporte_Winston_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
     } catch (error) {
       console.error('Error al generar Excel:', error);
       alert('Error al generar el archivo Excel. Por favor, intenta de nuevo.');
