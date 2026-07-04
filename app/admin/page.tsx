@@ -11,7 +11,7 @@ import {
   SESIONES_EDICIONES_META,
   getSesionesEdicionLabel,
 } from '../../lib/sesiones-informativas-event';
-import { getPlanCampamento } from '../../lib/campamento-verano';
+import { getPlanCampamento, KIT_BIENVENIDA_PRECIO_FORMATEADO } from '../../lib/campamento-verano';
 import { urlServiciosAdminDashboard } from '../../lib/serviciosAdminConfig';
 import type { CampamentoRegistro } from '../../lib/campamento-admin';
 import CampamentoAdminModal from '../components/admin/CampamentoAdminModal';
@@ -1058,6 +1058,7 @@ export default function AdminDashboard() {
                       <th>Nombre</th>
                       <th>Grado</th>
                       <th>Plan</th>
+                      <th>Kit bienvenida</th>
                       <th>Email</th>
                       <th>Fecha</th>
                       <th>Edición</th>
@@ -1066,14 +1067,14 @@ export default function AdminDashboard() {
                   <tbody>
                     {loadingCampamento ? (
                       <tr>
-                        <td colSpan={8} className="admin-loading">
+                        <td colSpan={9} className="admin-loading">
                           <div className="admin-spinner"></div>
                           <span>Cargando campamento...</span>
                         </td>
                       </tr>
                     ) : campamento.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="admin-empty">
+                        <td colSpan={9} className="admin-empty">
                           <span style={{ fontSize: '32px' }}>🏕️</span>
                           <p className="admin-empty-title">No hay inscripciones al campamento</p>
                           <p className="admin-empty-subtitle">Los registros aparecerán aquí cuando los padres llenen el formulario en /campamento-verano.</p>
@@ -1110,6 +1111,19 @@ export default function AdminDashboard() {
                             <span className="admin-campamento-plan-badge">
                               {formatPlanCampamento(item.plan_campamento)}
                             </span>
+                          </td>
+                          <td className="admin-campamento-kit">
+                            {item.plan_campamento === 'semanal' ? (
+                              item.kit_bienvenida ? (
+                                <span className="admin-campamento-kit-yes">
+                                  Sí · {KIT_BIENVENIDA_PRECIO_FORMATEADO}
+                                </span>
+                              ) : (
+                                <span className="admin-campamento-kit-no">No</span>
+                              )
+                            ) : (
+                              <span className="admin-campamento-kit-na">—</span>
+                            )}
                           </td>
                           <td className="admin-email">{item.email}</td>
                           <td className="admin-date">

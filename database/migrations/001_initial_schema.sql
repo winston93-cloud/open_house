@@ -196,6 +196,7 @@ CREATE TABLE IF NOT EXISTS public.campamento_verano (
     plan_campamento VARCHAR(20) NOT NULL CHECK (plan_campamento IN ('4_semanas', '3_semanas', 'semanal')),
     plan_precio NUMERIC(10, 2) NOT NULL,
     semanas_seleccionadas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    kit_bienvenida BOOLEAN NOT NULL DEFAULT false,
     folio VARCHAR(10),
     edicion VARCHAR(20) NOT NULL DEFAULT '2025',
     fecha_inscripcion TIMESTAMPTZ NOT NULL DEFAULT NOW(),

@@ -6,7 +6,7 @@ import {
   type CampamentoRegistro,
   registroToPayload,
 } from '../../../lib/campamento-admin';
-import { PLANES_CAMPAMENTO, CAMPAMENTO_EDICION, GRADOS_CAMPAMENTO } from '../../../lib/campamento-verano';
+import { PLANES_CAMPAMENTO, CAMPAMENTO_EDICION, GRADOS_CAMPAMENTO, KIT_BIENVENIDA_NOMBRE, KIT_BIENVENIDA_PRECIO_FORMATEADO, puedeElegirKitBienvenida } from '../../../lib/campamento-verano';
 import {
   getSemanasRequeridas,
   SEMANAS_CAMPAMENTO,
@@ -38,6 +38,7 @@ const emptyPayload = (): CampamentoPayload => ({
   fechaFirma: new Date().toISOString().slice(0, 10),
   planCampamento: '',
   semanasSeleccionadas: [],
+  kitBienvenida: false,
   edicion: CAMPAMENTO_EDICION,
 });
 
@@ -62,6 +63,10 @@ export default function CampamentoAdminModal({
   }, [registro, isNew]);
 
   const requeridas = getSemanasRequeridas(form.planCampamento);
+  const mostrarKitBienvenida = puedeElegirKitBienvenida(
+    form.planCampamento,
+    form.semanasSeleccionadas.length
+  );
 
   const update = (patch: Partial<CampamentoPayload>) => {
     setForm((prev) => ({ ...prev, ...patch }));
@@ -70,17 +75,22 @@ export default function CampamentoAdminModal({
 
   const toggleSemana = (id: string) => {
     const sel = form.semanasSeleccionadas;
+    let next: string[];
     if (sel.includes(id)) {
-      update({ semanasSeleccionadas: sel.filter((s) => s !== id) });
-      return;
-    }
-    if (sel.length >= requeridas) return;
-    update({
-      semanasSeleccionadas: [...sel, id].sort(
+      next = sel.filter((s) => s !== id);
+    } else {
+      if (sel.length >= requeridas) return;
+      next = [...sel, id].sort(
         (a, b) =>
           SEMANAS_CAMPAMENTO.find((s) => s.id === a)!.numero -
           SEMANAS_CAMPAMENTO.find((s) => s.id === b)!.numero
-      ),
+      );
+    }
+    update({
+      semanasSeleccionadas: next,
+      kitBienvenida: puedeElegirKitBienvenida(form.planCampamento, next.length)
+        ? form.kitBienvenida
+        : false,
     });
   };
 
@@ -309,6 +319,7 @@ export default function CampamentoAdminModal({
                     planCampamento: plan,
                     semanasSeleccionadas:
                       plan === '4_semanas' ? SEMANAS_CAMPAMENTO.map((s) => s.id) : [],
+                    kitBienvenida: false,
                   });
                 }}
               >
@@ -354,6 +365,23 @@ export default function CampamentoAdminModal({
                   </ul>
                 )}
               </div>
+            )}
+
+            {mostrarKitBienvenida && (
+              <label className="inline-check admin-campamento-kit-check">
+                <input
+                  type="checkbox"
+                  checked={form.kitBienvenida === true}
+                  onChange={(e) => update({ kitBienvenida: e.target.checked })}
+                />
+                {KIT_BIENVENIDA_NOMBRE} ({KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN)
+              </label>
+            )}
+
+            {form.planCampamento === 'semanal' && !mostrarKitBienvenida && (
+              <p className="admin-campamento-semanas-hint">
+                El {KIT_BIENVENIDA_NOMBRE.toLowerCase()} solo aplica al elegir exactamente 1 semana.
+              </p>
             )}
           </section>
         </div>

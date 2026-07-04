@@ -5,6 +5,9 @@ import {
   CAMPAMENTO_TITULO,
   getBannerCampamentoUrl,
   getPlanCampamento,
+  calcularTotalCampamento,
+  KIT_BIENVENIDA_NOMBRE,
+  KIT_BIENVENIDA_PRECIO_FORMATEADO,
   type PlanCampamento,
 } from './campamento-verano';
 import { getSemanasCampamentoLabels } from './campamento-semanas';
@@ -24,6 +27,7 @@ export interface CampamentoEmailData {
   planId: string;
   semanasSeleccionadas: string[];
   fechaFirma: string;
+  kitBienvenida: boolean;
 }
 
 function formatFecha(isoDate: string): string {
@@ -40,6 +44,7 @@ export function createCampamentoConfirmacionEmail(
   data: CampamentoEmailData
 ): { subject: string; html: string } {
   const plan = getPlanCampamento(data.planId) as PlanCampamento;
+  const totales = calcularTotalCampamento(data.planId, data.kitBienvenida);
   const bannerUrl = getBannerCampamentoUrl();
   const semanasLabels = getSemanasCampamentoLabels(data.semanasSeleccionadas);
   const semanasHtml = semanasLabels
@@ -107,6 +112,12 @@ export function createCampamentoConfirmacionEmail(
                   <td style="padding:22px;text-align:center;">
                     <p style="margin:0 0 6px;color:#92400e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Plan seleccionado</p>
                     <p style="margin:0;color:#1e3a8a;font-size:22px;font-weight:800;">${plan.label} — ${plan.precioFormateado}</p>
+                    ${
+                      data.kitBienvenida
+                        ? `<p style="margin:12px 0 0;color:#0f172a;font-size:15px;font-weight:700;">+ ${KIT_BIENVENIDA_NOMBRE}: ${KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN</p>
+                    <p style="margin:8px 0 0;color:#1e40af;font-size:18px;font-weight:800;">Total estimado: $${totales.total.toLocaleString('es-MX')} MXN</p>`
+                        : ''
+                    }
                   </td>
                 </tr>
               </table>

@@ -571,6 +571,7 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
     'Participante',
     'Grado',
     'Plan',
+    'Kit bienvenida',
     'Email',
     'Teléfono',
     'Tutor',
@@ -580,7 +581,7 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
   ];
   const colCount = headers.length;
 
-  setColumnWidths(sheet, [5, 14, 30, 16, 14, 32, 16, 26, 20, 10, 28]);
+  setColumnWidths(sheet, [5, 14, 30, 16, 14, 14, 32, 16, 26, 20, 10, 28]);
   const headerRow = addSheetBanner(
     sheet,
     logos,
@@ -608,6 +609,11 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
       item.nombre_participante,
       item.grado_escolar,
       input.formatPlan(item.plan_campamento),
+      item.plan_campamento === 'semanal'
+        ? item.kit_bienvenida
+          ? 'Sí ($280)'
+          : 'No'
+        : '—',
       item.email,
       item.telefono_principal || '—',
       item.nombre_tutor || '—',

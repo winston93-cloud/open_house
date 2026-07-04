@@ -1,5 +1,9 @@
 import type { PlanCampamentoId } from './campamento-verano';
-import { getPlanCampamento, CAMPAMENTO_EDICION } from './campamento-verano';
+import {
+  getPlanCampamento,
+  CAMPAMENTO_EDICION,
+  puedeElegirKitBienvenida,
+} from './campamento-verano';
 import { validarSemanasSeleccionadas } from './campamento-semanas';
 
 export interface CampamentoRegistro {
@@ -23,6 +27,7 @@ export interface CampamentoRegistro {
   semanas_seleccionadas: string[];
   edicion: string;
   folio?: string | null;
+  kit_bienvenida?: boolean;
   fecha_inscripcion?: string;
   created_at: string;
   updated_at?: string;
@@ -45,6 +50,7 @@ export interface CampamentoPayload {
   fechaFirma: string;
   planCampamento: string;
   semanasSeleccionadas: string[];
+  kitBienvenida?: boolean;
   edicion?: string;
 }
 
@@ -71,8 +77,20 @@ export function parseCampamentoPayload(body: Record<string, unknown>): Campament
     semanasSeleccionadas: Array.isArray(body.semanasSeleccionadas)
       ? (body.semanasSeleccionadas as unknown[]).map(String)
       : [],
+    kitBienvenida: body.kitBienvenida === true || body.kitBienvenida === 'true',
     edicion: body.edicion ? String(body.edicion).trim() : CAMPAMENTO_EDICION,
   };
+}
+
+export function resolveKitBienvenida(
+  planCampamento: string,
+  semanasSeleccionadas: string[],
+  requested: boolean
+): boolean {
+  if (!puedeElegirKitBienvenida(planCampamento, semanasSeleccionadas.length)) {
+    return false;
+  }
+  return requested;
 }
 
 export function normalizePhone(phone: string): string {
@@ -101,6 +119,11 @@ export function validateCampamentoPayload(data: CampamentoPayload): string | nul
 
 export function payloadToDbRow(data: CampamentoPayload) {
   const plan = getPlanCampamento(data.planCampamento)!;
+  const kitBienvenida = resolveKitBienvenida(
+    data.planCampamento,
+    data.semanasSeleccionadas,
+    data.kitBienvenida === true
+  );
   return {
     nombre_participante: data.nombreParticipante,
     fecha_nacimiento: data.fechaNacimiento,
@@ -119,6 +142,7 @@ export function payloadToDbRow(data: CampamentoPayload) {
     plan_campamento: plan.id,
     plan_precio: plan.precio,
     semanas_seleccionadas: data.semanasSeleccionadas,
+    kit_bienvenida: kitBienvenida,
     edicion: data.edicion || CAMPAMENTO_EDICION,
   };
 }
@@ -141,6 +165,7 @@ export function registroToPayload(r: CampamentoRegistro): CampamentoPayload {
     fechaFirma: r.fecha_firma,
     planCampamento: r.plan_campamento,
     semanasSeleccionadas: Array.isArray(r.semanas_seleccionadas) ? r.semanas_seleccionadas : [],
+    kitBienvenida: r.kit_bienvenida === true,
     edicion: r.edicion,
   };
 }
@@ -150,5 +175,6 @@ export function normalizeCampamentoRow(row: Record<string, unknown>): Campamento
   return {
     ...(row as unknown as CampamentoRegistro),
     semanas_seleccionadas: Array.isArray(semanas) ? (semanas as string[]) : [],
+    kit_bienvenida: row.kit_bienvenida === true,
   };
 }

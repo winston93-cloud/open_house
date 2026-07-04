@@ -5,10 +5,14 @@ import CampamentoSemanasPicker from './CampamentoSemanasPicker';
 import {
   PLANES_CAMPAMENTO,
   calcularEdad,
+  calcularTotalCampamento,
   CAMPAMENTO_INSTITUCION,
   CAMPAMENTO_SUBTITULO,
   CAMPAMENTO_TITULO,
   GRADOS_CAMPAMENTO,
+  KIT_BIENVENIDA_NOMBRE,
+  KIT_BIENVENIDA_PRECIO_FORMATEADO,
+  puedeElegirKitBienvenida,
 } from '../../lib/campamento-verano';
 import {
   getTodasSemanasIds,
@@ -30,6 +34,7 @@ interface FormData {
   autorizaFotos: boolean;
   aceptaReglamento: boolean;
   planCampamento: string;
+  kitBienvenida: boolean;
 }
 
 type FormErrors = Partial<Record<keyof FormData | 'semanasSeleccionadas' | 'general', string>>;
@@ -66,6 +71,7 @@ export default function CampamentoVeranoForm() {
     autorizaFotos: false,
     aceptaReglamento: false,
     planCampamento: '',
+    kitBienvenida: false,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
@@ -76,6 +82,13 @@ export default function CampamentoVeranoForm() {
   const [folioConfirmado, setFolioConfirmado] = useState<string | null>(null);
 
   const planSeleccionado = PLANES_CAMPAMENTO.find((p) => p.id === formData.planCampamento);
+  const mostrarKitBienvenida = puedeElegirKitBienvenida(
+    formData.planCampamento,
+    semanasSeleccionadas.length
+  );
+  const totales = planSeleccionado
+    ? calcularTotalCampamento(formData.planCampamento, formData.kitBienvenida)
+    : null;
 
   useEffect(() => {
     document.body.classList.add('campamento-page');
@@ -101,6 +114,10 @@ export default function CampamentoVeranoForm() {
 
       if (name === 'tieneAlergias' && value === 'no') {
         next.alergiasDetalle = '';
+      }
+
+      if (name === 'planCampamento') {
+        next.kitBienvenida = false;
       }
 
       return next;
@@ -183,6 +200,7 @@ export default function CampamentoVeranoForm() {
           edad: Number(formData.edad),
           fechaFirma,
           semanasSeleccionadas,
+          kitBienvenida: mostrarKitBienvenida ? formData.kitBienvenida : false,
         }),
       });
 
@@ -206,6 +224,7 @@ export default function CampamentoVeranoForm() {
           autorizaFotos: false,
           aceptaReglamento: false,
           planCampamento: '',
+          kitBienvenida: false,
         });
         setSemanasSeleccionadas([]);
       } else {
@@ -543,12 +562,44 @@ export default function CampamentoVeranoForm() {
                     selected={semanasSeleccionadas}
                     onChange={(ids) => {
                       setSemanasSeleccionadas(ids);
+                      if (!puedeElegirKitBienvenida(formData.planCampamento, ids.length)) {
+                        setFormData((prev) => ({ ...prev, kitBienvenida: false }));
+                      }
                       if (errors.semanasSeleccionadas) {
                         setErrors((prev) => ({ ...prev, semanasSeleccionadas: undefined }));
                       }
                     }}
                     error={errors.semanasSeleccionadas}
                   />
+                )}
+
+                {mostrarKitBienvenida && (
+                  <div className="campamento-kit-box">
+                    <p className="campamento-kit-intro">
+                      Para inscripciones de <strong>1 semana</strong> puedes agregar el{' '}
+                      <strong>{KIT_BIENVENIDA_NOMBRE}</strong> por{' '}
+                      <strong>{KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN</strong> (opcional).
+                    </p>
+                    <label className="campamento-check campamento-kit-check">
+                      <input
+                        type="checkbox"
+                        name="kitBienvenida"
+                        checked={formData.kitBienvenida}
+                        onChange={handleChange}
+                      />
+                      <span>
+                        Sí, deseo adquirir el {KIT_BIENVENIDA_NOMBRE} (
+                        {KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN)
+                      </span>
+                    </label>
+                    {totales && formData.kitBienvenida && (
+                      <p className="campamento-plan-hint campamento-kit-total">
+                        Total estimado: <strong>${totales.total.toLocaleString('es-MX')} MXN</strong>{' '}
+                        (plan {planSeleccionado?.precioFormateado} + kit{' '}
+                        {KIT_BIENVENIDA_PRECIO_FORMATEADO})
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             </section>

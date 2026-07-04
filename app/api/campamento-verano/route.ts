@@ -11,7 +11,7 @@ import {
   registroToCampamentoEmailData,
   sendCampamentoConfirmacionEmail,
 } from '../../../lib/campamento-mail';
-import { normalizeCampamentoRow } from '../../../lib/campamento-admin';
+import { normalizeCampamentoRow, resolveKitBienvenida } from '../../../lib/campamento-admin';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^[\d\s\-+()]{10,20}$/;
@@ -41,6 +41,7 @@ function parseBody(body: Record<string, unknown>) {
     semanasSeleccionadas: Array.isArray(body.semanasSeleccionadas)
       ? (body.semanasSeleccionadas as unknown[]).map(String)
       : [],
+    kitBienvenida: body.kitBienvenida === true || body.kitBienvenida === 'true',
   };
 }
 
@@ -97,6 +98,11 @@ export async function POST(request: NextRequest) {
     }
 
     const plan = getPlanCampamento(data.planCampamento)!;
+    const kitBienvenida = resolveKitBienvenida(
+      data.planCampamento,
+      data.semanasSeleccionadas,
+      data.kitBienvenida
+    );
     const client = getInsforgeAdmin();
     const db = client.database;
 
@@ -126,6 +132,7 @@ export async function POST(request: NextRequest) {
           plan_campamento: plan.id,
           plan_precio: plan.precio,
           semanas_seleccionadas: data.semanasSeleccionadas,
+          kit_bienvenida: kitBienvenida,
           edicion: CAMPAMENTO_EDICION,
           folio,
         },

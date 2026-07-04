@@ -507,6 +507,27 @@
   border-color: rgba(134, 239, 172, 0.3);
 }
 
+.admin-totality-theme .admin-campamento-kit-yes {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.admin-totality-theme .admin-campamento-kit-no {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.admin-totality-theme .admin-campamento-kit-na {
+  color: #64748b;
+}
+
 .admin-totality-theme .admin-campamento-section {
   border-bottom-color: var(--glass-border);
 }

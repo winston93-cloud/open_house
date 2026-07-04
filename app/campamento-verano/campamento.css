@@ -246,6 +246,30 @@ body.campamento-page {
   font-weight: 600;
 }
 
+.campamento-kit-box {
+  margin-top: 1.25rem;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  border: 2px dashed #93c5fd;
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+}
+
+.campamento-kit-intro {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.55;
+}
+
+.campamento-kit-check {
+  margin-top: 0;
+}
+
+.campamento-kit-total {
+  margin-top: 0.75rem !important;
+  color: #1e40af !important;
+}
+
 .campamento-submit {
   width: 100%;
   margin-top: 0.5rem;

@@ -35,6 +35,7 @@ export function registroToCampamentoEmailData(registro: CampamentoRegistro): Cam
       ? registro.semanas_seleccionadas
       : [],
     fechaFirma: registro.fecha_firma,
+    kitBienvenida: registro.kit_bienvenida === true,
   };
 }
 

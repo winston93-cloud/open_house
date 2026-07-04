@@ -62,6 +62,30 @@ export const CAMPAMENTO_CONTACTO = {
   web: 'www.winston93.edu.mx',
 };
 
+/** Kit de bienvenida — solo disponible en plan de 1 semana. */
+export const KIT_BIENVENIDA_NOMBRE = 'Kit de bienvenida';
+export const KIT_BIENVENIDA_PRECIO = 280;
+export const KIT_BIENVENIDA_PRECIO_FORMATEADO = '$280';
+
+/** El kit solo aplica al plan semanal con exactamente 1 semana elegida. */
+export function puedeElegirKitBienvenida(
+  planId: string,
+  semanasSeleccionadas: number
+): boolean {
+  return planId === 'semanal' && semanasSeleccionadas === 1;
+}
+
+export function calcularTotalCampamento(
+  planId: string,
+  kitBienvenida: boolean
+): { planPrecio: number; kitPrecio: number; total: number } {
+  const plan = getPlanCampamento(planId);
+  const planPrecio = plan?.precio ?? 0;
+  const kitPrecio =
+    kitBienvenida && planId === 'semanal' ? KIT_BIENVENIDA_PRECIO : 0;
+  return { planPrecio, kitPrecio, total: planPrecio + kitPrecio };
+}
+
 export function getPlanCampamento(id: string): PlanCampamento | undefined {
   return PLANES_CAMPAMENTO.find((p) => p.id === id);
 }
