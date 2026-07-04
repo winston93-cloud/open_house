@@ -1,20 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { insforge } from '../../../lib/insforge';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 import { getOpenHouseEventConfig, OPEN_HOUSE_EDICION_ACTUAL } from '../../../lib/open-house-event';
-
-
-
-
-// Configuración del transporter de email
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm'
-  }
-});
+import {
+  COPIA_CORREO_SISTEMAS,
+  getEmailTransporter,
+  remitenteFrom,
+} from '../../../lib/emailTransporter';
 
 // Template para Instituto Educativo Winston (Maternal/Kinder)
 const createEducativoTemplate = (formData: any, fechaEvento: string, horaEvento: string, institucionNombre: string) => {
@@ -742,28 +734,23 @@ export async function POST(request: NextRequest) {
     const emailHtml = createEmailTemplate(formData);
     
     // Configurar el email
+    const nombreRemitente =
+      formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder'
+        ? 'Instituto Educativo Winston'
+        : 'Instituto Winston Churchill';
     const mailOptions = {
-      from: {
-        name: formData.nivelAcademico === 'maternal' || formData.nivelAcademico === 'kinder' 
-          ? 'Instituto Educativo Winston' 
-          : 'Instituto Winston Churchill',
-        address: 'sistemas.desarrollo@winston93.edu.mx'
-      },
+      from: remitenteFrom(nombreRemitente),
       to: formData.correo,
       subject: 'Confirmación de Inscripción - Open House 2026',
       html: emailHtml
     };
 
     // Enviar el email
-    await transporter.sendMail(mailOptions);
+    await getEmailTransporter().sendMail(mailOptions);
     
-    // Enviar copia a sistemas.desarrollo@winston93.edu.mx
     const copyMailOptions = {
-      from: {
-        name: 'Sistema de Inscripciones - Open House 2026',
-        address: 'sistemas.desarrollo@winston93.edu.mx'
-      },
-      to: 'sistemas.desarrollo@winston93.edu.mx',
+      from: remitenteFrom('Sistema de Inscripciones - Open House 2026'),
+      to: COPIA_CORREO_SISTEMAS,
       subject: `📋 Nueva Inscripción - ${formData.nombreCompleto} (${formData.nivelAcademico})`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f8fafc;">
@@ -827,7 +814,7 @@ export async function POST(request: NextRequest) {
       `
     };
     
-    await transporter.sendMail(copyMailOptions);
+    await getEmailTransporter().sendMail(copyMailOptions);
     console.log('📧 Copia de inscripción enviada a sistemas.desarrollo@winston93.edu.mx');
     
     return NextResponse.json({ 

@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { insforge } from '../../../lib/insforge';
-
-// Configuración del transporter de email
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm'
-  }
-});
+import {
+  COPIA_CORREO_SISTEMAS,
+  getEmailTransporter,
+  remitenteFrom,
+} from '../../../lib/emailTransporter';
 
 // Template para el email de confirmación del taller
 const createTallerEmailTemplate = (formData: any) => {
@@ -358,24 +353,17 @@ export async function POST(request: NextRequest) {
     
     // Configurar el email de confirmación al participante
     const mailOptions = {
-      from: {
-        name: 'Taller de IA y Educación Temprana - Directora Claudia Benitez',
-        address: 'sistemas.desarrollo@winston93.edu.mx'
-      },
+      from: remitenteFrom('Taller de IA y Educación Temprana - Directora Claudia Benitez'),
       to: formData.email,
       subject: 'Confirmación de Registro - Taller de IA y Educación Temprana',
       html: emailHtml
     };
 
     // Enviar el email de confirmación
-    await transporter.sendMail(mailOptions);
+    await getEmailTransporter().sendMail(mailOptions);
     
-    // Enviar notificación a dirección académica
     const notificationMailOptions = {
-      from: {
-        name: 'Sistema de Registro - Taller de IA y Educación Temprana - Directora Claudia Benitez',
-        address: 'sistemas.desarrollo@winston93.edu.mx'
-      },
+      from: remitenteFrom('Sistema de Registro - Taller de IA y Educación Temprana - Directora Claudia Benitez'),
       to: 'direccion.academica@winston93.edu.mx',
       subject: `📋 Nuevo Registro al Taller de IA y Educación Temprana - ${formData.nombre} ${formData.apellido}`,
       html: `
@@ -440,7 +428,7 @@ export async function POST(request: NextRequest) {
       `
     };
     
-    await transporter.sendMail(notificationMailOptions);
+    await getEmailTransporter().sendMail(notificationMailOptions);
     console.log('📧 Notificación enviada a dirección académica');
     
     return NextResponse.json({ 

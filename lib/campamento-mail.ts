@@ -1,18 +1,10 @@
-import nodemailer from 'nodemailer';
 import type { CampamentoRegistro } from './campamento-admin';
 import { CAMPAMENTO_INSTITUCION } from './campamento-verano';
 import {
   createCampamentoConfirmacionEmail,
   type CampamentoEmailData,
 } from './campamento-verano-email';
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm',
-  },
-});
+import { getEmailTransporter, remitenteFrom } from './emailTransporter';
 
 export function registroToCampamentoEmailData(registro: CampamentoRegistro): CampamentoEmailData {
   if (!registro.folio) {
@@ -43,11 +35,8 @@ export async function sendCampamentoConfirmacionEmail(
   data: CampamentoEmailData
 ): Promise<void> {
   const { subject, html } = createCampamentoConfirmacionEmail(data);
-  await transporter.sendMail({
-    from: {
-      name: CAMPAMENTO_INSTITUCION,
-      address: 'sistemas.desarrollo@winston93.edu.mx',
-    },
+  await getEmailTransporter().sendMail({
+    from: remitenteFrom(CAMPAMENTO_INSTITUCION),
     to: data.email,
     subject,
     html,

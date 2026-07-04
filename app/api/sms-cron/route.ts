@@ -1,32 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getInsforgeAdmin } from '../../../lib/insforge-admin';
-import * as nodemailer from 'nodemailer';
 import { getEmailTemplate24h, getEmailTemplate72h, getEmailTemplate5d } from '../../../lib/email-templates';
+import { getEmailTransporter, remitenteFromString } from '../../../lib/emailTransporter';
 
 const db = getInsforgeAdmin().database;
 
-// =============================================================================
-// CRON JOB: SISTEMA DE SMS Y EMAILS AUTOMÁTICOS PARA LEADS DE KOMMO
-// =============================================================================
-// Horario: 12:50 PM hora de México (18:50 UTC)
-// Envía SMS y Emails automatizados a leads según el tiempo sin actividad:
-// - 24 horas: Primer recordatorio de contacto
-// - 72 horas: Segundo recordatorio (invitación a recorrido)
-// - 5 días: Tercer recordatorio (oferta especial/descuento)
-// Última actualización: 25 noviembre 2025
-// =============================================================================
-
 // ⛔ DESACTIVACIÓN TEMPORAL - Cambiar a true para reactivar
 const ENVIOS_ACTIVOS = false;
-
-// Configuración del transporter de email
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm'
-  }
-});
 
 // Función principal que ejecuta el cron job
 async function executeCronJob() {
@@ -488,8 +468,8 @@ async function sendEmail(email: string, nombre: string, template: string, subjec
     
     console.log(`   📧 Enviando email a ${email}...`);
     
-    await transporter.sendMail({
-      from: '"Instituto Winston Churchill" <sistemas.desarrollo@winston93.edu.mx>',
+    await getEmailTransporter().sendMail({
+      from: remitenteFromString('Instituto Winston Churchill'),
       to: email,
       subject: subject,
       html: template

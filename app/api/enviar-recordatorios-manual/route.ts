@@ -1,27 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
 import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import { getReminderEventInfo } from '../../../lib/reminder-event-info';
+import { getEmailTransporter, remitenteFrom } from '../../../lib/emailTransporter';
 
 const db = getInsforgeAdmin().database;
-
-// =============================================================================
-// ENDPOINT MANUAL: ENVIAR RECORDATORIOS DEL DÍA
-// =============================================================================
-// Envía recordatorios programados para HOY de forma manual
-// Utiliza los mismos templates y lógica que el cron automático
-// URL: https://open-house-chi.vercel.app/api/enviar-recordatorios-manual
-// Última actualización: 18 noviembre 2025 - 09:00
-// =============================================================================
-
-// Configuración del transporter de email
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'sistemas.desarrollo@winston93.edu.mx',
-    pass: 'ckxc xdfg oxqx jtmm'
-  }
-});
 
 // Template del email de recordatorio para Open House - MEJORADO PARA MÓVILES
 const createReminderEmailTemplate = (formData: any) => {
@@ -1029,16 +1011,13 @@ const sendSesionesReminderEmail = async (sesion: any) => {
     });
     
     const mailOptions = {
-      from: {
-        name: eventInfo.institucionNombre,
-        address: 'sistemas.desarrollo@winston93.edu.mx'
-      },
+      from: remitenteFrom(eventInfo.institucionNombre),
       to: sesion.email,
       subject: `🔔 Recordatorio - Sesión Informativa ${eventInfo.institucionNombre} - ¡Mañana es el gran día!`,
       html: emailHtml
     };
     
-    await transporter.sendMail(mailOptions);
+    await getEmailTransporter().sendMail(mailOptions);
     console.log(`✅ Recordatorio enviado exitosamente a ${sesion.email}`);
     
     // Ya NO se envía SMS aquí - se enviará después en un batch separado
@@ -1108,16 +1087,13 @@ const sendReminderEmail = async (inscripcion: any) => {
     });
     
     const mailOptions = {
-      from: {
-        name: eventInfo.institucionNombre,
-        address: 'sistemas.desarrollo@winston93.edu.mx'
-      },
+      from: remitenteFrom(eventInfo.institucionNombre),
       to: inscripcion.email,
       subject: `🔔 Recordatorio - Open House ${eventInfo.institucionNombre} - ¡Mañana es el gran día!`,
       html: emailHtml
     };
 
-    await transporter.sendMail(mailOptions);
+    await getEmailTransporter().sendMail(mailOptions);
     console.log(`✅ Email de recordatorio enviado a: ${inscripcion.email}`);
     
     // Ya NO se envía SMS aquí - se enviará después en un batch separado
