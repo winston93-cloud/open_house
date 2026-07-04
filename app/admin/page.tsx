@@ -1055,13 +1055,13 @@ export default function AdminDashboard() {
                         />
                       </th>
                       <th>Folio</th>
+                      <th className="admin-campamento-actions-col">Edición</th>
                       <th>Nombre</th>
                       <th>Grado</th>
                       <th>Plan</th>
                       <th>Kit bienvenida</th>
                       <th>Email</th>
                       <th>Fecha</th>
-                      <th>Edición</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1098,6 +1098,15 @@ export default function AdminDashboard() {
                               <span className="admin-campamento-sin-folio">Sin folio</span>
                             )}
                           </td>
+                          <td className="admin-campamento-actions-col">
+                            <button
+                              type="button"
+                              className="admin-campamento-edit-btn"
+                              onClick={() => openCampamentoModal(item)}
+                            >
+                              ✏️ Ver / Editar
+                            </button>
+                          </td>
                           <td>
                             <div className="admin-user-info">
                               <div className="admin-user-avatar">
@@ -1125,7 +1134,9 @@ export default function AdminDashboard() {
                               <span className="admin-campamento-kit-na">—</span>
                             )}
                           </td>
-                          <td className="admin-email">{item.email}</td>
+                          <td className="admin-email admin-email-truncate" title={item.email}>
+                            {item.email}
+                          </td>
                           <td className="admin-date">
                             {new Date(item.created_at).toLocaleDateString('es-MX', {
                               year: 'numeric',
@@ -1134,15 +1145,6 @@ export default function AdminDashboard() {
                               hour: '2-digit',
                               minute: '2-digit',
                             })}
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className="admin-campamento-edit-btn"
-                              onClick={() => openCampamentoModal(item)}
-                            >
-                              ✏️ Ver / Editar
-                            </button>
                           </td>
                         </tr>
                       ))

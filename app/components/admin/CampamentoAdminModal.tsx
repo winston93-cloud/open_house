@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   type CampamentoPayload,
   type CampamentoRegistro,
   registroToPayload,
+  validateCampamentoPayload,
 } from '../../../lib/campamento-admin';
 import { PLANES_CAMPAMENTO, CAMPAMENTO_EDICION, GRADOS_CAMPAMENTO, KIT_BIENVENIDA_NOMBRE, KIT_BIENVENIDA_PRECIO_FORMATEADO, puedeElegirKitBienvenida } from '../../../lib/campamento-verano';
 import {
@@ -53,6 +54,7 @@ export default function CampamentoAdminModal({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (registro) {
@@ -68,9 +70,30 @@ export default function CampamentoAdminModal({
     form.semanasSeleccionadas.length
   );
 
+  const ajustarSemanasAlPlan = (plan: string, prev: string[]): string[] => {
+    if (plan === '4_semanas') return SEMANAS_CAMPAMENTO.map((s) => s.id);
+    const req = getSemanasRequeridas(plan);
+    if (!req) return [];
+    const sorted = prev
+      .filter((id) => SEMANAS_CAMPAMENTO.some((s) => s.id === id))
+      .sort(
+        (a, b) =>
+          SEMANAS_CAMPAMENTO.find((s) => s.id === a)!.numero -
+          SEMANAS_CAMPAMENTO.find((s) => s.id === b)!.numero
+      );
+    return sorted.slice(0, req);
+  };
+
   const update = (patch: Partial<CampamentoPayload>) => {
     setForm((prev) => ({ ...prev, ...patch }));
     setError(null);
+  };
+
+  const showError = (message: string) => {
+    setError(message);
+    requestAnimationFrame(() => {
+      errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
   };
 
   const toggleSemana = (id: string) => {
@@ -95,6 +118,12 @@ export default function CampamentoAdminModal({
   };
 
   const handleSave = async () => {
+    const validationError = validateCampamentoPayload(form);
+    if (validationError) {
+      showError(validationError);
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
@@ -108,13 +137,13 @@ export default function CampamentoAdminModal({
       });
       const data = await res.json();
       if (!data.success) {
-        setError(data.message || 'Error al guardar');
+        showError(data.message || 'Error al guardar');
         return;
       }
       onSaved(data.registro);
       onClose();
     } catch {
-      setError('Error de conexión');
+      showError('Error de conexión');
     } finally {
       setSaving(false);
     }
@@ -155,7 +184,11 @@ export default function CampamentoAdminModal({
         </div>
 
         <div className="admin-modal-content admin-campamento-modal-body">
-          {error && <div className="admin-campamento-error">{error}</div>}
+          {error && (
+            <div ref={errorRef} className="admin-campamento-error" role="alert">
+              {error}
+            </div>
+          )}
 
           {!isNew && registro?.folio && (
             <div className="admin-campamento-folio-banner">
@@ -315,11 +348,13 @@ export default function CampamentoAdminModal({
                 value={form.planCampamento}
                 onChange={(e) => {
                   const plan = e.target.value;
+                  const nextSemanas = ajustarSemanasAlPlan(plan, form.semanasSeleccionadas);
                   update({
                     planCampamento: plan,
-                    semanasSeleccionadas:
-                      plan === '4_semanas' ? SEMANAS_CAMPAMENTO.map((s) => s.id) : [],
-                    kitBienvenida: false,
+                    semanasSeleccionadas: nextSemanas,
+                    kitBienvenida: puedeElegirKitBienvenida(plan, nextSemanas.length)
+                      ? form.kitBienvenida
+                      : false,
                   });
                 }}
               >
@@ -334,9 +369,15 @@ export default function CampamentoAdminModal({
 
             {form.planCampamento && (
               <div className="admin-campamento-semanas">
-                <p className="admin-campamento-semanas-hint">
+                <p
+                  className={`admin-campamento-semanas-hint${
+                    form.semanasSeleccionadas.length < requeridas ? ' admin-campamento-semanas-hint-warn' : ''
+                  }`}
+                >
                   Selecciona {requeridas} semana{requeridas > 1 ? 's' : ''} (
                   {form.semanasSeleccionadas.length}/{requeridas})
+                  {form.semanasSeleccionadas.length < requeridas &&
+                    ' — debes elegir las semanas antes de guardar'}
                 </p>
                 <div className="admin-campamento-semanas-grid">
                   {SEMANAS_CAMPAMENTO.map((s) => {

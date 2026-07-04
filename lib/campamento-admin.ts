@@ -147,10 +147,15 @@ export function payloadToDbRow(data: CampamentoPayload) {
   };
 }
 
+function toDateInputValue(value: string | null | undefined): string {
+  if (!value) return '';
+  return value.slice(0, 10);
+}
+
 export function registroToPayload(r: CampamentoRegistro): CampamentoPayload {
   return {
     nombreParticipante: r.nombre_participante,
-    fechaNacimiento: r.fecha_nacimiento,
+    fechaNacimiento: toDateInputValue(r.fecha_nacimiento),
     edad: r.edad,
     gradoEscolar: r.grado_escolar,
     nombreTutor: r.nombre_tutor,
@@ -162,7 +167,7 @@ export function registroToPayload(r: CampamentoRegistro): CampamentoPayload {
     autorizaPrimerosAuxilios: r.autoriza_primeros_auxilios,
     autorizaFotos: r.autoriza_fotos,
     aceptaReglamento: r.acepta_reglamento,
-    fechaFirma: r.fecha_firma,
+    fechaFirma: toDateInputValue(r.fecha_firma),
     planCampamento: r.plan_campamento,
     semanasSeleccionadas: Array.isArray(r.semanas_seleccionadas) ? r.semanas_seleccionadas : [],
     kitBienvenida: r.kit_bienvenida === true,

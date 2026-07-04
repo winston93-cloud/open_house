@@ -561,6 +561,14 @@
   border: 1px solid rgba(255, 180, 171, 0.3);
 }
 
+.admin-totality-theme .admin-campamento-semanas-hint-warn {
+  color: #fbbf24;
+}
+
+.admin-totality-theme .admin-email-truncate {
+  max-width: 160px;
+}
+
 .admin-totality-theme .admin-campamento-semana-chip {
   background: rgba(52, 52, 58, 0.4);
   border: 1px solid var(--glass-border);

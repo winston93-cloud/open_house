@@ -3063,6 +3063,18 @@ body.sesiones-page {
   border-color: #38bdf8;
 }
 
+.admin-campamento-actions-col {
+  white-space: nowrap;
+  width: 1%;
+}
+
+.admin-email-truncate {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .admin-campamento-plan-badge {
   display: inline-block;
   background: #ecfdf5;
@@ -3165,6 +3177,11 @@ body.sesiones-page {
   font-size: 13px;
   color: #64748b;
   margin: 0 0 8px;
+}
+
+.admin-campamento-semanas-hint-warn {
+  color: #b45309;
+  font-weight: 600;
 }
 
 .admin-campamento-semanas-grid {
