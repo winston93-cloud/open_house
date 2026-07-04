@@ -11,8 +11,14 @@ import { PLANES_CAMPAMENTO, CAMPAMENTO_EDICION, GRADOS_CAMPAMENTO, KIT_BIENVENID
 import {
   getSemanasRequeridas,
   SEMANAS_CAMPAMENTO,
-  getSemanasCampamentoLabels,
+  CAMPAMENTO_RANGO_LABEL,
 } from '../../../lib/campamento-semanas';
+
+const PLAN_META: Record<string, { icon: string; desc: string }> = {
+  '4_semanas': { icon: '🏕️', desc: 'Julio completo · 4 semanas' },
+  '3_semanas': { icon: '⭐', desc: 'Elige 3 semanas del calendario' },
+  semanal: { icon: '☀️', desc: '1 semana a la vez' },
+};
 
 interface CampamentoAdminModalProps {
   registro: CampamentoRegistro | null;
@@ -169,9 +175,25 @@ export default function CampamentoAdminModal({
     }
   };
 
+  const selectPlan = (planId: string) => {
+    if (planId === form.planCampamento) return;
+    const nextSemanas = ajustarSemanasAlPlan(planId, form.semanasSeleccionadas);
+    update({
+      planCampamento: planId,
+      semanasSeleccionadas: nextSemanas,
+      kitBienvenida: puedeElegirKitBienvenida(planId, nextSemanas.length)
+        ? form.kitBienvenida
+        : false,
+    });
+  };
+
+  const semanasCompletas = form.planCampamento
+    ? form.semanasSeleccionadas.length === requeridas
+    : false;
+
   if (!registro && !isNew) return null;
 
-  const semanasLabels = getSemanasCampamentoLabels(form.semanasSeleccionadas);
+  const planActivo = PLANES_CAMPAMENTO.find((p) => p.id === form.planCampamento);
 
   return (
     <div className="admin-modal-overlay" onClick={onClose}>
@@ -340,46 +362,92 @@ export default function CampamentoAdminModal({
             </div>
           </section>
 
-          <section className="admin-campamento-section">
+          <section className="admin-campamento-section admin-campamento-plan-section">
             <h4>Plan y semanas</h4>
-            <label>
-              Plan
-              <select
-                value={form.planCampamento}
-                onChange={(e) => {
-                  const plan = e.target.value;
-                  const nextSemanas = ajustarSemanasAlPlan(plan, form.semanasSeleccionadas);
-                  update({
-                    planCampamento: plan,
-                    semanasSeleccionadas: nextSemanas,
-                    kitBienvenida: puedeElegirKitBienvenida(plan, nextSemanas.length)
-                      ? form.kitBienvenida
-                      : false,
-                  });
-                }}
-              >
-                <option value="">Seleccionar plan</option>
-                {PLANES_CAMPAMENTO.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.label} — {p.precioFormateado}
-                  </option>
-                ))}
-              </select>
-            </label>
+
+            <p className="admin-campamento-plan-intro">Elige el plan de inscripción</p>
+            <div className="admin-campamento-plan-grid" role="radiogroup" aria-label="Plan del campamento">
+              {PLANES_CAMPAMENTO.map((p) => {
+                const meta = PLAN_META[p.id];
+                const selected = form.planCampamento === p.id;
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    className={`admin-campamento-plan-card${selected ? ' selected' : ''}`}
+                    onClick={() => selectPlan(p.id)}
+                  >
+                    {selected && <span className="admin-campamento-plan-check" aria-hidden>✓</span>}
+                    <span className="admin-campamento-plan-card-icon">{meta.icon}</span>
+                    <span className="admin-campamento-plan-card-label">{p.label}</span>
+                    <span className="admin-campamento-plan-card-meta">{meta.desc}</span>
+                    <span className="admin-campamento-plan-card-price">{p.precioFormateado}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {planActivo && (
+              <div className="admin-campamento-plan-summary">
+                <span className="admin-campamento-plan-summary-label">Inversión del plan</span>
+                <strong>{planActivo.precioFormateado} MXN</strong>
+              </div>
+            )}
 
             {form.planCampamento && (
-              <div className="admin-campamento-semanas">
+              <div className="admin-campamento-weeks-panel">
+                <div className="admin-campamento-weeks-header">
+                  <div className="admin-campamento-weeks-title-wrap">
+                    <span className="admin-campamento-weeks-icon">📅</span>
+                    <div>
+                      <p className="admin-campamento-weeks-title">Semanas del campamento</p>
+                      <p className="admin-campamento-weeks-range">{CAMPAMENTO_RANGO_LABEL}</p>
+                    </div>
+                  </div>
+                  <div
+                    className={`admin-campamento-weeks-counter${
+                      semanasCompletas ? ' admin-campamento-weeks-counter--done' : ''
+                    }`}
+                  >
+                    <span className="admin-campamento-weeks-counter-num">
+                      {form.semanasSeleccionadas.length}/{requeridas}
+                    </span>
+                    <span className="admin-campamento-weeks-counter-label">
+                      {requeridas === 1 ? 'semana' : 'semanas'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="admin-campamento-weeks-timeline" aria-hidden="true">
+                  {SEMANAS_CAMPAMENTO.map((s) => (
+                    <div
+                      key={s.id}
+                      className={`admin-campamento-weeks-timeline-seg${
+                        form.semanasSeleccionadas.includes(s.id)
+                          ? ' admin-campamento-weeks-timeline-seg--on'
+                          : ''
+                      }`}
+                    >
+                      S{s.numero}
+                    </div>
+                  ))}
+                </div>
+
                 <p
-                  className={`admin-campamento-semanas-hint${
-                    form.semanasSeleccionadas.length < requeridas ? ' admin-campamento-semanas-hint-warn' : ''
+                  className={`admin-campamento-weeks-hint${
+                    !semanasCompletas ? ' admin-campamento-weeks-hint--warn' : ''
                   }`}
                 >
-                  Selecciona {requeridas} semana{requeridas > 1 ? 's' : ''} (
-                  {form.semanasSeleccionadas.length}/{requeridas})
-                  {form.semanasSeleccionadas.length < requeridas &&
-                    ' — debes elegir las semanas antes de guardar'}
+                  {semanasCompletas
+                    ? '✓ Semanas listas para guardar'
+                    : requeridas === 1
+                      ? 'Toca la semana en la que participará'
+                      : `Elige ${requeridas} semanas del calendario`}
                 </p>
-                <div className="admin-campamento-semanas-grid">
+
+                <div className="admin-campamento-weeks-grid">
                   {SEMANAS_CAMPAMENTO.map((s) => {
                     const selected = form.semanasSeleccionadas.includes(s.id);
                     const disabled = !selected && form.semanasSeleccionadas.length >= requeridas;
@@ -387,40 +455,60 @@ export default function CampamentoAdminModal({
                       <button
                         key={s.id}
                         type="button"
-                        className={`admin-campamento-semana-chip${selected ? ' selected' : ''}${
+                        className={`admin-campamento-week-card${selected ? ' selected' : ''}${
                           disabled ? ' disabled' : ''
                         }`}
                         onClick={() => toggleSemana(s.id)}
                         disabled={disabled}
+                        aria-pressed={selected}
                       >
-                        {s.emoji} S{s.numero} · {s.labelCorto}
+                        <span className="admin-campamento-week-card-emoji">{s.emoji}</span>
+                        <span className="admin-campamento-week-card-num">Semana {s.numero}</span>
+                        <span className="admin-campamento-week-card-dates">{s.labelCorto}</span>
+                        <span className="admin-campamento-week-card-full">{s.label}</span>
+                        {selected && <span className="admin-campamento-week-card-check">✓</span>}
                       </button>
                     );
                   })}
                 </div>
-                {semanasLabels.length > 0 && (
-                  <ul className="admin-campamento-semanas-list">
-                    {semanasLabels.map((l) => (
-                      <li key={l}>{l}</li>
-                    ))}
-                  </ul>
+
+                {form.semanasSeleccionadas.length > 0 && (
+                  <div className="admin-campamento-week-summary">
+                    {form.semanasSeleccionadas
+                      .map((id) => SEMANAS_CAMPAMENTO.find((w) => w.id === id))
+                      .filter(Boolean)
+                      .sort((a, b) => a!.numero - b!.numero)
+                      .map((s) => (
+                        <span key={s!.id} className="admin-campamento-week-tag">
+                          {s!.emoji} S{s!.numero}: {s!.label}
+                        </span>
+                      ))}
+                  </div>
                 )}
               </div>
             )}
 
             {mostrarKitBienvenida && (
-              <label className="inline-check admin-campamento-kit-check">
-                <input
-                  type="checkbox"
-                  checked={form.kitBienvenida === true}
-                  onChange={(e) => update({ kitBienvenida: e.target.checked })}
-                />
-                {KIT_BIENVENIDA_NOMBRE} ({KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN)
-              </label>
+              <div className="admin-campamento-kit-box">
+                <p className="admin-campamento-kit-intro">
+                  Opcional para plan semanal: agrega el <strong>{KIT_BIENVENIDA_NOMBRE}</strong> por{' '}
+                  <strong>{KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN</strong>.
+                </p>
+                <label className="admin-campamento-kit-option">
+                  <input
+                    type="checkbox"
+                    checked={form.kitBienvenida === true}
+                    onChange={(e) => update({ kitBienvenida: e.target.checked })}
+                  />
+                  <span>
+                    Sí, incluir {KIT_BIENVENIDA_NOMBRE} ({KIT_BIENVENIDA_PRECIO_FORMATEADO}.00 MXN)
+                  </span>
+                </label>
+              </div>
             )}
 
             {form.planCampamento === 'semanal' && !mostrarKitBienvenida && (
-              <p className="admin-campamento-semanas-hint">
+              <p className="admin-campamento-weeks-hint admin-campamento-weeks-hint--muted">
                 El {KIT_BIENVENIDA_NOMBRE.toLowerCase()} solo aplica al elegir exactamente 1 semana.
               </p>
             )}

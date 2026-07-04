@@ -3087,7 +3087,7 @@ body.sesiones-page {
 }
 
 .admin-campamento-modal {
-  max-width: 720px;
+  max-width: 800px;
   width: 95%;
   max-height: 92vh;
   display: flex;
@@ -3184,6 +3184,389 @@ body.sesiones-page {
   font-weight: 600;
 }
 
+/* ——— Plan picker (admin modal) ——— */
+.admin-campamento-plan-section h4 {
+  margin-bottom: 0.35rem;
+}
+
+.admin-campamento-plan-intro {
+  margin: 0 0 14px;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.admin-campamento-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-campamento-plan-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  padding: 16px 14px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #ffffff 0%, #f8fafc 100%);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.admin-campamento-plan-card:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+  transform: translateY(-1px);
+}
+
+.admin-campamento-plan-card.selected {
+  border-color: #2563eb;
+  background: linear-gradient(160deg, #eff6ff 0%, #fef9c3 100%);
+  box-shadow: 0 10px 28px rgba(37, 99, 235, 0.18);
+}
+
+.admin-campamento-plan-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.admin-campamento-plan-card-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.admin-campamento-plan-card-label {
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.admin-campamento-plan-card-meta {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.35;
+  min-height: 2.5em;
+}
+
+.admin-campamento-plan-card-price {
+  margin-top: 6px;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #1d4ed8;
+  letter-spacing: -0.02em;
+}
+
+.admin-campamento-plan-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  font-size: 13px;
+  color: #475569;
+}
+
+.admin-campamento-plan-summary strong {
+  font-size: 16px;
+  color: #1e40af;
+}
+
+.admin-campamento-weeks-panel {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid #dbeafe;
+  background: linear-gradient(145deg, #f8fafc 0%, #eff6ff 55%, #fffbeb 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.admin-campamento-weeks-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-campamento-weeks-title-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.admin-campamento-weeks-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.admin-campamento-weeks-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e3a8a;
+  line-height: 1.25;
+}
+
+.admin-campamento-weeks-range {
+  margin: 3px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.admin-campamento-weeks-counter {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+}
+
+.admin-campamento-weeks-counter--done {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: transparent;
+}
+
+.admin-campamento-weeks-counter-num {
+  font-size: 16px;
+  font-weight: 900;
+  color: #1e40af;
+  line-height: 1;
+}
+
+.admin-campamento-weeks-counter-label {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.admin-campamento-weeks-counter--done .admin-campamento-weeks-counter-num,
+.admin-campamento-weeks-counter--done .admin-campamento-weeks-counter-label {
+  color: #fff;
+}
+
+.admin-campamento-weeks-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.admin-campamento-weeks-timeline-seg {
+  text-align: center;
+  padding: 6px 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px dashed #cbd5e1;
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+  transition: all 0.2s ease;
+}
+
+.admin-campamento-weeks-timeline-seg--on {
+  background: #dbeafe;
+  border-color: #3b82f6;
+  border-style: solid;
+  color: #1d4ed8;
+}
+
+.admin-campamento-weeks-hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.admin-campamento-weeks-hint--warn {
+  color: #b45309;
+}
+
+.admin-campamento-weeks-hint--muted {
+  margin-top: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.admin-campamento-weeks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-campamento-week-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 100%;
+  padding: 12px 12px 10px;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.admin-campamento-week-card:hover:not(:disabled) {
+  border-color: #93c5fd;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
+}
+
+.admin-campamento-week-card.selected {
+  border-color: #2563eb;
+  background: linear-gradient(160deg, #eff6ff 0%, #dbeafe 100%);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+}
+
+.admin-campamento-week-card.disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.admin-campamento-week-card-emoji {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.admin-campamento-week-card-num {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e3a8a;
+}
+
+.admin-campamento-week-card-dates {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.admin-campamento-week-card-full {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.admin-campamento-week-card-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-campamento-week-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.admin-campamento-week-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #047857;
+}
+
+.admin-campamento-kit-box {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px dashed #93c5fd;
+  background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+}
+
+.admin-campamento-kit-intro {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.admin-campamento-kit-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-campamento-kit-option:has(input:checked) {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.admin-campamento-kit-option input {
+  margin-top: 2px;
+  width: 1rem;
+  height: 1rem;
+  accent-color: #059669;
+  flex-shrink: 0;
+}
+
 .admin-campamento-semanas-grid {
   display: flex;
   flex-wrap: wrap;
@@ -3270,6 +3653,14 @@ body.sesiones-page {
 
 @media (max-width: 640px) {
   .admin-campamento-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-campamento-plan-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-campamento-weeks-grid {
     grid-template-columns: 1fr;
   }
 
