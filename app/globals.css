@@ -3068,6 +3068,92 @@ body.sesiones-page {
   width: 1%;
 }
 
+.admin-table-campamento th,
+.admin-table-campamento td {
+  vertical-align: middle;
+}
+
+.admin-campamento-check-col {
+  width: 36px;
+}
+
+.admin-campamento-folio-col {
+  width: 108px;
+}
+
+.admin-campamento-nombre-col {
+  min-width: 160px;
+}
+
+.admin-campamento-grado-col {
+  width: 96px;
+  white-space: nowrap;
+}
+
+.admin-campamento-plan-col {
+  width: 88px;
+}
+
+.admin-campamento-kit-col {
+  width: 72px;
+  white-space: nowrap;
+}
+
+.admin-campamento-email-col {
+  min-width: 220px;
+  width: 22%;
+}
+
+.admin-campamento-fecha-col {
+  width: 118px;
+  white-space: nowrap;
+}
+
+.admin-campamento-email-cell {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-campamento-email-text {
+  flex: 1;
+  min-width: 0;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 1.35;
+  font-size: 0.82rem;
+}
+
+.admin-campamento-reenviar-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #bfdbfe;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.admin-campamento-reenviar-btn:hover:not(:disabled) {
+  background: #dbeafe;
+  border-color: #93c5fd;
+  transform: scale(1.04);
+}
+
+.admin-campamento-reenviar-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .admin-email-truncate {
   max-width: 180px;
   overflow: hidden;

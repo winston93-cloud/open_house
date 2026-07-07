@@ -60,6 +60,7 @@ export default function AdminDashboard() {
   const [campamentoModalIsNew, setCampamentoModalIsNew] = useState(false);
   const [campamentoSeleccionados, setCampamentoSeleccionados] = useState<Set<string>>(new Set());
   const [enviandoCorreosCampamento, setEnviandoCorreosCampamento] = useState(false);
+  const [reenviandoCorreoCampamentoId, setReenviandoCorreoCampamentoId] = useState<string | null>(null);
   const [asignandoFoliosCampamento, setAsignandoFoliosCampamento] = useState(false);
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
@@ -330,6 +331,40 @@ export default function AdminDashboard() {
       alert('Error de conexión al asignar folios.');
     } finally {
       setAsignandoFoliosCampamento(false);
+    }
+  };
+
+  const handleReenviarCorreoCampamento = async (item: CampamentoRegistro) => {
+    const email = item.email?.trim();
+    if (!email) {
+      alert('Esta inscripción no tiene correo. Actualízalo en Ver / Editar antes de reenviar.');
+      return;
+    }
+    if (
+      !confirm(
+        `¿Reenviar correo de confirmación de Campamento de Verano 2026 a ${email}?`
+      )
+    ) {
+      return;
+    }
+    setReenviandoCorreoCampamentoId(item.id);
+    try {
+      const res = await fetch('/api/admin/campamento-verano/enviar-correos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: [item.id] }),
+      });
+      const data = await res.json();
+      if (data.enviados > 0) {
+        alert(data.message || `Correo reenviado a ${email}.`);
+      } else {
+        const err = data.fallidos?.[0]?.message || data.message || 'No se pudo enviar el correo.';
+        alert(err);
+      }
+    } catch {
+      alert('Error de conexión al reenviar correo.');
+    } finally {
+      setReenviandoCorreoCampamentoId(null);
     }
   };
 
@@ -1040,7 +1075,7 @@ export default function AdminDashboard() {
               </div>
 
               <div className="admin-table-wrapper">
-                <table className="admin-table">
+                <table className="admin-table admin-table-campamento">
                   <thead>
                     <tr>
                       <th className="admin-campamento-check-col">
@@ -1054,14 +1089,14 @@ export default function AdminDashboard() {
                           aria-label="Seleccionar todos"
                         />
                       </th>
-                      <th>Folio</th>
+                      <th className="admin-campamento-folio-col">Folio</th>
                       <th className="admin-campamento-actions-col">Edición</th>
-                      <th>Nombre</th>
-                      <th>Grado</th>
-                      <th>Plan</th>
-                      <th>Kit bienvenida</th>
-                      <th>Email</th>
-                      <th>Fecha</th>
+                      <th className="admin-campamento-nombre-col">Nombre</th>
+                      <th className="admin-campamento-grado-col">Grado</th>
+                      <th className="admin-campamento-plan-col">Plan</th>
+                      <th className="admin-campamento-kit-col">Kit</th>
+                      <th className="admin-campamento-email-col">Correo</th>
+                      <th className="admin-campamento-fecha-col">Fecha</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1134,8 +1169,26 @@ export default function AdminDashboard() {
                               <span className="admin-campamento-kit-na">—</span>
                             )}
                           </td>
-                          <td className="admin-email admin-email-truncate" title={item.email}>
-                            {item.email}
+                          <td className="admin-campamento-email-col">
+                            <div className="admin-campamento-email-cell">
+                              <span className="admin-email admin-campamento-email-text">
+                                {item.email}
+                              </span>
+                              <button
+                                type="button"
+                                className="admin-campamento-reenviar-btn"
+                                onClick={() => handleReenviarCorreoCampamento(item)}
+                                disabled={
+                                  reenviandoCorreoCampamentoId === item.id ||
+                                  enviandoCorreosCampamento ||
+                                  asignandoFoliosCampamento
+                                }
+                                title="Reenviar correo de Campamento de Verano 2026"
+                                aria-label={`Reenviar correo de Campamento de Verano 2026 a ${item.email}`}
+                              >
+                                {reenviandoCorreoCampamentoId === item.id ? '…' : '📧'}
+                              </button>
+                            </div>
                           </td>
                           <td className="admin-date">
                             {new Date(item.created_at).toLocaleDateString('es-MX', {

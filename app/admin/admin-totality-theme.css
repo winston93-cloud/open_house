@@ -741,6 +741,21 @@
   max-width: 160px;
 }
 
+.admin-totality-theme .admin-campamento-email-text {
+  color: var(--totality-text-muted);
+}
+
+.admin-totality-theme .admin-campamento-reenviar-btn {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(96, 165, 250, 0.35);
+  color: #93c5fd;
+}
+
+.admin-totality-theme .admin-campamento-reenviar-btn:hover:not(:disabled) {
+  background: rgba(59, 130, 246, 0.22);
+  border-color: rgba(96, 165, 250, 0.55);
+}
+
 .admin-totality-theme .admin-campamento-semana-chip {
   background: rgba(52, 52, 58, 0.4);
   border: 1px solid var(--glass-border);
