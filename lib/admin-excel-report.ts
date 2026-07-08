@@ -569,6 +569,7 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
     '#',
     'Folio',
     'Participante',
+    'Edad',
     'Grado',
     'Plan',
     'Kit bienvenida',
@@ -581,7 +582,7 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
   ];
   const colCount = headers.length;
 
-  setColumnWidths(sheet, [5, 14, 30, 16, 14, 14, 32, 16, 26, 20, 10, 28]);
+  setColumnWidths(sheet, [5, 14, 30, 8, 16, 14, 14, 32, 16, 26, 20, 10, 28]);
   const headerRow = addSheetBanner(
     sheet,
     logos,
@@ -607,6 +608,7 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
       idx + 1,
       item.folio || 'Sin folio',
       item.nombre_participante,
+      item.edad,
       item.grado_escolar,
       input.formatPlan(item.plan_campamento),
       item.plan_campamento === 'semanal'
@@ -632,7 +634,7 @@ function buildCampamentoSheet(wb: Workbook, input: AdminExcelReportInput, logos:
         color: isFolio && item.folio ? C.blueText : C.text,
         bold: isFolio && !!item.folio,
         border: true,
-        align: i <= 1 ? 'center' : 'left',
+        align: i <= 1 || i === 3 ? 'center' : 'left',
       });
     });
   });
