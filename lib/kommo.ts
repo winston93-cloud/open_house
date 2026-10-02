@@ -1,5 +1,6 @@
 // Kommo API Integration
 import { NextResponse } from 'next/server';
+import { OPEN_HOUSE_KOMMO_TAGS } from './open-house-event';
 
 // Kommo API Configuration
 const KOMMO_CONFIG = {
@@ -157,8 +158,7 @@ export async function createKommoLead(leadData: {
       // Winston -> Sesiones Informativas Winston 2026, Educativo -> Sesiones Informativas Educativo 2026
       tagName = leadData.plantel === 'winston' ? 'Sesiones Informativas Winston 2026' : 'Sesiones Informativas Educativo 2026';
     } else {
-      // Open House
-      tagName = leadData.plantel === 'winston' ? 'Open House Winston 2026' : 'Open House Educativo 2026';
+      tagName = leadData.plantel === 'winston' ? OPEN_HOUSE_KOMMO_TAGS.winston : OPEN_HOUSE_KOMMO_TAGS.educativo;
     }
     if (tagName) {
       console.log(`🏷️ Etiqueta a incluir: ${tagName} (Evento: ${tipoEvento}, Plantel: ${leadData.plantel})`);

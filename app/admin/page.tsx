@@ -5,6 +5,7 @@ import {
   getDefaultOpenHouseEdicion,
   OPEN_HOUSE_EDICIONES_META,
   getOpenHouseEdicionLabel,
+  cicloDeEdicion,
 } from '../../lib/open-house-event';
 import {
   getDefaultSesionesEdicion,
@@ -118,18 +119,14 @@ export default function AdminDashboard() {
 
   const onEdicionOpenHouseChange = (value: string) => {
     setEdicionOpenHouse(value);
-    if (value === '2025-diciembre') {
-      setCicloEscolar('2025');
-    } else if (value === '2026-enero' || value === '2026-junio') {
-      setCicloEscolar('2026');
-    }
+    const ciclo = cicloDeEdicion(value);
+    if (ciclo) setCicloEscolar(ciclo);
   };
 
   const onEdicionSesionesChange = (value: string) => {
     setEdicionSesiones(value);
-    if (value === '2026-enero' || value === '2026-junio') {
-      setCicloEscolar('2026');
-    }
+    const ciclo = cicloDeEdicion(value);
+    if (ciclo) setCicloEscolar(ciclo);
   };
 
   const descripcionFiltroSesiones = (): string => {
