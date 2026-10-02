@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { insforge } from '../../../lib/insforge';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 import { cicloDeEdicion, getOpenHouseEventConfig, OPEN_HOUSE_EDICION_ACTUAL } from '../../../lib/open-house-event';
+import { SMS_CONFIRMACION_ACTIVO } from '../../../lib/sms';
 import {
   COPIA_CORREO_SISTEMAS,
   getEmailTransporter,
@@ -693,7 +694,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ===== ENVIAR SMS DE CONFIRMACIÓN =====
-    if (formData.telefono) {
+    if (SMS_CONFIRMACION_ACTIVO && formData.telefono) {
       try {
         console.log('📱 Enviando SMS de confirmación...');
         

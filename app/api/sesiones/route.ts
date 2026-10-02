@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { insforge } from '../../../lib/insforge';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
+import { SMS_CONFIRMACION_ACTIVO } from '../../../lib/sms';
 import {
   getSesionesInformativasEventConfig,
   SESIONES_EDICION_ACTUAL,
@@ -693,7 +694,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ===== ENVIAR SMS DE CONFIRMACIÓN =====
-    if (formData.telefono) {
+    if (SMS_CONFIRMACION_ACTIVO && formData.telefono) {
       try {
         console.log('📱 Enviando SMS de confirmación...');
         

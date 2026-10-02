@@ -2,6 +2,9 @@
 // UTILIDAD: Función para enviar SMS via SMS Mobile API
 // =============================================================================
 
+/** SMS de confirmación al registrarse (Open House / Sesiones). Hoy solo se envía correo. */
+export const SMS_CONFIRMACION_ACTIVO = false;
+
 export async function sendSMS(phone: string, message: string) {
   const SMS_GATEWAY_URL = process.env.SMS_GATEWAY_URL;
   const SMS_GATEWAY_TOKEN = process.env.SMS_GATEWAY_TOKEN;
