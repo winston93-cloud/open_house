@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { insforge } from '../../../lib/insforge';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import { createKommoLead, determinePlantel } from '../../../lib/kommo';
 import { cicloDeEdicion, getOpenHouseEventConfig, OPEN_HOUSE_EDICION_ACTUAL } from '../../../lib/open-house-event';
 import { SMS_CONFIRMACION_ACTIVO } from '../../../lib/sms';
@@ -634,7 +634,7 @@ export async function POST(request: NextRequest) {
     const reminderDate = new Date(ev.reminderDateStr);
 
     // Guardar en la base de datos
-    const { data: inscripcion, error: dbError } = await insforge.database
+    const { data: inscripcion, error: dbError } = await getInsforgeAdmin().database
       .from('inscripciones')
       .insert([
         {

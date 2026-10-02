@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { insforge } from '../../../lib/insforge';
+import { getInsforgeAdmin } from '../../../lib/insforge-admin';
 import {
   COPIA_CORREO_SISTEMAS,
   getEmailTransporter,
@@ -323,7 +323,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Guardar en la base de datos
-    const { data: registro, error: dbError } = await insforge.database
+    const { data: registro, error: dbError } = await getInsforgeAdmin().database
       .from('taller_ia')
       .insert([
         {
